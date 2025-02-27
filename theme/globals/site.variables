@@ -1,0 +1,27 @@
+/*******************************
+         Site Settings
+*******************************/
+
+@import '@eeacms/volto-ied-policy/../theme/tokens/tokens';
+
+// @fontName: 'OpenSans';
+// @fontSize: 16px;
+
+/*-------------------
+    Brand Colors
+--------------------*/
+
+@primaryColor: @green-6;
+@secondaryColor: @green-4;
+
+@lightPrimaryColor: @green-5;
+@lightSecondaryColor: @green-4;
+
+@darkPrimaryColor: @green-6;
+@darkSecondaryColor: @green-6;
+
+@linkColor: @secondaryColor;
+@linkHoverColor: @primaryColor;
+@linkActiveColor: @linkHoverColor;
+
+@scrollbarWidth: 15px;

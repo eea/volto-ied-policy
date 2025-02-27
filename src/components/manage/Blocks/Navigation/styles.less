@@ -1,0 +1,42 @@
+@import (multiple, reference, optional) '../../theme.config';
+
+@type: extra;
+@element: custom;
+
+.ui.menu.navigation-block {
+  flex-wrap: wrap;
+  border: none;
+  box-shadow: unset;
+
+  .item {
+    padding: 0;
+    border: none;
+
+    &.active {
+      a {
+        color: @primaryColor;
+        // text-decoration: none;
+        // border-bottom: 1px solid @secondaryColor;
+      }
+    }
+
+    &:hover,
+    &.active:hover {
+      background-color: unset;
+    }
+
+    &::before {
+      content: none;
+    }
+
+    &:not(:last-child)::after {
+      top: 0%;
+      right: 0px;
+      width: 1px;
+      height: 80%;
+      margin: 0 0.3rem;
+      background: @secondaryColor;
+      content: '';
+    }
+  }
+}

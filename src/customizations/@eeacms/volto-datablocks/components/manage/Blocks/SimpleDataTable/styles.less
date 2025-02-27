@@ -1,0 +1,126 @@
+.simple-data-table {
+  padding: 1em;
+  overflow-x: auto;
+
+  table {
+    > thead {
+      > tr > th {
+        background: none !important;
+        color: #000 !important;
+        text-transform: inherit !important;
+        vertical-align: bottom !important;
+
+        &::after {
+          display: block;
+          width: 100%;
+          padding-top: 0.7rem;
+          border-bottom: 0.1rem solid #000;
+          content: '';
+        }
+
+        &::before {
+          display: none !important;
+        }
+
+        &.left::after {
+          /* Nothing here for now. */
+        }
+
+        &.center::after {
+          margin-right: auto;
+          margin-left: auto;
+        }
+
+        &.right::after {
+          margin-left: auto;
+        }
+
+        &.justify::after {
+          width: 100%;
+        }
+
+        &.left {
+          text-align: left !important;
+        }
+
+        &.right {
+          text-align: right !important;
+        }
+
+        &.center {
+          text-align: center !important;
+        }
+
+        &.justify {
+          text-align: justify !important;
+        }
+      }
+    }
+
+    td {
+      p {
+        margin-bottom: 0;
+      }
+    }
+
+    > tfoot {
+      .ui.menu.pagination {
+        .item {
+          &.fitted {
+            min-width: auto;
+            padding: 0 !important;
+
+            .loader {
+              padding: 0 !important;
+            }
+          }
+        }
+
+        .ui.loader {
+          &.disabled {
+            visibility: hidden;
+          }
+        }
+      }
+    }
+  }
+
+  .table-title {
+    font-size: 15px;
+  }
+
+  .title-border {
+    display: table;
+    border-bottom: 2px solid #000;
+
+    > *:first-child {
+      margin-bottom: 0 !important;
+    }
+  }
+
+  table.no-borders {
+    border: none !important;
+
+    tr > th:first-child,
+    tr > td:first-child {
+      padding-left: 0;
+    }
+
+    tr > th:last-child,
+    tr > td:last-child {
+      padding-right: 0;
+    }
+
+    th,
+    td {
+      border: none !important;
+    }
+  }
+
+  table.compact-table {
+    tr td {
+      padding-top: 0.3em !important;
+      padding-bottom: 0.3em !important;
+    }
+  }
+}
