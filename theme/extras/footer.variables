@@ -1,6 +1,0 @@
-/*******************************
-            Footer
-*******************************/
-
-@mobileFooterBackgroundGrandient    : linear-gradient(45deg, @primaryColor 12%, @secondaryColor 80%);
-@computerFooterBackgroundGrandient  : linear-gradient(45deg, @primaryColor 12%, @secondaryColor 80%);
