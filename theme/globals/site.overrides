@@ -1,0 +1,332 @@
+/*******************************
+        Global Overrides
+*******************************/
+
+@import '../extras/widgets';
+@import '../extras/keyfacts';
+@import '../extras/factsheets';
+@import '../extras/pluggables';
+@import '../extras/stylemenu';
+@import '../extras/tocnav';
+@import './helpers';
+@import './natura2000';
+
+// :root {
+//   .define-color(primary, #005248);
+//   .define-color(secondary, #00a390);
+//   .define-color(tertiary, #3d5265);
+//   .define-color(light-primary, #007b6c);
+//   .define-color(light-secondary, #00a390);
+//   .define-color(light-tertiary, #54728c);
+//   .define-color(dark-primary, #005248);
+//   .define-color(dark-secondary, #005248);
+//   .define-color(dark-tertiary, #2e3e4c);
+// }
+
+@font-face {
+  font-family: 'OpenSans';
+  font-weight: normal;
+  src: url('../fonts/OpenSans-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'OpenSans';
+  font-weight: 600;
+  src: url('../fonts/OpenSans-Semibold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'OpenSans';
+  font-weight: 800;
+  src: url('../fonts/OpenSans-Bold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'RajdhaniR';
+  font-weight: 400;
+  src: url('../fonts/Rajdhani-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'RajdhaniB';
+  font-weight: 600;
+  src: url('../fonts/Rajdhani-Bold.ttf') format('truetype');
+}
+
+a {
+  color: @linkColor;
+
+  &:visited {
+    color:  @linkColor;
+  }
+
+  &:active {
+    color: @linkActiveColor;
+  }
+
+  &:hover {
+    color: @linkHoverColor;
+  }
+}
+
+p.has--clear--both:empty {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.contenttype-bise_factsheet {
+  #main {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      margin-top: 1.5em;
+    }
+
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      text-decoration: underline;
+      // border-bottom: 2px solid @darkSecondaryColor;
+    }
+
+    // h2 {
+    //   border-bottom: 2px solid @secondaryColor;
+    // }
+
+    .column-blocks-wrapper {
+      display: flex;
+      align-items: center;
+
+      > div {
+        width: 100%;
+      }
+    }
+  }
+}
+
+.smart-table {
+  .search-description {
+    margin-bottom: 2rem;
+    color: #6b6b6b;
+  }
+
+  .ui.search {
+    .ui.input {
+      max-width: unset;
+      > input {
+        border-radius: 12px;
+      }
+    }
+  }
+}
+
+.subsite.subsite-natura2000.subsite-root {
+  footer {
+    display: none;
+  }
+
+  .ui.content-area {
+    padding-bottom: 0;
+  }
+}
+
+.subsite.subsite-natura2000 {
+  &.grey-bg {
+    .content-area {
+      margin-bottom: 0 !important;
+      padding-bottom: 0;
+    }
+
+    #view {
+      padding-bottom: 4rem !important;
+      background-color: #f8f8f8 !important;
+    }
+  }
+
+  .eea.banner,
+  .breadcrumbs,
+  .block-editor-title {
+    display: none;
+  }
+
+  &:not(.section-edit) {
+    .ui.basic.segment.content-area {
+      padding-top: 0;
+      margin-top: 0;
+    }
+  }
+
+  .styled-with-bg {
+    padding: 0 !important;
+  }
+
+  .eea.header a:hover {
+    color: @secondaryColor;
+  }
+
+  .content-area {
+    /* TEXT */
+    // h1,
+    // h2,
+    // h3,
+    // h4,
+    // h5,
+    // h6,
+    // p,
+    // a,
+    // span,
+    // button {
+    //   font-family: OpenSans, 'Raleway', sans-serif;
+    // }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      color: @primaryColor !important;
+    }
+
+    h2 {
+      font-weight: 600;
+    }
+
+    a {
+      color: @secondaryColor;
+      font-weight: 600;
+
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        color: @secondaryColor !important;
+      }
+
+      &:hover {
+        color: @secondaryColor;
+        text-decoration: underline;
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+          color: @secondaryColor !important;
+        }
+      }
+    }
+
+    .light-links {
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        color: @secondaryColor !important;
+      }
+
+      a {
+        color: @secondaryColor;
+
+        &:hover {
+          color: @secondaryColor;
+          text-decoration: underline;
+
+          h1,
+          h2,
+          h3,
+          h4,
+          h5,
+          h6 {
+            color: @secondaryColor !important;
+          }
+        }
+      }
+    }
+
+    .dark-links {
+      a {
+        color: @primaryColor;
+
+        &:hover {
+          color: @primaryColor;
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+
+  // .ui.overlay.sidebar {
+  //   z-index: 800;
+  // }
+}
+
+.subsite.subsite-natura2000:not(.subsite-root) {
+  .ui.content-area {
+    margin-bottom: 2rem;
+  }
+}
+
+// #toolbar {
+//   z-index: 6;
+// }
+
+.simple-data-table {
+  padding: 0;
+}
+
+.content-box {
+  &.light-green {
+    background-color: @green-1;
+    color: @tertiaryColor;
+  }
+}
+
+.style-select-widget {
+  svg.light-green {
+    background-color:@green-1;
+    fill: @tertiaryColor !important;
+  }
+}
+
+#sidebar > .sidebar-container > .tabs-wrapper > .ui.menu {
+  flex-wrap: nowrap;
+}
+
+.ui.button.full-size-sidenav-btn {
+  padding: 6px !important;
+}
+
+.color-picker-widget .wrapper {
+  flex-flow: row;
+}
+
+.simple-data-table .default-table {
+  tr th {
+    padding: 0 !important;
+
+    &:not(:last-child) {
+      border-right: 0.1rem solid @secondaryColor !important;
+    }
+
+    &::after {
+      border-bottom-color: @secondaryColor;
+    }
+  }
+
+  tr td {
+    &:not(:last-child) {
+      border-right: 0.1rem solid @secondaryColor !important;
+    }
+  }
+}

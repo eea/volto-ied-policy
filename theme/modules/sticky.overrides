@@ -1,0 +1,21 @@
+.eea.header {
+  z-index: @zIndex;
+}
+
+.eea.header .ui.sticky {
+  z-index: @zIndex;
+}
+
+.sticky-navigation-anchors.full-width:not(.sticky-broken) {
+  z-index: @zIndex;
+}
+
+.sticky-broken {
+  .ui.sticky {
+    z-index: unset !important;
+  }
+}
+
+#toolbar {
+  z-index: @zIndex + 1;
+}

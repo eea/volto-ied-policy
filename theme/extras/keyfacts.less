@@ -1,0 +1,202 @@
+.keyfacts-block {
+  padding-top: 2em;
+
+  & > div {
+    background-color: #e8f2d2;
+  }
+
+  .block-wrapper {
+    display: flex !important;
+    max-width: 1127px !important;
+    max-height: 600px;
+    margin: 0 auto !important;
+
+    .facts-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      padding: 4em 0 4em 2em;
+      margin: 0.5em 0;
+
+      & :nth-child(3n) {
+        // the bottom fact
+        justify-content: flex-end;
+      }
+
+      & :nth-child(3n + 1) {
+        // the first fact
+        justify-content: flex-start;
+      }
+
+      & :nth-child(3n + 2) {
+        // the middle fact
+        justify-content: center;
+      }
+
+      .fact {
+        flex: 0 50%;
+        margin: 1em 0;
+
+        .upper {
+          margin: 0 0 0.2em 0;
+          color: @primaryColor;
+          font-size: 44px;
+          font-weight: 700;
+          line-height: 47px;
+
+          p {
+            margin-bottom: 0;
+            line-height: 1;
+          }
+
+          @media only screen and (max-width: 840px) {
+            font-size: 37px;
+          }
+        }
+
+        .lower {
+          font-size: 18px;
+        }
+
+        @media only screen and (max-width: 600px) {
+          flex: 0 1 100%;
+          padding: 0.5rem 0 0.5rem 1.5rem;
+        }
+      }
+    }
+
+    .title-wrapper,
+    .facts-wrapper {
+      margin-bottom: 0!important;
+    }
+
+    .title-wrapper {
+      width: 40%;
+      padding: 4em 4em 4em 0.8em;
+
+      @media (max-width: 1024px) {
+        padding-right: 2em;
+      }
+
+      .title {
+        position: relative;
+        min-height: 370px;
+        padding: 3em 2em;
+        background-color: #fff;
+
+        @media (max-width: 767px) {
+          width: 100%;
+          min-height: 230px;
+        }
+
+        &::before {
+          position: absolute;
+          top: 15%;
+          right: -32px;
+          width: 0;
+          height: 0;
+          border-top: 32px solid transparent;
+          border-bottom: 32px solid transparent;
+          border-left: 32px solid #fff;
+          content: '';
+
+          @media (max-width: 1071px) {
+            content: none;
+          }
+        }
+
+        &::after {
+          content: none;
+
+          @media (max-width: 1071px) {
+            position: absolute;
+            bottom: 0;
+            left: 100px;
+            width: 0;
+            height: 0;
+            margin-bottom: -28px;
+            margin-left: -28px;
+            border: 28px solid transparent;
+            border-top-color: #fff;
+            border-bottom: 0;
+            content: '';
+          }
+        }
+
+        .headline {
+          margin-bottom: 1em;
+          color: @primaryColor;
+          font-family: @headerFont;
+          font-size: 44px;
+          font-weight: 700;
+          line-height: 47px;
+
+          @media (max-width: 1024px) {
+            margin-bottom: 2em;
+            font-size: 34px;
+          }
+        }
+      }
+    }
+  }
+
+  .full-width {
+    @media only screen and (max-width: 840px) {
+      right: unset;
+      left: unset;
+      width: 100vw !important;
+      margin-right: -2vw !important;
+      margin-left: -6vw !important;
+    }
+
+    @media only screen and (max-width: 800px) {
+      margin-left: -3vw !important;
+    }
+
+    @media only screen and (max-width: 600px) {
+      margin-left: -5vw !important;
+    }
+  }
+}
+
+
+@media only screen and (min-width: 1072px) and (max-width: 1279px)  {
+  .title-wrapper,
+  .facts-wrapper {
+    width: 50%!important;
+  }
+}
+
+@media only screen and (max-width: 1071px) {
+  .keyfacts-block {
+    .block-wrapper {
+      display: block !important;
+      max-height: unset !important;
+
+      .title-wrapper {
+        padding: 2rem 0.5rem;
+
+        .title {
+          min-height: unset;
+          padding: 1.8em;
+
+          .headline {
+            margin-bottom: 2rem;
+          }
+        }
+      }
+
+      .fact {
+        padding-left: 1rem;
+      }
+
+      .facts-wrapper {
+        padding: 1em 0.5em;
+      }
+
+      .title-wrapper,
+      .facts-wrapper {
+        width: 100%;
+      }
+    }
+  }
+}

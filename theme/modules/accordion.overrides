@@ -1,0 +1,3 @@
+.ui.accordion:not([class*='ary']) .active.title i {
+  color: @iconColorActive;
+}
