@@ -1,8 +1,8 @@
-import React from "react";
-import SidebarPortal from "@plone/volto/components/manage/Sidebar/SidebarPortal";
-import InlineForm from "@plone/volto/components/manage/Form/InlineForm";
-import { getFieldURL } from "@eeacms/volto-ied-policy/helpers";
-import schema from "./schema";
+import React from 'react';
+import SidebarPortal from '@plone/volto/components/manage/Sidebar/SidebarPortal';
+import InlineForm from '@plone/volto/components/manage/Form/InlineForm';
+import { getFieldURL } from '@eeacms/volto-ied-policy/helpers';
+import schema from './schema';
 
 const Edit = (props) => {
   return (

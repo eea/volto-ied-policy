@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { getFieldURL } from "@eeacms/volto-ied-policy/helpers";
+import { useEffect } from 'react';
+import { getFieldURL } from '@eeacms/volto-ied-policy/helpers';
 
 const View = (props) => {
   useEffect(() => {
