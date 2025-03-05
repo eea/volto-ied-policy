@@ -28,6 +28,14 @@
   font-weight: normal;
   src: url('../fonts/OpenSans-Regular.ttf') format('truetype');
 }
+footer {
+    background: linear-gradient(
+      212.33deg,
+      @primaryColor 6.78%,
+      @darkPrimaryColor 69.54%,
+      @darkPrimaryColor 98.23%
+    ) !important;
+  }
 
 @font-face {
   font-family: 'OpenSans';

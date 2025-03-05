@@ -6,8 +6,8 @@ import installBlocks from './components/manage/Blocks';
 import installStyles from './styles-config';
 import installDataTable from './customizations/@eeacms/volto-datablocks/components/manage/Blocks/SimpleDataTable';
 
-import biseLogo from '@eeacms/volto-ied-policy/../theme/assets/images/Header/bise-logo.svg';
-import biseWhiteLogo from '@eeacms/volto-ied-policy/../theme/assets/images/Header/bise-logo-white.svg';
+import biseLogo from '@eeacms/volto-ied-policy/../theme/assets/images/Header/ied-logo.svg';
+import biseWhiteLogo from '@eeacms/volto-ied-policy/../theme/assets/images/Header/ied-logo.svg';
 import ecLogo from '@eeacms/volto-ied-policy/../theme/assets/logos/logo-ec.svg';
 
 const restrictedBlocks = ['imagecards', 'embed_eea_tableau_block'];
