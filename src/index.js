@@ -55,6 +55,7 @@ const applyConfig = (config) => {
     navDepth: 3,
   };
 
+  config.blocks.blocksConfig.tableau_block.restricted = false;
   // Multi-lingual
   config.settings.isMultilingual = false;
   config.settings.defaultLanguage =
