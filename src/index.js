@@ -102,7 +102,7 @@ const applyConfig = (config) => {
       },
     ],
     logoTargetUrl: '/',
-    organisationName: 'Biodiversity Information System for Europe',
+    organisationName: 'European Industrial Emissions Portal',
   };
 
   config.settings.eea.footerOpts.logosHeader = 'Managed by';
