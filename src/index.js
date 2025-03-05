@@ -9,7 +9,6 @@ import installDataTable from './customizations/@eeacms/volto-datablocks/componen
 import biseLogo from '@eeacms/volto-ied-policy/../theme/assets/images/Header/ied-logo.svg';
 import biseWhiteLogo from '@eeacms/volto-ied-policy/../theme/assets/images/Header/ied-logo.svg';
 import ecLogo from '@eeacms/volto-ied-policy/../theme/assets/logos/logo-ec.svg';
-
 const restrictedBlocks = ['imagecards', 'embed_eea_tableau_block'];
 
 const customBlocks = [
@@ -50,6 +49,7 @@ const n2kLanguages = [
 
 const applyConfig = (config) => {
   // Volto specific settings
+
   config.settings = {
     ...config.settings,
     navDepth: 3,
@@ -94,7 +94,7 @@ const applyConfig = (config) => {
         isDefault: true,
         // to replace search path change path to whatever you want and match with the page in volto website
         path: '/advanced-search',
-        placeholder: 'Search BISE...',
+        placeholder: 'Search IED...',
         description:
           'Looking for more information? Try searching the full EEA website content',
         buttonTitle: 'Go to advanced search',
