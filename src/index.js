@@ -6,10 +6,9 @@ import installBlocks from './components/manage/Blocks';
 import installStyles from './styles-config';
 import installDataTable from './customizations/@eeacms/volto-datablocks/components/manage/Blocks/SimpleDataTable';
 
-import biseLogo from '@eeacms/volto-ied-policy/../theme/assets/images/Header/bise-logo.svg';
-import biseWhiteLogo from '@eeacms/volto-ied-policy/../theme/assets/images/Header/bise-logo-white.svg';
+import biseLogo from '@eeacms/volto-ied-policy/../theme/assets/images/Header/ied-logo.svg';
+import biseWhiteLogo from '@eeacms/volto-ied-policy/../theme/assets/images/Header/ied-logo.svg';
 import ecLogo from '@eeacms/volto-ied-policy/../theme/assets/logos/logo-ec.svg';
-
 const restrictedBlocks = ['imagecards', 'embed_eea_tableau_block'];
 
 const customBlocks = [
@@ -50,11 +49,13 @@ const n2kLanguages = [
 
 const applyConfig = (config) => {
   // Volto specific settings
+
   config.settings = {
     ...config.settings,
     navDepth: 3,
   };
 
+  config.blocks.blocksConfig.tableau_block.restricted = false;
   // Multi-lingual
   config.settings.isMultilingual = false;
   config.settings.defaultLanguage =
@@ -93,7 +94,7 @@ const applyConfig = (config) => {
         isDefault: true,
         // to replace search path change path to whatever you want and match with the page in volto website
         path: '/advanced-search',
-        placeholder: 'Search BISE...',
+        placeholder: 'Search IED...',
         description:
           'Looking for more information? Try searching the full EEA website content',
         buttonTitle: 'Go to advanced search',
@@ -101,7 +102,7 @@ const applyConfig = (config) => {
       },
     ],
     logoTargetUrl: '/',
-    organisationName: 'Biodiversity Information System for Europe',
+    organisationName: 'European Industrial Emissions Portal',
   };
 
   config.settings.eea.footerOpts.logosHeader = 'Managed by';
