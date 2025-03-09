@@ -3,7 +3,7 @@ import {
   DELETE_QUERY,
   RESET_QUERY,
   TRIGGER_QUERY_RENDER,
-} from '@eeacms/volto-industry-theme/constants';
+} from '../constants';
 
 export function setQuery(queryParam) {
   return {
