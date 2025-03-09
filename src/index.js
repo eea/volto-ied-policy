@@ -10,6 +10,7 @@ import biseLogo from '@eeacms/volto-ied-policy/../theme/assets/images/Header/ied
 import biseWhiteLogo from '@eeacms/volto-ied-policy/../theme/assets/images/Header/ied-logo.svg';
 import ecLogo from '@eeacms/volto-ied-policy/../theme/assets/logos/logo-ec.svg';
 import ListView from './components/manage/Blocks/ConnectedList/View.jsx';
+import EditView from './components/manage/Blocks/ConnectedList/Edit.jsx';
 import getSchema from './components/manage/Blocks/ConnectedList/schema.js';
 const restrictedBlocks = ['imagecards', 'embed_eea_tableau_block'];
 
@@ -60,8 +61,8 @@ const applyConfig = (config) => {
     id: 'custom_connected_block',
     title: 'Connected Tags',
     group: 'common',
-    edit: ListView,
     view: ListView,
+    edit: EditView,
     schema: getSchema,
     icon: iconSVG,
   };

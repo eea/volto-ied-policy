@@ -23,16 +23,13 @@ const ConnectedList = (props) => {
   console.log('assa', props);
   return (
     <div className="connected-list-container">
-      {mode === 'edit' && (
-        <BlockDataForm
-          schema={schema}
-          title={schema.title}
-          formData={data}
-          onChangeField={(id, value) => {
-            onChangeBlock(block, { ...data, [id]: value });
-          }}
-        />
-      )}
+      <BlockDataForm
+        schema={schema()}
+        formData={data}
+        onChangeField={(id, value) => {
+          onChangeBlock(block, { ...data, [id]: value });
+        }}
+      />
 
       <div className="connected-list">
         {data.queries?.length && data.value ? (
