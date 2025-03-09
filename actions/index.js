@@ -16,7 +16,7 @@ import {
   GET_PAGE,
   GET_SPARQL_DATA,
   SET_FLAGS,
-} from '~/constants/ActionTypes';
+} from '../constants/ActionTypes';
 
 export function setSectionTabs(payload) {
   return {
