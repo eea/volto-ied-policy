@@ -18,7 +18,7 @@ const getLength = (length = 0, limit = 0) => {
 };
 
 const ConnectedList = (props) => {
-  const { data = {}, onChangeBlock, block, mode, provider_data = {} } = props;
+  const { data = {}, onChangeBlock, block, provider_data = {} } = props;
   const firstKey = Object.keys(provider_data || {})?.[0];
   const columns = getLength(provider_data?.[firstKey]?.length, data?.limit);
 
