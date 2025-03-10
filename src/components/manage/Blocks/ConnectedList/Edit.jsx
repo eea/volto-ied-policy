@@ -3,7 +3,6 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import {
   SidebarPortal,
-  BlocksToolbar,
   BlockDataForm,
   UniversalLink,
 } from '@plone/volto/components';
