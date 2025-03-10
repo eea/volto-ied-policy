@@ -22,7 +22,7 @@ const getQuerySchema = (data) => {
 };
 
 const getSchema = (props) => {
-  const data = props.provider_data || {};
+  const data = props?.provider_data || {};
   const choices = Object.keys(data).map((key) => [key, key]);
 
   return {

@@ -10,15 +10,13 @@ import './styles.less';
 
 const getLength = (length = 0, limit = 0) => {
   if (!length) return 0;
-  return limit < length ? limit : length;
+  return Math.min(limit || length, length);
 };
 
 const ConnectedList = (props) => {
   const { data = {}, onChangeBlock, block, mode, provider_data = {} } = props;
-  const columns = getLength(
-    provider_data[Object.keys(provider_data)?.[0]]?.length,
-    data.limit,
-  );
+  const firstKey = Object.keys(provider_data || {})?.[0];
+  const columns = getLength(provider_data?.[firstKey]?.length, data?.limit);
 
   console.log('assa', props);
   return (
@@ -35,7 +33,9 @@ const ConnectedList = (props) => {
       )}
 
       <div className="connected-list">
-        {data.queries?.length && data.value ? (
+        {Array.isArray(data?.queries) &&
+        data?.queries.length > 0 &&
+        data?.value ? (
           Array(Math.max(0, columns))
             .fill()
             .map((_, column) => {
@@ -44,7 +44,7 @@ const ConnectedList = (props) => {
                 if (
                   query.paramToSet &&
                   query.param &&
-                  provider_data[query.param]
+                  provider_data?.[query.param]?.[column]
                 ) {
                   queries[query.paramToSet] =
                     provider_data[query.param][column];
@@ -66,7 +66,7 @@ const ConnectedList = (props) => {
                     });
                   }}
                 >
-                  {provider_data[data.value][column]}
+                  {provider_data?.[data.value]?.[column] ?? 'N/A'}
                 </UniversalLink>
               );
             })
