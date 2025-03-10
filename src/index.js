@@ -5,10 +5,13 @@ import { addStylingFieldsetSchemaEnhancer } from '@eeacms/volto-ied-policy/compo
 import installBlocks from './components/manage/Blocks';
 import installStyles from './styles-config';
 import installDataTable from './customizations/@eeacms/volto-datablocks/components/manage/Blocks/SimpleDataTable';
-
+import iconSVG from '@plone/volto/icons/tag.svg';
 import biseLogo from '@eeacms/volto-ied-policy/../theme/assets/images/Header/ied-logo.svg';
 import biseWhiteLogo from '@eeacms/volto-ied-policy/../theme/assets/images/Header/ied-logo.svg';
 import ecLogo from '@eeacms/volto-ied-policy/../theme/assets/logos/logo-ec.svg';
+import ListView from './components/manage/Blocks/ConnectedList/View.jsx';
+import EditView from './components/manage/Blocks/ConnectedList/Edit.jsx';
+import getSchema from './components/manage/Blocks/ConnectedList/schema.js';
 const restrictedBlocks = ['imagecards', 'embed_eea_tableau_block'];
 
 const customBlocks = [
@@ -53,6 +56,15 @@ const applyConfig = (config) => {
   config.settings = {
     ...config.settings,
     navDepth: 3,
+  };
+  config.blocks.blocksConfig.custom_connected_block = {
+    id: 'custom_connected_block',
+    title: 'Connected Tags',
+    group: 'common',
+    view: ListView,
+    edit: EditView,
+    schema: getSchema,
+    icon: iconSVG,
   };
 
   config.blocks.blocksConfig.tableau_block.restricted = false;
