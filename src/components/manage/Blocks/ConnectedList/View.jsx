@@ -18,7 +18,6 @@ const ConnectedList = (props) => {
   const firstKey = Object.keys(provider_data || {})?.[0];
   const columns = getLength(provider_data?.[firstKey]?.length, data?.limit);
 
-  console.log('assa', props);
   return (
     <div className="connected-list-container">
       {mode === 'edit' && (
@@ -81,7 +80,6 @@ const ConnectedList = (props) => {
 export default compose(
   connect(
     (state) => {
-      console.log({ state });
       return {};
     },
     { setQuery },
