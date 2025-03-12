@@ -9,7 +9,7 @@ import {
 import cx from 'classnames';
 import { setQuery } from '../../../../../actions';
 import schema from './schema';
-
+import { connectToProviderData } from '@eeacms/volto-datablocks/hocs';
 import './styles.less';
 
 const getLength = (length = 0, limit = 0) => {
@@ -82,6 +82,12 @@ const ConnectedList = (props) => {
 };
 
 export default compose(
+  connectToProviderData((props) => ({
+    provider_url: props.data?.url,
+    pagination: {
+      enabled: false,
+    },
+  })),
   connect(
     (state) => {
       return {};

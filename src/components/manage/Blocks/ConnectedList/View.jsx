@@ -5,6 +5,7 @@ import { UniversalLink, BlockDataForm } from '@plone/volto/components';
 import cx from 'classnames';
 import { setQuery } from '../../../../../actions';
 import schema from './schema';
+import { connectToProviderData } from '@eeacms/volto-datablocks/hocs';
 
 import './styles.less';
 
@@ -15,9 +16,10 @@ const getLength = (length = 0, limit = 0) => {
 
 const ConnectedList = (props) => {
   const { data = {}, onChangeBlock, block, mode, provider_data = {} } = props;
+  console.log({ props });
   const firstKey = Object.keys(provider_data || {})?.[0];
   const columns = getLength(provider_data?.[firstKey]?.length, data?.limit);
-
+  console.log({ provider_data });
   return (
     <div className="connected-list-container">
       {mode === 'edit' && (
@@ -32,9 +34,7 @@ const ConnectedList = (props) => {
       )}
 
       <div className="connected-list">
-        {Array.isArray(data?.queries) &&
-        data?.queries.length > 0 &&
-        data?.value ? (
+        {data?.value ? (
           Array(Math.max(0, columns))
             .fill()
             .map((_, column) => {
@@ -78,8 +78,15 @@ const ConnectedList = (props) => {
 };
 
 export default compose(
+  connectToProviderData((props) => ({
+    provider_url: props.data?.url,
+    pagination: {
+      enabled: false,
+    },
+  })),
   connect(
     (state) => {
+      console.log({ state });
       return {};
     },
     { setQuery },
