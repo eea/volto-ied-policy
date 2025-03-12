@@ -1,15 +1,13 @@
 import React from 'react';
 import { compose } from 'redux';
-import { connect } from 'react-redux';
 import {
   SidebarPortal,
   BlockDataForm,
   UniversalLink,
 } from '@plone/volto/components';
 import cx from 'classnames';
-import { setQuery } from '../../../../../actions';
 import schema from './schema';
-
+import { connectToProviderData } from '@eeacms/volto-datablocks/hocs';
 import './styles.less';
 
 const getLength = (length = 0, limit = 0) => {
@@ -82,10 +80,10 @@ const ConnectedList = (props) => {
 };
 
 export default compose(
-  connect(
-    (state) => {
-      return {};
+  connectToProviderData((props) => ({
+    provider_url: props.data?.url,
+    pagination: {
+      enabled: false,
     },
-    { setQuery },
-  ),
+  })),
 )(ConnectedList);
