@@ -16,10 +16,10 @@ const getLength = (length = 0, limit = 0) => {
 
 const ConnectedList = (props) => {
   const { data = {}, onChangeBlock, block, mode, provider_data = {} } = props;
-  console.log({ props });
+
   const firstKey = Object.keys(provider_data || {})?.[0];
   const columns = getLength(provider_data?.[firstKey]?.length, data?.limit);
-  console.log({ provider_data });
+
   return (
     <div className="connected-list-container">
       {mode === 'edit' && (
@@ -84,11 +84,4 @@ export default compose(
       enabled: false,
     },
   })),
-  connect(
-    (state) => {
-      console.log({ state });
-      return {};
-    },
-    { setQuery },
-  ),
 )(ConnectedList);

@@ -88,10 +88,4 @@ export default compose(
       enabled: false,
     },
   })),
-  connect(
-    (state) => {
-      return {};
-    },
-    { setQuery },
-  ),
 )(ConnectedList);
