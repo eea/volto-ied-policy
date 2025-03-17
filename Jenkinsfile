@@ -9,7 +9,7 @@ pipeline {
   environment {
     GIT_NAME = "volto-ied-policy"
     NAMESPACE = "@eeacms"
-    SONARQUBE_TAGS = "volto.eea.europa.eu,industry.europa.eu"
+    SONARQUBE_TAGS = "volto.eea.europa.eu,industry.europa.eu,www.industry.eea.europa.eu"
     DEPENDENCIES = ""
     BACKEND_PROFILES = "eea.kitkat:testing"
     BACKEND_ADDONS = ""
