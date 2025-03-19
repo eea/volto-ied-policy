@@ -15,7 +15,7 @@ import getSchema from './components/manage/Blocks/ConnectedList/schema.js';
 import getSchemaPolluants from './components/manage/Blocks/PolluantsTable/schema.js';
 import PollutantIndexView from './components/manage/Blocks/PolluantsTable/View';
 import PollutantIndexEdit from './components/manage/Blocks/PolluantsTable/Edit';
-import schema from '@plone/volto/reducers/schema/schema';
+import addonReducers from '../reducers';
 const restrictedBlocks = ['imagecards', 'embed_eea_tableau_block'];
 
 const customBlocks = [
@@ -79,6 +79,10 @@ const applyConfig = (config) => {
     },
   };
 
+  config.addonReducers = {
+    ...config.addonReducers,
+    ...addonReducers,
+  };
   config.blocks.blocksConfig.custom_connected_block = {
     id: 'custom_connected_block',
     title: 'Connected Tags',

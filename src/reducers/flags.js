@@ -1,4 +1,4 @@
-import { SET_FLAGS } from '~/constants/ActionTypes';
+import { SET_FLAGS } from '../constants/ActionTypes';
 
 const initialState = {
   items: {},
