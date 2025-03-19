@@ -213,7 +213,7 @@ const View = ({ providers_data, query, setQuery, ...props }) => {
     if (!query?.index_pollutant_id) {
       setQuery({ index_pollutant_id: 70 });
     }
-  }, []);
+  }, [setQuery, query?.index_pollutant_id]);
 
   const index_data = React.useMemo(() => {
     if (id < 0) return {};

@@ -19,7 +19,7 @@ const providerSchema = {
   required: [],
 };
 
-export default {
+const pollutantsIndexSchema = {
   title: 'Pollutants index',
   fieldsets: [
     {
@@ -44,3 +44,4 @@ export default {
   },
   required: [],
 };
+export default pollutantsIndexSchema;
