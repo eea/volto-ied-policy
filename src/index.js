@@ -1,7 +1,7 @@
 import { getBlocks } from '@plone/volto/helpers';
 import installLink from '@plone/volto-slate/editor/plugins/AdvancedLink';
 import { addStylingFieldsetSchemaEnhancer } from '@eeacms/volto-ied-policy/components/manage/Blocks/schema';
-
+import documentIcon from '@plone/volto/icons/doument-details.svg';
 import installBlocks from './components/manage/Blocks';
 import installStyles from './styles-config';
 import installDataTable from './customizations/@eeacms/volto-datablocks/components/manage/Blocks/SimpleDataTable';
@@ -12,6 +12,10 @@ import ecLogo from '@eeacms/volto-ied-policy/../theme/assets/logos/logo-ec.svg';
 import ListView from './components/manage/Blocks/ConnectedList/View.jsx';
 import EditView from './components/manage/Blocks/ConnectedList/Edit.jsx';
 import getSchema from './components/manage/Blocks/ConnectedList/schema.js';
+import getSchemaPolluants from './components/manage/Blocks/PolluantsTable/schema.js';
+import PollutantIndexView from './components/manage/Blocks/PolluantsTable/View';
+import PollutantIndexEdit from './components/manage/Blocks/PolluantsTable/Edit';
+import schema from '@plone/volto/reducers/schema/schema';
 const restrictedBlocks = ['imagecards', 'embed_eea_tableau_block'];
 
 const customBlocks = [
@@ -57,6 +61,24 @@ const applyConfig = (config) => {
     ...config.settings,
     navDepth: 3,
   };
+
+  config.blocks.blocksConfig.polluantTable = {
+    id: 'polluantTable',
+    title: 'Pollutant index',
+    icon: documentIcon,
+    group: 'eprtr_blocks',
+    view: PollutantIndexView,
+    edit: PollutantIndexEdit,
+    restricted: false,
+    mostUsed: false,
+    sidebarTab: 1,
+    schema: getSchema,
+    security: {
+      addPermission: [],
+      view: [],
+    },
+  };
+
   config.blocks.blocksConfig.custom_connected_block = {
     id: 'custom_connected_block',
     title: 'Connected Tags',

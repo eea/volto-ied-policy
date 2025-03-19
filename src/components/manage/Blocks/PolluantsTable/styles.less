@@ -1,0 +1,102 @@
+@import (multiple, reference, optional) '../../../../../theme/theme.config';
+@type: extra;
+@element: custom;
+
+@borderSize: 3px;
+
+.index-pollutants {
+  padding-top: 1rem;
+  border: 1px solid #d4d4d5;
+  background-color: #f6f6f6;
+  border-radius: 0.25rem;
+
+  .ui.selection.dropdown {
+    width: fit-content;
+    border: none;
+    margin-bottom: 1rem;
+    background: transparent;
+    color: @primaryColor;
+    font-size: 1em;
+    font-weight: bold;
+
+    > .text {
+      color: @primaryColor !important;
+      font-weight: bold !important;
+    }
+
+    > .text,
+    > .icon {
+      font-size: 1.5em;
+    }
+
+    &.active {
+      border-bottom: none;
+      box-shadow: none;
+    }
+
+    &:hover {
+      box-shadow: none !important;
+    }
+  }
+
+  .ui.menu {
+    @textColor: var(--text-color, @blue);
+    border: none;
+    background: transparent;
+    box-shadow: none;
+
+    .item {
+      padding: @relative11px @relative14px;
+      border: none !important;
+      margin-bottom: 0 !important;
+      color: @textColor;
+      font-weight: bold;
+
+      &:hover {
+        background: transparent !important;
+        color: @textColor;
+      }
+
+      &::before {
+        display: none;
+      }
+
+      &.active {
+        background: transparent;
+        color: @textColor;
+        font-weight: bold;
+
+        &:hover {
+          color: @textColor;
+        }
+
+        &::before {
+          position: absolute;
+          top: calc(100% - @borderSize + 1px);
+          left: 0.875em;
+          display: block;
+          width: calc(100% - 1.75em);
+          height: @borderSize;
+          background-color: @textColor;
+          content: '';
+        }
+
+        &:hover {
+        }
+      }
+    }
+
+    > .item:first-child {
+      border-radius: @defaultBorderRadius 0px 0px 0px;
+    }
+  }
+
+  .ui.tab {
+    border: none !important;
+    background-color: transparent !important;
+  }
+
+  h3 {
+    color: @orange;
+  }
+}
