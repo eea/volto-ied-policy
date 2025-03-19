@@ -208,12 +208,9 @@ const panes = [
 
 const View = ({ providers_data, query, setQuery, ...props }) => {
   const id = query?.index_pollutant_id || -1;
-  console.log({ query });
 
-  console.log(props.data.providers, providers_data);
   React.useEffect(() => {
     if (!query?.index_pollutant_id) {
-      console.log('uu', { index_pollutant_id: 70 });
       setQuery({ index_pollutant_id: 70 });
     }
   }, []);
