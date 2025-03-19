@@ -4,6 +4,7 @@ import installFactsheetsListing from './FactsheetsListing';
 import installKeyFacts from './KeyFacts';
 import installMaesViewer from './MaesViewer';
 import installNavigation from './Navigation';
+import installIndustryMap from './IndustryMap';
 
 const config = (config) => {
   return [
@@ -13,6 +14,7 @@ const config = (config) => {
     installKeyFacts,
     installMaesViewer,
     installNavigation,
+    installIndustryMap,
   ].reduce((acc, apply) => apply(acc), config);
 };
 
