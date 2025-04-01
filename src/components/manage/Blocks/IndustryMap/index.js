@@ -355,7 +355,7 @@ export const getRegionsWhereStatement = (query = {}) => {
   return where.join(' AND ');
 };
 
-export default (config) => {
+const applyIndustryMapBlockConfig = (config) => {
   config.blocks.blocksConfig.industry_map = {
     id: 'industry_map',
     title: 'Industry map',
@@ -373,3 +373,5 @@ export default (config) => {
   };
   return config;
 };
+
+export default applyIndustryMapBlockConfig;
