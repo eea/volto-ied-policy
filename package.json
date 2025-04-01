@@ -1,6 +1,6 @@
 {
   "name": "@eeacms/volto-ied-policy",
-  "version": "1.2.19",
+  "version": "1.2.20",
   "description": "@eeacms/volto-ied-policy: Volto add-on",
   "main": "src/index.js",
   "author": "European Environment Agency: IDM2 A-Team",
@@ -17,25 +17,31 @@
     "@eeacms/volto-block-toc",
     "@eeacms/volto-eea-design-system",
     "@eeacms/volto-eea-website-theme",
+    "@eeacms/volto-openlayers-map",
     "@eeacms/volto-resize-helper",
     "@eeacms/volto-spotlight",
-    "@eeacms/volto-tableau"
+    "@eeacms/volto-tableau",
+    "@eeacms/volto-block-style"
   ],
   "repository": {
     "type": "git",
     "url": "git@github.com:eea/volto-ied-policy.git"
   },
   "dependencies": {
+    "@eeacms/volto-block-style": "*",
     "@eeacms/volto-block-toc": "*",
     "@eeacms/volto-datablocks": "*",
     "@eeacms/volto-eea-design-system": "*",
     "@eeacms/volto-eea-website-theme": "*",
+    "@eeacms/volto-openlayers-map": "*",
     "@eeacms/volto-resize-helper": "*",
     "@eeacms/volto-spotlight": "*",
     "@eeacms/volto-tableau": "*",
     "esri-loader": "3.7.0",
     "plotly.js": "^2.28.0",
-    "react-plotly.js": "2.6.0"
+    "react-highlight-words": "0.17.0",
+    "react-plotly.js": "2.6.0",
+    "react-tooltip": "4.2.21"
   },
   "devDependencies": {
     "@cypress/code-coverage": "^3.10.0",
