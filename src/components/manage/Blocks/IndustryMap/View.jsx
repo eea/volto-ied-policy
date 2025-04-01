@@ -13,10 +13,10 @@ import { Overlays } from '@eeacms/volto-openlayers-map/Overlays';
 import { Controls, Control } from '@eeacms/volto-openlayers-map/Controls';
 import { Layers, Layer } from '@eeacms/volto-openlayers-map/Layers';
 import { openlayers } from '@eeacms/volto-openlayers-map';
-
+import { StyleWrapperView } from '@eeacms/volto-block-style/StyleWrapper';
 import PrivacyProtection from '@eeacms/volto-ied-policy/components/manage/Blocks/PrivacyProtection';
 import { setQuery } from '@eeacms/volto-ied-policy/actions';
-import { emitEvent } from '@eeacms/volto-ied-policy/helpers';
+import { emitEvent } from '@eeacms/volto-ied-policy/helpers.js';
 import {
   dataprotection,
   getStyles,
@@ -485,60 +485,65 @@ class View extends React.PureComponent {
     const { proj, source } = openlayers;
     if (__SERVER__) return '';
     return (
-      <div className="industry-map-wrapper">
-        <div id="industry-map" className="industry-map">
-          <PrivacyProtection data={{ dataprotection }}>
-            <Map
-              ref={(data) => {
-                this.map.current = data?.map;
-                if (data?.mapRendered && !this.state.mapRendered) {
-                  this.setState({ mapRendered: true });
-                }
-              }}
-              view={{
-                center: proj.fromLonLat([20, 50]),
-                showFullExtent: true,
-                // maxZoom: 1,
-                minZoom: 1,
-                zoom: 1,
-              }}
-              renderer="webgl"
-              onPointermove={this.onPointermove}
-              onClick={this.onClick}
-              onMoveend={this.onMoveend}
-            >
-              <Controls attribution={false} zoom={true}>
-                <Control className="ol-custom">
-                  <button
-                    className="navigation-button"
-                    title="Center to user location"
-                    onClick={() => {
-                      this.centerToUserLocation(true);
-                    }}
-                  >
-                    <Icon name={navigationSVG} size="1em" fill="white" />
-                  </button>
-                </Control>
-              </Controls>
-              <Interactions
-                doubleClickZoom={true}
-                keyboardZoom={true}
-                mouseWheelZoom={true}
-                pointer={true}
-                select={false}
-                pinchRotate={false}
-                altShiftDragRotate={false}
-              />
-              <Layers>
-                <Layer.Tile
-                  source={
-                    new source.XYZ({
-                      url: getLayerBaseURL(),
-                    })
+      <StyleWrapperView
+        {...this.props}
+        styleData={this.props.data.styles || {}}
+        styled={true}
+      >
+        <div className="industry-map-wrapper">
+          <div id="industry-map" className="industry-map">
+            <PrivacyProtection data={{ dataprotection }}>
+              <Map
+                ref={(data) => {
+                  this.map.current = data?.map;
+                  if (data?.mapRendered && !this.state.mapRendered) {
+                    this.setState({ mapRendered: true });
                   }
-                  zIndex={0}
+                }}
+                view={{
+                  center: proj.fromLonLat([20, 50]),
+                  showFullExtent: true,
+                  // maxZoom: 1,
+                  minZoom: 1,
+                  zoom: 1,
+                }}
+                renderer="webgl"
+                onPointermove={this.onPointermove}
+                onClick={this.onClick}
+                onMoveend={this.onMoveend}
+              >
+                <Controls attribution={false} zoom={true}>
+                  <Control className="ol-custom">
+                    <button
+                      className="navigation-button"
+                      title="Center to user location"
+                      onClick={() => {
+                        this.centerToUserLocation(true);
+                      }}
+                    >
+                      <Icon name={navigationSVG} size="1em" fill="white" />
+                    </button>
+                  </Control>
+                </Controls>
+                <Interactions
+                  doubleClickZoom={true}
+                  keyboardZoom={true}
+                  mouseWheelZoom={true}
+                  pointer={true}
+                  select={false}
+                  pinchRotate={false}
+                  altShiftDragRotate={false}
                 />
-                {/* <Layer.VectorImage
+                <Layers>
+                  <Layer.Tile
+                    source={
+                      new source.XYZ({
+                        url: getLayerBaseURL(),
+                      })
+                    }
+                    zIndex={0}
+                  />
+                  {/* <Layer.VectorImage
                   className="ol-layer-regions"
                   ref={(data) => {
                     this.layerRegions.current = data?.layer;
@@ -578,55 +583,56 @@ class View extends React.PureComponent {
                   title="1.Regions"
                   zIndex={1}
                 /> */}
-                <Layer.Tile
+                  <Layer.Tile
+                    ref={(data) => {
+                      this.layerSites.current = data?.layer;
+                    }}
+                    className="ol-layer-sites"
+                    source={getSitesSource(this)}
+                    title="2.Sites"
+                    zIndex={1}
+                  />
+                </Layers>
+                <Overlays
                   ref={(data) => {
-                    this.layerSites.current = data?.layer;
+                    this.overlayPopup.current = data?.overlay;
                   }}
-                  className="ol-layer-sites"
-                  source={getSitesSource(this)}
-                  title="2.Sites"
-                  zIndex={1}
-                />
-              </Layers>
-              <Overlays
-                ref={(data) => {
-                  this.overlayPopup.current = data?.overlay;
-                }}
-                className="ol-popup"
-                positioning="center-center"
-                stopEvent={true}
-              >
-                <Popup overlay={this.overlayPopup} />
-              </Overlays>
-              <Overlays
-                ref={(data) => {
-                  this.overlayPopupDetailed.current = data?.overlay;
-                }}
-                className="ol-popup-detailed"
-                positioning="center-center"
-                stopEvent={true}
-              >
-                <PopupDetailed overlay={this.overlayPopupDetailed} />
-              </Overlays>
-              <Overlays
-                className="ol-dynamic-filter"
-                positioning="center-center"
-                stopEvent={true}
-              >
-                <Sidebar
-                  data={this.props.data}
-                  providers_data={this.props.providers_data}
-                />
-              </Overlays>
-              {this.state.loading ? (
-                <div className="loader">Loading...</div>
-              ) : (
-                ''
-              )}
-            </Map>
-          </PrivacyProtection>
+                  className="ol-popup"
+                  positioning="center-center"
+                  stopEvent={true}
+                >
+                  <Popup overlay={this.overlayPopup} />
+                </Overlays>
+                <Overlays
+                  ref={(data) => {
+                    this.overlayPopupDetailed.current = data?.overlay;
+                  }}
+                  className="ol-popup-detailed"
+                  positioning="center-center"
+                  stopEvent={true}
+                >
+                  <PopupDetailed overlay={this.overlayPopupDetailed} />
+                </Overlays>
+                <Overlays
+                  className="ol-dynamic-filter"
+                  positioning="center-center"
+                  stopEvent={true}
+                >
+                  <Sidebar
+                    data={this.props.data}
+                    providers_data={this.props.providers_data}
+                  />
+                </Overlays>
+                {this.state.loading ? (
+                  <div className="loader">Loading...</div>
+                ) : (
+                  ''
+                )}
+              </Map>
+            </PrivacyProtection>
+          </div>
         </div>
-      </div>
+      </StyleWrapperView>
     );
   }
 }

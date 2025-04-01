@@ -5,7 +5,7 @@ import mapPlaceholder from './map_placeholder.png';
 import {
   cleanUpText,
   getEncodedQueryString,
-} from '@eeacms/volto-ied-policy/helpers';
+} from '@eeacms/volto-ied-policy/helpers.js';
 import IndustryMapEdit from './Edit';
 import IndustryMapView from './View';
 
