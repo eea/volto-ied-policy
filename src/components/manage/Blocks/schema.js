@@ -20,7 +20,6 @@ export const addStylingFieldsetSchemaEnhancer = ({ schema }) => {
 
   if (!applied) {
     const resSchema = cloneDeep(schema);
-
     resSchema.fieldsets.push({
       id: 'styling',
       fields: ['styles'],

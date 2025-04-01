@@ -1,3 +1,17 @@
 .ui.accordion:not([class*='ary']) .active.title i {
   color: @iconColorActive;
 }
+.call-to-action {
+  a{
+  padding: 0.6875em 1.5em !important;
+  border: 1px solid var(--text-color, #12435d) !important;
+  border-radius: 1.5em !important;
+  margin: 0 0.25em 0 0 !important;
+  background-color: transparent !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08) !important;
+  color: var(--text-color, #12435d) !important;
+  cursor: pointer !important;
+  font-weight: 700 !important;
+  text-align: center !important;
+  }
+}
