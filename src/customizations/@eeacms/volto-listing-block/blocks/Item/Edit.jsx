@@ -4,7 +4,6 @@ import { isArray } from 'lodash';
 import config from '@plone/volto/registry';
 import { BlockDataForm, SidebarPortal } from '@plone/volto/components';
 import SlateEditor from '@plone/volto-slate/editor/SlateEditor';
-import { handleKey } from '@plone/volto-slate/blocks/Text/keyboard';
 import {
   uploadContent,
   saveSlateBlockSelection,
