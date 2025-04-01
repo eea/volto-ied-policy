@@ -41,12 +41,12 @@ export default function query(state = initialState, action = {}) {
       if (Array.isArray(action.queryParam)) {
         action.queryParam.forEach((param) => {
           if(search?.[param])
-            delete search?.[param];
+            delete search.[param];
           deletedQueryParams[param] = true;
         });
       } else {
         if(search?.[action.queryParam])
-          delete search?.[action.queryParam];
+          delete search.[action.queryParam];
         deletedQueryParams[action.queryParam] = true;
       }
       return {
@@ -60,12 +60,12 @@ export default function query(state = initialState, action = {}) {
       if (Array.isArray(action.queryParam)) {
         action.queryParam.forEach((param) => {
           if(search?.[param])
-            delete search?.[param];
+            delete search.[param];
           deletedQueryParams[param] = true;
         });
       } else {
         if(search?.[action.queryParam])
-          delete search?.[action.queryParam];
+          delete search.[action.queryParam];
         deletedQueryParams[action.queryParam] = true;
       }
       return {
