@@ -11,7 +11,7 @@ const initialState = {
   counter: 0,
   lastAction: '',
 };
-
+//fix deploy in strict mode
 export default function query(state = initialState, action = {}) {
   let search = { ...state.search };
   let deletedQueryParams = { ...state.deletedQueryParams };
