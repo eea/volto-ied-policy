@@ -14,7 +14,7 @@ import EditView from './components/manage/Blocks/ConnectedList/Edit.jsx';
 import getSchema from './components/manage/Blocks/ConnectedList/schema.js';
 import PollutantIndexView from './components/manage/Blocks/PolluantsTable/View';
 import PollutantIndexEdit from './components/manage/Blocks/PolluantsTable/Edit';
-import addonReducers from '../reducers';
+import addonReducers from './reducers';
 const restrictedBlocks = ['imagecards', 'embed_eea_tableau_block'];
 
 const customBlocks = [

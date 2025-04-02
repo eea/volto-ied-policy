@@ -40,8 +40,10 @@ export default function query(state = initialState, action = {}) {
     case DELETE_QUERY:
       if (Array.isArray(action.queryParam)) {
         action.queryParam.forEach((param) => {
-          if (search?.[param]) delete search[param];
-          deletedQueryParams[param] = true;
+          if (Object.prototype.hasOwnProperty.call(search, param)) {
+            delete search[param];
+            deletedQueryParams[param] = true;
+          }
         });
       } else {
         if (search?.[action.queryParam]) delete search[action.queryParam];
