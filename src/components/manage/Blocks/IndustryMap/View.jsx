@@ -342,7 +342,7 @@ class View extends React.PureComponent {
         e.originalEvent,
       )
     ) {
-      this.overlayPopup.current.setPosition(undefined);
+      this.overlayPopup.current?.setPosition(undefined);
       e.map.getTarget().style.cursor = '';
       return;
     }
