@@ -4,8 +4,10 @@ import { UniversalLink, BlockDataForm } from '@plone/volto/components';
 import cx from 'classnames';
 import schema from './schema';
 import { connectToProviderData } from '@eeacms/volto-datablocks/hocs';
-
+import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import './styles.less';
+import { setQuery } from '../../../../../actions';
 
 const getLength = (length = 0, limit = 0) => {
   if (!length) return 0;
@@ -17,7 +19,7 @@ const ConnectedList = (props) => {
 
   const firstKey = Object.keys(provider_data || {})?.[0];
   const columns = getLength(provider_data?.[firstKey]?.length, data?.limit);
-
+  const dispatch = useDispatch();
   return (
     <div className="connected-list-container">
       {mode === 'edit' && (
@@ -51,16 +53,19 @@ const ConnectedList = (props) => {
               return (
                 <UniversalLink
                   key={`connected-list-${column}`}
-                  href={data.url || '/'}
+                  href={'/polluants'}
                   className={cx(data.className)}
                   style={{
                     display: 'inline-block',
                     margin: '5px',
                   }}
                   onClick={() => {
-                    props.setQuery({
-                      ...queries,
-                    });
+                    dispatch(
+                      setQuery({
+                        index_pollutant_id:
+                          provider_data?.['pollutantId']?.[column] || '',
+                      }),
+                    );
                   }}
                 >
                   {provider_data?.[data.value]?.[column] ?? 'N/A'}
