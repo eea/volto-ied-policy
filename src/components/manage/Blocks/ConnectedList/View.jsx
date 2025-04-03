@@ -4,7 +4,6 @@ import { UniversalLink, BlockDataForm } from '@plone/volto/components';
 import cx from 'classnames';
 import schema from './schema';
 import { connectToProviderData } from '@eeacms/volto-datablocks/hocs';
-import { connect } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import './styles.less';
 import { setQuery } from '../../../../../actions';
