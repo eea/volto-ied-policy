@@ -260,7 +260,6 @@ body.map-sidebar-visible .industry-map .ol-dynamic-filter {
 
 .styled-navigationBlock.styled-with-bg.full-width {
   padding: 0;
-
 }
 
 .industrial-site-style {
@@ -277,8 +276,8 @@ div#view .navigation-block .ui.container > .underline-menu {
 
 .navigation-block {
   border: @border;
-  box-shadow: @boxShadow;
   margin-bottom: 1.5rem;
+  box-shadow: @boxShadow;
 
   > .menu-wrapper {
     display: flex !important;
@@ -296,8 +295,8 @@ div#view .navigation-block .ui.container > .underline-menu {
   overflow: hidden !important;
   width: 100%;
   border: none;
-  background: transparent;
   border-radius: 0;
+  background: transparent;
   box-shadow: none;
 
   .item {
@@ -391,13 +390,13 @@ div#view .navigation-block .ui.container > .underline-menu {
       justify-content: center;
       padding: 0;
       border: 1px solid @textColor !important;
+      border-radius: 0;
       margin: 0;
       margin-top: 0 !important;
       margin-right: 0 !important;
       margin-bottom: 0 !important;
       margin-left: 0 !important;
       background: #fff;
-      border-radius: 0;
       transition: background-color 0.2s ease-in-out;
 
       a {
@@ -434,11 +433,12 @@ div#view .navigation-block .ui.container > .underline-menu {
     }
   }
 }
-@darkblue: #12435D;
+@darkblue: #12435d;
 @verticalPadding: @inputVerticalPadding;
+
 .filters-block {
   // Import as darkBlue
-  @textColor: var(--text-color,  @darkblue);
+  @textColor: var(--text-color, @darkblue);
   display: flex;
   height: 100%;
   flex-flow: row;
@@ -449,16 +449,16 @@ div#view .navigation-block .ui.container > .underline-menu {
 
     .ui.input {
       width: 100%;
-      height: 100%;
       max-width: 100%;
+      height: 100%;
 
       input {
         padding-top: @verticalPadding !important;
         padding-right: 3.5em !important;
         padding-bottom: @verticalPadding !important;
         padding-left: 1em !important;
-        margin-right: 1rem;
         border-radius: 2em;
+        margin-right: 1rem;
         box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.08);
       }
 
@@ -500,9 +500,9 @@ div#view .navigation-block .ui.container > .underline-menu {
       z-index: 1;
       width: calc(100% - 1rem);
       padding: 1rem;
+      border-radius: 1em;
       margin-top: 0;
       background: #fff;
-      border-radius: 1em;
       box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.08);
 
       .item {
@@ -512,8 +512,8 @@ div#view .navigation-block .ui.container > .underline-menu {
         cursor: pointer;
 
         &:hover {
-          background-color: @lightGrey;
           border-radius: 1em;
+          background-color: @lightGrey;
         }
 
         &::after {
@@ -641,11 +641,10 @@ div#view .navigation-block .ui.container > .underline-menu {
 @borderWidth: 1px;
 @border: @borderWidth solid @borderColor;
 @boxShadow: @subtleShadow;
-@darkblue: #12435D;
+@darkblue: #12435d;
 
 .outline-button {
-
-  @textColor: var(--text-color, #12435D);
+  @textColor: var(--text-color, #12435d);
 
   &.style-preview,
   a,
@@ -655,14 +654,16 @@ div#view .navigation-block .ui.container > .underline-menu {
     padding: @verticalPadding @horizontalPadding
       (@verticalPadding + @shadowOffset);
     border: 1px solid @textColor;
+    border-radius: @borderRadius;
     margin: 0em @horizontalMargin @verticalMargin 0em;
     background-color: transparent;
-    border-radius: @borderRadius;
     box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.08);
     color: @textColor;
     cursor: pointer;
     font-weight: bold;
-    transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+    transition:
+      color 0.2s ease-in-out,
+      background-color 0.2s ease-in-out;
 
     &:hover {
       background-color: @textColor;
@@ -672,7 +673,7 @@ div#view .navigation-block .ui.container > .underline-menu {
 }
 
 .solid-button {
-  @textColor: var(--text-color, #12435D);
+  @textColor: var(--text-color, #12435d);
 
   &.style-preview,
   a,
@@ -682,15 +683,17 @@ div#view .navigation-block .ui.container > .underline-menu {
     padding: @verticalPadding @horizontalPadding
       (@verticalPadding + @shadowOffset);
     border: 1px solid @textColor;
+    border-radius: @borderRadius;
     margin: 0em @horizontalMargin @verticalMargin 0em;
     background-color: transparent;
     background-color: @textColor;
-    border-radius: @borderRadius;
     box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.08);
     color: #fff;
     cursor: pointer;
     font-weight: bold;
-    transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+    transition:
+      color 0.2s ease-in-out,
+      background-color 0.2s ease-in-out;
 
     &:hover {
       .darkenFilter(0.9);
