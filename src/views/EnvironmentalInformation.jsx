@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { compose } from 'redux';
 import { connect, useSelector } from 'react-redux';
 import { Grid, Dropdown } from 'semantic-ui-react';
@@ -132,31 +132,34 @@ function HeaderInformation(props) {
     /* eslint-disable-next-line */
   }, [provider_data]);
 
-  useEffect(
-    () => {
-      const query = new URLSearchParams(props?.location?.search || '');
+  useEffect(() => {
+    const query = new URLSearchParams(props?.location?.search || '');
 
-      if (query.get('siteReportingYear') || query.get('siteName')) {
-        dispatch(
-          setQuery({
-            siteName: query.get('siteName'),
-            siteReportingYear: parseInt(query.get('siteReportingYear')),
-          }),
-        );
+    if (query.get('siteReportingYear') || query.get('siteName')) {
+      dispatch(
+        setQuery({
+          siteName: query.get('siteName'),
+          siteReportingYear: parseInt(query.get('siteReportingYear')),
+        }),
+      );
 
-        props.history.push({
-          pathname: props.location.pathname,
-          search: getQueryString({
-            siteInspireId: query.get('siteInspireId'),
-          }),
-          state: {
-            ignoreScrollBehavior: true,
-          },
-        });
-      }
-    },
-    { props },
-  );
+      props.history.push({
+        pathname: props.location.pathname,
+        search: getQueryString({
+          siteInspireId: query.get('siteInspireId'),
+        }),
+        state: {
+          ignoreScrollBehavior: true,
+        },
+      });
+    }
+  }, [
+    props,
+    dispatch,
+    props.history,
+    props.location.pathname,
+    props.location?.search,
+  ]);
 
   React.useEffect(() => {
     setSiteHeader(getSiteByYear(provider_data, siteReportingYear));
