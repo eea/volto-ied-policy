@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';import { compose } from 'redux';
+import React from 'react';
+import { compose } from 'redux';
 import { connect } from 'react-redux';
 import jsonp from 'jsonp';
 import qs from 'querystring';
@@ -28,105 +29,19 @@ import {
   getCountriesExtent,
   getWhereStatement,
 } from './index';
-import cx from 'classnames';
-import Search from './Search';
-import Modal from './Modal';
-import { getOptions, permitTypes } from './dictionary';
 
-import { Container, Menu, Dropdown, Grid } from 'semantic-ui-react';
-import { UniversalLink } from '@plone/volto/components';
-import { getBaseUrl } from '@plone/volto/helpers';
+import { Container, Grid } from 'semantic-ui-react';
+
 import Sidebar from './Sidebar';
 import Popup from './Popup';
 import PopupDetailed from './PopupDetailed';
-import { positionedOffset } from './dimensions';
 
 import navigationSVG from '@plone/volto/icons/navigation.svg';
 
 import './styles.less';
-import { useLocation } from 'react-router-dom';
+import Filters from './Filters';
+import NavigationBlock from './Navigation';
 
-const Filters = ({ data, providers_data, query, dispatch }) => {
-  const [open, setOpenState] = useState(false);
-  const [filtersInitialized, setFiltersInitialized] = useState(false);
-  const [options, setOptions] = useState({});
-  const prevProvidersData = useRef(providers_data); // Store previous providers_data
-
-  const setOpen = useCallback((open, callback) => {
-    setOpenState(open);
-    if (callback) callback();
-  }, []);
-
-  const setInitialFilters = useCallback(
-    (filters = {}) => {
-      const keys = Object.keys(filters);
-      const queryKeys = Object.keys(query);
-      for (const key of keys) {
-        if (queryKeys.includes(key)) {
-          return false;
-        }
-      }
-      dispatch(setQuery(filters));
-      setFiltersInitialized(true);
-      return true;
-    },
-    [dispatch, query]
-  );
-
-  const updateOptions = useCallback(() => {
-    const newOptions = { ...options };
-    if (data.providers) {
-      data.providers.forEach((source) => {
-        if (source.name && !newOptions[source.name] && providers_data[source.name]) {
-          newOptions[source.name] = getOptions(providers_data[source.name]);
-        }
-      });
-      if (!newOptions['permit_types']) {
-        newOptions['permit_types'] = permitTypes;
-      }
-      setOptions(newOptions);
-      if (!filtersInitialized && newOptions.reporting_years?.length) {
-        const latestYear = newOptions.reporting_years
-          .filter((opt) => opt.value)
-          .sort((a, b) => b.value - a.value)[0].value;
-        setInitialFilters({
-          filter_reporting_years: [latestYear],
-          filter_change: {
-            counter: 1,
-            type: 'simple-filter',
-          },
-        });
-      }
-    }
-  }, [data, providers_data, filtersInitialized, permitTypes, setInitialFilters]);
-
-  useEffect(() => {
-    // Only update options if providers_data has changed
-    if (providers_data !== prevProvidersData.current) {
-      updateOptions();
-    }
-    prevProvidersData.current = providers_data; // Update prevProvidersData after checking
-  }, [providers_data, updateOptions]);
-
-  useEffect(() => {
-    updateOptions();
-  }, [updateOptions]);
-
-  return (
-    <div className="filters-block outline-button">
-      <Search data={data} providers_data={providers_data} />
-      <button onClick={() => setOpen(true)}>Advanced Filter</button>
-      <Modal
-        data={data}
-        providers_data={providers_data}
-        open={open}
-        options={options}
-        setOpen={setOpen}
-      />
-    </div>
-  );
-
-};
 // let _REQS = 0;
 // const zoomSwitch = 6;
 let timer = [];
@@ -171,165 +86,6 @@ const getClosestFeatureToCoordinate = (coordinate, features) => {
 
   return closestFeature;
 };
-function toggleItem(container, item, hidden) {
-  // Set visibility to hidden, instead of .hidden attribute
-  // so we can still calculate distance accurately
-  item.style.visibility = hidden ? 'hidden' : '';
-  // Get tab-item name, if present, so we can match it up with the dropdown menu
-  const itemData = item.getAttribute('item-data');
-  if (itemData) {
-    const itemToHide = container.querySelector(
-      `[underline-item-data="${itemData}"]`,
-    );
-    if (itemToHide instanceof HTMLElement) {
-      itemToHide.hidden = !hidden;
-    }
-  }
-}
-
-const MenuWrapper = ({ children, data, className }) => {
-  if (data.styles?.align === 'full') {
-    return <Container className="menu-wrapper">{children}</Container>;
-  }
-  return <div className="menu-wrapper">{children}</div>;
-};
-
-const NavigationBlock = ({data, screen, navigation }) => {
-  if (!data?.navigation) return null;
-  data = data.navigation;
-  const nav = useRef();
-  const [items, setItems] = useState([]);
-  const pages = data.pages || [];
-  const location = useLocation();
-  const pathname = getBaseUrl(location.pathname);
-  useEffect(() => {
-    const parent = navigation.filter((item) => item.url === data.parent)[0];
-    setItems(parent?.items || []);
-  }, [data.parent, navigation]);
-
-  useEffect(() => {
-    if (!nav.current || !data.isResponsive) return;
-    const items = nav.current.querySelectorAll('.ui.menu .item');
-    const underlineMenu = nav.current.querySelector('.ui.underline-menu');
-    if (!underlineMenu) return;
-    const overflowOffset = positionedOffset(underlineMenu, nav.current);
-    if (!overflowOffset) {
-      return;
-    }
-    let anyHidden = false;
-    for (const item of items) {
-      const itemOffset = positionedOffset(item, nav.current);
-      if (itemOffset) {
-        const hidden =
-          itemOffset.left + item.offsetWidth >= overflowOffset.left;
-        toggleItem(nav.current, item, hidden);
-        anyHidden = anyHidden || hidden;
-      }
-    }
-    underlineMenu.style.visibility = anyHidden ? '' : 'hidden';
-  }, [screen, data.isResponsive]);
-
-  return (
-    <div
-      className={cx('navigation-block', {
-        'with-container': data.styles?.align === 'full',
-      })}
-      ref={nav}
-    >
-      <MenuWrapper data={data}>
-        <Menu>
-          {items.map((item, index) => (
-            <Menu.Item
-              key={item.url}
-              item-data={item.url}
-              active={
-                data.isExact
-                  ? pathname === item.url
-                  : pathname.includes(getBaseUrl(item.url))
-              }
-            >
-              <UniversalLink
-                href={`${item.url}${location.search}`}
-                ignoreScroll={data.ignoreScroll}
-              >
-                {item.title}
-              </UniversalLink>
-            </Menu.Item>
-          ))}
-          {pages.map((item) => {
-            return item.url ? (
-              <Menu.Item
-                key={item.url}
-                item-data={item.url}
-                active={pathname.includes(getBaseUrl(item.url))}
-              >
-                <UniversalLink
-                  href={`${item.url}${location.search}`}
-                  ignoreScroll={data.ignoreScroll}
-                >
-                  {item.title}
-                </UniversalLink>
-              </Menu.Item>
-            ) : (
-              ''
-            );
-          })}
-        </Menu>
-        {data.isResponsive ? (
-          <Dropdown
-            icon="ellipsis horizontal"
-            className="ui underline-menu"
-            pointing="top-right"
-          >
-            <Dropdown.Menu>
-              {items.map((item) => (
-                <Dropdown.Item
-                  hidden
-                  key={item.url}
-                  underline-item-data={item.url}
-                  active={
-                    data.isExact
-                      ? pathname === item.url
-                      : pathname.includes(getBaseUrl(item.url))
-                  }
-                >
-                  <UniversalLink
-                    href={`${item.url}${location.search}`}
-                    ignoreScroll={data.ignoreScroll}
-                  >
-                    {item.title}
-                  </UniversalLink>
-                </Dropdown.Item>
-              ))}
-              {pages.map((item) => {
-                return item.url ? (
-                  <Dropdown.Item
-                    hidden
-                    key={item.url}
-                    underline-item-data={item.url}
-                    active={pathname.includes(getBaseUrl(item.url))}
-                  >
-                    <UniversalLink
-                      href={`${item.url}${location.search}`}
-                      ignoreScroll={data.ignoreScroll}
-                    >
-                      {item.title}
-                    </UniversalLink>
-                  </Dropdown.Item>
-                ) : (
-                  ''
-                );
-              })}
-            </Dropdown.Menu>
-          </Dropdown>
-        ) : (
-          ''
-        )}
-      </MenuWrapper>
-    </div>
-  );
-};
-
 class View extends React.PureComponent {
   /**
    * Property types.
@@ -738,33 +494,33 @@ class View extends React.PureComponent {
         styled={true}
       >
         <div className="industry-map-wrapper">
-        {!this.props.data?.hideFilters && (
-          <Container>
-            <Grid>
-              <Grid.Row>
-                <Grid.Column width={4}>
-                  <div className='styled-navigationBlock type-1 has--style_name--type1 styled'>
-                    <NavigationBlock
-                      data={this.props.data}
-                      screen={this.props.screen}
-                      navigation={this.props.navigation}
+          {!this.props.data?.hideFilters && (
+            <Container>
+              <Grid>
+                <Grid.Row>
+                  <Grid.Column width={4}>
+                    <div className="styled-navigationBlock type-1 has--style_name--type1 styled">
+                      <NavigationBlock
+                        data={this.props.data}
+                        screen={this.props.screen}
+                        navigation={this.props.navigation}
                       />
-                  </div>
-                </Grid.Column>
-                <Grid.Column width={8}>
-                  <div>
-                    <Filters
-                    data={this.props.data}
-                    providers_data = {this.props.providers_data}
-                    query={this.props.query}
-                    dispatch={this.props.dispatch}
-                    />
-                  </div>
-                </Grid.Column>
-              </Grid.Row>
-            </Grid>
-          </Container>
-        )} 
+                    </div>
+                  </Grid.Column>
+                  <Grid.Column width={8}>
+                    <div>
+                      <Filters
+                        data={this.props.data}
+                        providers_data={this.props.providers_data}
+                        query={this.props.query}
+                        dispatch={this.props.dispatch}
+                      />
+                    </div>
+                  </Grid.Column>
+                </Grid.Row>
+              </Grid>
+            </Container>
+          )}
           <div id="industry-map" className="industry-map">
             <PrivacyProtection data={{ dataprotection }}>
               <Map
@@ -889,15 +645,15 @@ class View extends React.PureComponent {
                 </Overlays>
                 {!this.props.data?.hideFilters && (
                   <Overlays
-                  className="ol-dynamic-filter"
-                  positioning="center-center"
-                  stopEvent={true}
-                >
-                  <Sidebar
-                    data={this.props.data}
-                    providers_data={this.props.providers_data}
-                  />
-                </Overlays>
+                    className="ol-dynamic-filter"
+                    positioning="center-center"
+                    stopEvent={true}
+                  >
+                    <Sidebar
+                      data={this.props.data}
+                      providers_data={this.props.providers_data}
+                    />
+                  </Overlays>
                 )}
 
                 {this.state.loading ? (

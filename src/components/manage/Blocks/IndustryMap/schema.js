@@ -80,17 +80,12 @@ const Filters =  {
     {
       id: 'default',
       title: 'Default',
-      fields: ['searchPlaceholder', 'providers'],
+      fields: ['searchPlaceholder'],
     },
   ],
   properties: {
     searchPlaceholder: {
       title: 'Search placeholder',
-    },
-    providers: {
-      title: 'Providers',
-      schema: providerSchema,
-      widget: 'object_list',
     },
   },
   required: [],

@@ -52,7 +52,6 @@ const getFacilities = (value) => {
   WHERE [facilityName] COLLATE Latin1_General_CI_AI LIKE '%${value}%'
   GROUP BY facilityName
   ORDER BY [facilityName]`;
-
   return axios.get(
     providerUrl + `?${getEncodedQueryString(query)}&p=1&nrOfHits=6`,
   );
