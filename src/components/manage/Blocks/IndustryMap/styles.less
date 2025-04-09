@@ -244,3 +244,538 @@ body.map-sidebar-visible .industry-map .ol-dynamic-filter {
     width: 100%;
   }
 }
+// @import (multiple, reference, optional) '../../theme.config';
+
+// @type: extra;
+// @element: custom;
+
+@borderSize: 2px;
+@borderWidth: 1px;
+// @border: @borderWidth solid @borderColor;
+// @boxShadow: @subtleShadow;
+
+[hidden] {
+  display: none !important;
+}
+
+.styled-navigationBlock.styled-with-bg.full-width {
+  padding: 0;
+}
+
+.industrial-site-style {
+  .navigation-block .ui.menu {
+    border: none;
+    margin-bottom: 0;
+  }
+}
+
+div#view .navigation-block .ui.container > .ui.menu,
+div#view .navigation-block .ui.container > .underline-menu {
+  margin-bottom: 0;
+}
+
+.navigation-block {
+  border: @border;
+  margin-bottom: 1.5rem;
+  box-shadow: @boxShadow;
+
+  > .menu-wrapper {
+    display: flex !important;
+    justify-content: space-between !important;
+    margin: -1px !important;
+
+    > .underline-menu {
+      padding: @relative11px @relative14px;
+    }
+  }
+}
+
+.navigation-block .ui.menu {
+  @textColor: var(--text-color, @blue);
+  overflow: hidden !important;
+  width: 100%;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+
+  .item {
+    padding: @relative11px @relative14px;
+    border: none !important;
+    margin-bottom: 0 !important;
+
+    a {
+      color: @textColor;
+      font-weight: bold;
+
+      &:hover {
+        .darkenFilter(0.9);
+      }
+    }
+
+    &::before {
+      display: none;
+    }
+
+    &.active {
+      background: transparent;
+
+      &::before {
+        position: absolute;
+        top: calc(100% - @borderSize);
+        display: block;
+        width: 100%;
+        height: @borderSize;
+        background-color: @textColor;
+        content: '';
+      }
+    }
+
+    &:hover {
+      background-color: transparent !important;
+    }
+  }
+
+  > .item:first-child {
+    border-radius: @defaultBorderRadius 0px 0px 0px;
+  }
+}
+
+.navigation-block .ui.underline-menu {
+  @textColor: var(--text-color, @blue);
+  color: @textColor;
+  font-weight: bold;
+
+  .item {
+    padding: @relative11px @relative14px;
+    border: none !important;
+    margin-bottom: 0 !important;
+
+    a {
+      color: @textColor;
+
+      &:hover {
+        .darkenFilter(0.9);
+      }
+    }
+  }
+
+  &.pointing.dropdown > .menu {
+    right: 0px;
+    left: auto;
+    margin-top: 0px;
+
+    &::after {
+      right: 20px;
+      left: auto;
+    }
+  }
+}
+
+.type-1 {
+  > .navigation-block {
+    border: none;
+    box-shadow: none;
+  }
+
+  > .navigation-block .ui.menu {
+    @textColor: var(--text-color, @blue);
+    height: 100%;
+    border: 0;
+    border-radius: 2em;
+    box-shadow: @boxShadow;
+
+    .item {
+      flex: 1;
+      justify-content: center;
+      padding: 0;
+      border: 1px solid @textColor !important;
+      border-radius: 0;
+      margin: 0;
+      margin-top: 0 !important;
+      margin-right: 0 !important;
+      margin-bottom: 0 !important;
+      margin-left: 0 !important;
+      background: #fff;
+      transition: background-color 0.2s ease-in-out;
+
+      a {
+        display: inline-block;
+        width: 100%;
+        padding: @relative11px @relative14px;
+        text-align: center;
+        transition: color 0.2s ease-in-out;
+      }
+
+      &:first-child {
+        border-radius: 2em 0 0 2em;
+      }
+
+      &:last-child {
+        border-radius: 0 2em 2em 0;
+      }
+
+      &.active {
+        background-color: @textColor;
+
+        a {
+          color: #fff;
+        }
+
+        &::before {
+          display: none;
+        }
+
+        &:hover {
+          background-color: @textColor !important;
+        }
+      }
+    }
+  }
+}
+@darkblue: #12435d;
+@verticalPadding: @inputVerticalPadding;
+
+.filters-block {
+  // Import as darkBlue
+  @textColor: var(--text-color, @darkblue);
+  display: flex;
+  height: 100%;
+  flex-flow: row;
+
+  .search-container {
+    position: relative;
+    flex: 1;
+
+    .ui.input {
+      width: 100%;
+      max-width: 100%;
+      height: 100%;
+
+      input {
+        padding-top: @verticalPadding !important;
+        padding-right: 3.5em !important;
+        padding-bottom: @verticalPadding !important;
+        padding-left: 1em !important;
+        border-radius: 2em;
+        margin-right: 1rem;
+        box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.08);
+      }
+
+      .icon {
+        position: absolute;
+        top: 50%;
+        right: 0;
+        width: 1em;
+        padding: 0;
+        border: none;
+        margin: 0;
+        opacity: 0.8;
+        transform: translateY(-50%);
+
+        &.search {
+          right: 2em;
+        }
+
+        &.delete {
+          right: 3.5em;
+        }
+      }
+
+      &:not(.loading) {
+        .icon {
+          color: @textColor;
+          cursor: pointer;
+          pointer-events: all !important;
+
+          &:hover {
+            opacity: 1;
+          }
+        }
+      }
+    }
+
+    .ui.list {
+      position: absolute;
+      z-index: 1;
+      width: calc(100% - 1rem);
+      padding: 1rem;
+      border-radius: 1em;
+      margin-top: 0;
+      background: #fff;
+      box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.08);
+
+      .item {
+        display: flex;
+        justify-content: space-between;
+        padding: 6px 10px;
+        cursor: pointer;
+
+        &:hover {
+          border-radius: 1em;
+          background-color: @lightGrey;
+        }
+
+        &::after {
+          display: none;
+        }
+
+        span.text {
+          display: block;
+          margin-right: 1rem;
+        }
+
+        span.type {
+          color: @grey;
+          opacity: 0.9;
+        }
+      }
+    }
+  }
+
+  @media only screen and (max-width: @largestMobileScreen) {
+    flex-flow: column;
+
+    .search-container {
+      margin-bottom: 1rem;
+
+      .ui.input {
+        input {
+          margin-right: 0;
+        }
+      }
+    }
+  }
+}
+
+.ui.modal.filters-block {
+  > .header,
+  h3 {
+    margin-top: 1rem;
+    color: @primaryColor;
+  }
+
+  > .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+    margin-top: 0;
+
+    .icon {
+      cursor: pointer;
+      fill: @orange !important;
+
+      &:hover {
+        .darkenFilter(0.9);
+      }
+    }
+  }
+
+  .dropdown-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+
+    .icon {
+      margin-bottom: 1rem;
+      color: @orange !important;
+      cursor: pointer;
+      fill: @orange !important;
+
+      &:hover {
+        .darkenFilter(0.9);
+      }
+    }
+  }
+
+  .ui.dropdown {
+    display: inline-flex;
+    max-width: 14em;
+    margin-right: 1rem;
+    margin-bottom: 1rem;
+
+    > .dropdown.icon:before {
+      color: @orange;
+    }
+
+    .text {
+      overflow: hidden;
+      width: 100%;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .menu {
+      .text {
+        white-space: pre-wrap !important;
+      }
+    }
+  }
+
+  .actions {
+    padding: 1rem !important;
+    text-align: center;
+
+    button {
+      margin-right: 2rem;
+    }
+
+    .clear-button {
+      --text-color: @orange;
+    }
+  }
+}
+
+@verticalMargin: 0em;
+@horizontalMargin: 0.25em;
+
+@verticalPadding: @inputVerticalPadding;
+@horizontalPadding: 1.5em;
+
+@shadowDistance: 0em;
+@shadowOffset: (@shadowDistance / 2);
+
+@borderRadius: 1.5em;
+@borderWidth: 1px;
+@border: @borderWidth solid @borderColor;
+@boxShadow: @subtleShadow;
+@darkblue: #12435d;
+
+.outline-button {
+  @textColor: var(--text-color, #12435d);
+
+  &.style-preview,
+  a,
+  button,
+  .slate-editor-link {
+    display: inline-block;
+    padding: @verticalPadding @horizontalPadding
+      (@verticalPadding + @shadowOffset);
+    border: 1px solid @textColor;
+    border-radius: @borderRadius;
+    margin: 0em @horizontalMargin @verticalMargin 0em;
+    background-color: transparent;
+    box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.08);
+    color: @textColor;
+    cursor: pointer;
+    font-weight: bold;
+    transition:
+      color 0.2s ease-in-out,
+      background-color 0.2s ease-in-out;
+
+    &:hover {
+      background-color: @textColor;
+      color: #fff;
+    }
+  }
+}
+
+.solid-button {
+  @textColor: var(--text-color, #12435d);
+
+  &.style-preview,
+  a,
+  button,
+  .slate-editor-link {
+    display: inline-block;
+    padding: @verticalPadding @horizontalPadding
+      (@verticalPadding + @shadowOffset);
+    border: 1px solid @textColor;
+    border-radius: @borderRadius;
+    margin: 0em @horizontalMargin @verticalMargin 0em;
+    background-color: transparent;
+    background-color: @textColor;
+    box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.08);
+    color: #fff;
+    cursor: pointer;
+    font-weight: bold;
+    transition:
+      color 0.2s ease-in-out,
+      background-color 0.2s ease-in-out;
+
+    &:hover {
+      .darkenFilter(0.9);
+    }
+  }
+}
+
+.type-1 {
+  height: 100%;
+
+  > .columns-view {
+    .ui.grid.column-grid .column > div {
+      height: 100%;
+
+      > div {
+        height: 100%;
+      }
+
+      > .styled {
+        height: 100%;
+      }
+    }
+  }
+}
+
+.industrial-site-style {
+  margin-bottom: 0 !important;
+
+  > .columns-view {
+    border: @border;
+    border-top: 0;
+    box-shadow: @boxShadow;
+
+    > .ui.grid {
+      > .column {
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+
+        &:first-child {
+          padding-right: 0;
+
+          > div {
+            height: 100%;
+            min-height: 800px;
+            background: #f3efee;
+          }
+
+          @media only screen and (max-width: @largestMobileScreen) {
+            padding-right: 1rem;
+
+            > div {
+              height: fit-content;
+              min-height: auto;
+            }
+          }
+        }
+
+        &:last-child {
+          padding-left: 0;
+
+          > div {
+            height: 100%;
+            padding: 1rem 1rem;
+            background: #f6f6f6;
+          }
+
+          @media only screen and (max-width: @largestMobileScreen) {
+            padding-left: 1rem;
+
+            > div {
+              min-height: 800px;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .sidebar-block {
+    .ui.menu {
+      border: none;
+      box-shadow: none;
+    }
+  }
+}

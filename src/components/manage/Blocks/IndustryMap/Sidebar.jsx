@@ -7,11 +7,7 @@ import { Icon } from '@plone/volto/components';
 import { BodyClass } from '@plone/volto/helpers';
 import { trackSiteSearch } from '@eeacms/volto-matomo/utils';
 import { setQuery } from '@eeacms/volto-ied-policy/actions';
-import {
-  getOptions,
-  noOptions,
-  inputsKeys,
-} from '@eeacms/volto-ied-policy/components/manage/Blocks/FiltersBlock/dictionary';
+import { getOptions, noOptions, inputsKeys } from './dictionary';
 
 import menuSVG from '@plone/volto/icons/menu-alt.svg';
 
