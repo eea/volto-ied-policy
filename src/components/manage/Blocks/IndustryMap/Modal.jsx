@@ -156,14 +156,13 @@ const ModalView = ({
   const onIndustriesChange = React.useCallback(
     ({ inputs }) => {
       let newInputs = cloneDeep(inputs);
-      newInputs.filter_eprtr_AnnexIActivity = newInputs.filter_eprtr_AnnexIActivity.filter(
-        (input) => {
+      newInputs.filter_eprtr_AnnexIActivity =
+        newInputs.filter_eprtr_AnnexIActivity.filter((input) => {
           const sector = options.eprtr_AnnexIActivity.filter(
             (opt) => opt.value === input,
           )[0]?.sector;
           return newInputs.filter_industries.indexOf(sector) !== -1;
-        },
-      );
+        });
       setInputs(newInputs);
     },
     [options.eprtr_AnnexIActivity],
