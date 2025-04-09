@@ -35,7 +35,6 @@ const MenuWrapper = ({ children, data, className }) => {
 };
 
 const NavigationBlock = ({ data, screen, navigation }) => {
-  if (!data?.navigation) return null;
   data = data.navigation;
   const nav = useRef();
   const [items, setItems] = useState([]);
