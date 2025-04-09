@@ -30,6 +30,8 @@ import {
   getWhereStatement,
 } from './index';
 
+import { Container, Grid } from 'semantic-ui-react';
+
 import Sidebar from './Sidebar';
 import Popup from './Popup';
 import PopupDetailed from './PopupDetailed';
@@ -37,6 +39,8 @@ import PopupDetailed from './PopupDetailed';
 import navigationSVG from '@plone/volto/icons/navigation.svg';
 
 import './styles.less';
+import Filters from './Filters';
+import NavigationBlock from './Navigation';
 
 // let _REQS = 0;
 // const zoomSwitch = 6;
@@ -82,7 +86,6 @@ const getClosestFeatureToCoordinate = (coordinate, features) => {
 
   return closestFeature;
 };
-
 class View extends React.PureComponent {
   /**
    * Property types.
@@ -491,6 +494,33 @@ class View extends React.PureComponent {
         styled={true}
       >
         <div className="industry-map-wrapper">
+          {!this.props.data?.hideFilters && (
+            <Container>
+              <Grid>
+                <Grid.Row>
+                  <Grid.Column width={4}>
+                    <div className="styled-navigationBlock type-1 has--style_name--type1 styled">
+                      <NavigationBlock
+                        data={this.props.data}
+                        screen={this.props.screen}
+                        navigation={this.props.navigation}
+                      />
+                    </div>
+                  </Grid.Column>
+                  <Grid.Column width={8}>
+                    <div>
+                      <Filters
+                        data={this.props.data}
+                        providers_data={this.props.providers_data}
+                        query={this.props.query}
+                        dispatch={this.props.dispatch}
+                      />
+                    </div>
+                  </Grid.Column>
+                </Grid.Row>
+              </Grid>
+            </Container>
+          )}
           <div id="industry-map" className="industry-map">
             <PrivacyProtection data={{ dataprotection }}>
               <Map
@@ -613,16 +643,19 @@ class View extends React.PureComponent {
                 >
                   <PopupDetailed overlay={this.overlayPopupDetailed} />
                 </Overlays>
-                <Overlays
-                  className="ol-dynamic-filter"
-                  positioning="center-center"
-                  stopEvent={true}
-                >
-                  <Sidebar
-                    data={this.props.data}
-                    providers_data={this.props.providers_data}
-                  />
-                </Overlays>
+                {!this.props.data?.hideFilters && (
+                  <Overlays
+                    className="ol-dynamic-filter"
+                    positioning="center-center"
+                    stopEvent={true}
+                  >
+                    <Sidebar
+                      data={this.props.data}
+                      providers_data={this.props.providers_data}
+                    />
+                  </Overlays>
+                )}
+
                 {this.state.loading ? (
                   <div className="loader">Loading...</div>
                 ) : (
@@ -644,6 +677,9 @@ export default compose(
         ...qs.parse(state.router.location.search.replace('?', '')),
         ...state.query.search,
       },
+      location: state.router.location,
+      navigation: state.navigation.items,
+      screen: state.screen,
     }),
     {
       setQuery,
