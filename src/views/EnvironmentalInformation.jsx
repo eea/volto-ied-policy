@@ -132,15 +132,11 @@ function HeaderInformation(props) {
     /* eslint-disable-next-line */
   }, [provider_data]);
 
-  console.log({ siteReportingYear });
   useEffect(
     () => {
       const query = new URLSearchParams(props?.location?.search || '');
-      console.log('uff', query.get('siteReportingYear'));
-      if (query.get('siteReportingYear') || query.get('siteName')) {
-        console.log(query.get('siteReportingYear'), query.get('siteName'));
-        console.log('i am setting', query.get('siteReportingYear'));
 
+      if (query.get('siteReportingYear') || query.get('siteName')) {
         dispatch(
           setQuery({
             siteName: query.get('siteName'),

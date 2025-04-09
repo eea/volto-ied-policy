@@ -282,7 +282,7 @@ const View = ({ providers_data, query, setQuery, ...props }) => {
       pollutantPhrases,
     };
   }, [id, providers_data]);
-  console.log({ props });
+
   const pollutantsOptions = React.useMemo(() => {
     const { index_pollutants } = providers_data;
     return (
