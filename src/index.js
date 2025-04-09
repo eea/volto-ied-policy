@@ -15,6 +15,7 @@ import getSchema from './components/manage/Blocks/ConnectedList/schema.js';
 import PollutantIndexView from './components/manage/Blocks/PolluantsTable/View';
 import PollutantIndexEdit from './components/manage/Blocks/PolluantsTable/Edit';
 import addonReducers from './reducers';
+import EnvironmentalInformation from './views/EnvironmentalInformation';
 const restrictedBlocks = ['imagecards', 'embed_eea_tableau_block'];
 
 const customBlocks = [
@@ -99,23 +100,8 @@ const applyConfig = (config) => {
     config.settings.eea?.defaultLanguage || 'en';
 
   // mega menu layout settings
-  config.settings.menuItemsLayouts = {
-    '/policy': {
-      hideChildrenFromNavigation: false,
-    },
-    '/europes-biodiversity': {
-      hideChildrenFromNavigation: false,
-    },
-    '/countries': {
-      menuItemColumns: ['eight wide column', 'four wide column'],
-      menuItemChildrenListColumns: [5, 2],
-      appendExtraMenuItemsToLastColumn: true,
-      hideChildrenFromNavigation: false,
-    },
-    '/resources': {
-      hideChildrenFromNavigation: false,
-    },
-  };
+  config.views.contentTypesViews['environmental_information'] =
+    EnvironmentalInformation;
 
   // EEA customizations
   config.settings.eea = {
@@ -187,6 +173,7 @@ const applyConfig = (config) => {
     config.blocks.blocksConfig.group.schemaEnhancer =
       addStylingFieldsetSchemaEnhancer;
   }
+  config.settings.providerUrl = 'https://discodata.eea.europa.eu/sql';
 
   // Columns
   if (config.blocks.blocksConfig.columnsBlock) {
