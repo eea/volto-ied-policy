@@ -51,7 +51,7 @@ const Navigation = {
     },
   },
   required: [],
-}
+};
 const providerSchema = {
   title: 'Provider',
   fieldsets: [
@@ -73,8 +73,7 @@ const providerSchema = {
   required: [],
 };
 
-
-const Filters =  {
+const Filters = {
   title: 'Filters block',
   fieldsets: [
     {
@@ -117,8 +116,8 @@ const schema = {
     filters: {
       title: 'Filters',
       schema: Filters,
-      widget: 'object'
-    }
+      widget: 'object',
+    },
   },
   required: [],
 };
