@@ -132,39 +132,39 @@ function HeaderInformation(props) {
     /* eslint-disable-next-line */
   }, [provider_data]);
 
-  useEffect(() => {
-    const query = new URLSearchParams(props?.location?.search || '');
+  // useEffect(() => {
+  //   const query = new URLSearchParams(props?.location?.search || '');
 
-    if (query.get('siteReportingYear') || query.get('siteName')) {
-      dispatch(
-        setQuery({
-          siteName: query.get('siteName'),
-          siteReportingYear: parseInt(query.get('siteReportingYear')),
-        }),
-      );
+  //   if (query.get('siteReportingYear') || query.get('siteName')) {
+  //     dispatch(
+  //       setQuery({
+  //         siteName: query.get('siteName'),
+  //         siteReportingYear: parseInt(query.get('siteReportingYear')),
+  //       }),
+  //     );
 
-      props.history.push({
-        pathname: props.location.pathname,
-        search: getQueryString({
-          siteInspireId: query.get('siteInspireId'),
-        }),
-        state: {
-          ignoreScrollBehavior: true,
-        },
-      });
-    }
-  }, [
-    props,
-    dispatch,
-    props.history,
-    props.location.pathname,
-    props.location?.search,
-  ]);
+  //     props.history.push({
+  //       pathname: props.location.pathname,
+  //       search: getQueryString({
+  //         siteInspireId: query.get('siteInspireId'),
+  //       }),
+  //       state: {
+  //         ignoreScrollBehavior: true,
+  //       },
+  //     });
+  //   }
+  // }, [
+  //   props,
+  //   dispatch,
+  //   props.history,
+  //   props.location.pathname,
+  //   props.location?.search,
+  // ]);
 
-  React.useEffect(() => {
-    setSiteHeader(getSiteByYear(provider_data, siteReportingYear));
-    /* eslint-disable-next-line */
-  }, [provider_data, siteReportingYear]);
+  // React.useEffect(() => {
+  //   setSiteHeader(getSiteByYear(provider_data, siteReportingYear));
+  //   /* eslint-disable-next-line */
+  // }, [provider_data, siteReportingYear]);
 
   return props.mode === 'edit' ? (
     <p>Site header</p>
@@ -288,6 +288,9 @@ function HeaderInformation(props) {
 }
 
 function EnvironmentalInformation(props) {
+  console.log('here props query in env', props?.query);
+  console.log('here in env', [props?.query?.lon, props?.query?.lat]);
+
   return (
     <div className="environmental-information">
       <HeaderInformation {...props} />
@@ -296,7 +299,17 @@ function EnvironmentalInformation(props) {
           {...props}
           content={{
             ...(props.content || {}),
-            ...mapBlock,
+            blocks: {
+              ...mapBlock.blocks,
+              'dd8d70fd-7544-4906-bc09-2c6db106c9ec': {
+                ...mapBlock.blocks['dd8d70fd-7544-4906-bc09-2c6db106c9ec'],
+                center:
+                  props.query?.lat && props.query?.lon
+                    ? [Number(props.query.lon), Number(props.query.lat)]
+                    : undefined,
+              },
+            },
+            blocks_layout: mapBlock.blocks_layout,
           }}
         />
       </div>

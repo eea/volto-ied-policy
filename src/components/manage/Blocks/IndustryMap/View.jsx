@@ -141,6 +141,21 @@ class View extends React.PureComponent {
     if (!prevState.mapRendered) {
       this.centerToUserLocation();
     }
+    if (
+      this.props.location?.pathname?.includes(
+        '/industrial-site/environmental-information',
+      )
+    ) {
+      console.log('here we are on detail page');
+      console.log('here in view', this.props?.data?.center);
+      // [1248971, 5670346]
+      // [2852740, 5347872]
+      this.map.current.getView().animate({
+        center: this.props?.data?.center || [],
+        duration: 1000,
+        zoom: 16,
+      });
+    }
     if (filter_change?.counter !== prevProps.query.filter_change?.counter) {
       /* Trigger update of features style */
       debounce(
@@ -507,7 +522,7 @@ class View extends React.PureComponent {
                       />
                     </div>
                   </Grid.Column>
-                  <Grid.Column width={8}>
+                  {/* <Grid.Column width={8}>
                     <div>
                       <Filters
                         data={this.props.data}
@@ -516,7 +531,7 @@ class View extends React.PureComponent {
                         dispatch={this.props.dispatch}
                       />
                     </div>
-                  </Grid.Column>
+                  </Grid.Column> */}
                 </Grid.Row>
               </Grid>
             </Container>
