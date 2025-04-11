@@ -288,6 +288,9 @@ function HeaderInformation(props) {
 }
 
 function EnvironmentalInformation(props) {
+  console.log('here props query in env', props?.query);
+  console.log('here in env', [props?.query?.lon, props?.query?.lat]);
+
   return (
     <div className="environmental-information">
       <HeaderInformation {...props} />
@@ -296,7 +299,17 @@ function EnvironmentalInformation(props) {
           {...props}
           content={{
             ...(props.content || {}),
-            ...mapBlock,
+            blocks: {
+              ...mapBlock.blocks,
+              'dd8d70fd-7544-4906-bc09-2c6db106c9ec': {
+                ...mapBlock.blocks['dd8d70fd-7544-4906-bc09-2c6db106c9ec'],
+                center:
+                  props.query?.lat && props.query?.lon
+                    ? [Number(props.query.lon), Number(props.query.lat)]
+                    : undefined,
+              },
+            },
+            blocks_layout: mapBlock.blocks_layout,
           }}
         />
       </div>

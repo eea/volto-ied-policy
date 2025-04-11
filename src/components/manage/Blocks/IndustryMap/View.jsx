@@ -131,6 +131,8 @@ class View extends React.PureComponent {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    console.log('here in view', this.props?.data);
+
     if (!this.state.mapRendered || !this.map.current) return;
     const { extent, proj } = openlayers;
     const { filter_change, filter_search } = this.props.query;
@@ -507,7 +509,7 @@ class View extends React.PureComponent {
                       />
                     </div>
                   </Grid.Column>
-                  <Grid.Column width={8}>
+                  {/* <Grid.Column width={8}>
                     <div>
                       <Filters
                         data={this.props.data}
@@ -516,7 +518,7 @@ class View extends React.PureComponent {
                         dispatch={this.props.dispatch}
                       />
                     </div>
-                  </Grid.Column>
+                  </Grid.Column> */}
                 </Grid.Row>
               </Grid>
             </Container>
