@@ -30,6 +30,7 @@ class Popup extends React.PureComponent {
 
   render() {
     const { data } = this.state;
+    console.log('here data in popup', data);
     return (
       <div
         id="popup"

@@ -132,39 +132,39 @@ function HeaderInformation(props) {
     /* eslint-disable-next-line */
   }, [provider_data]);
 
-  useEffect(() => {
-    const query = new URLSearchParams(props?.location?.search || '');
+  // useEffect(() => {
+  //   const query = new URLSearchParams(props?.location?.search || '');
 
-    if (query.get('siteReportingYear') || query.get('siteName')) {
-      dispatch(
-        setQuery({
-          siteName: query.get('siteName'),
-          siteReportingYear: parseInt(query.get('siteReportingYear')),
-        }),
-      );
+  //   if (query.get('siteReportingYear') || query.get('siteName')) {
+  //     dispatch(
+  //       setQuery({
+  //         siteName: query.get('siteName'),
+  //         siteReportingYear: parseInt(query.get('siteReportingYear')),
+  //       }),
+  //     );
 
-      props.history.push({
-        pathname: props.location.pathname,
-        search: getQueryString({
-          siteInspireId: query.get('siteInspireId'),
-        }),
-        state: {
-          ignoreScrollBehavior: true,
-        },
-      });
-    }
-  }, [
-    props,
-    dispatch,
-    props.history,
-    props.location.pathname,
-    props.location?.search,
-  ]);
+  //     props.history.push({
+  //       pathname: props.location.pathname,
+  //       search: getQueryString({
+  //         siteInspireId: query.get('siteInspireId'),
+  //       }),
+  //       state: {
+  //         ignoreScrollBehavior: true,
+  //       },
+  //     });
+  //   }
+  // }, [
+  //   props,
+  //   dispatch,
+  //   props.history,
+  //   props.location.pathname,
+  //   props.location?.search,
+  // ]);
 
-  React.useEffect(() => {
-    setSiteHeader(getSiteByYear(provider_data, siteReportingYear));
-    /* eslint-disable-next-line */
-  }, [provider_data, siteReportingYear]);
+  // React.useEffect(() => {
+  //   setSiteHeader(getSiteByYear(provider_data, siteReportingYear));
+  //   /* eslint-disable-next-line */
+  // }, [provider_data, siteReportingYear]);
 
   return props.mode === 'edit' ? (
     <p>Site header</p>

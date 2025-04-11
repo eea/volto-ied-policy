@@ -131,8 +131,6 @@ class View extends React.PureComponent {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log('here in view', this.props?.data);
-
     if (!this.state.mapRendered || !this.map.current) return;
     const { extent, proj } = openlayers;
     const { filter_change, filter_search } = this.props.query;
@@ -142,6 +140,19 @@ class View extends React.PureComponent {
     );
     if (!prevState.mapRendered) {
       this.centerToUserLocation();
+    }
+    if (
+      this.props.location?.pathname?.includes(
+        '/industrial-site/environmental-information',
+      )
+    ) {
+      console.log('here we are on detail page');
+      console.log('here in view', this.props?.data?.center);
+      this.map.current.getView().animate({
+        center: this.props?.data?.center || [],
+        duration: 1000,
+        zoom: 12,
+      });
     }
     if (filter_change?.counter !== prevProps.query.filter_change?.counter) {
       /* Trigger update of features style */
