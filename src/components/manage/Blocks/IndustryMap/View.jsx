@@ -148,10 +148,12 @@ class View extends React.PureComponent {
     ) {
       console.log('here we are on detail page');
       console.log('here in view', this.props?.data?.center);
+      // [1248971, 5670346]
+      // [2852740, 5347872]
       this.map.current.getView().animate({
         center: this.props?.data?.center || [],
         duration: 1000,
-        zoom: 12,
+        zoom: 16,
       });
     }
     if (filter_change?.counter !== prevProps.query.filter_change?.counter) {
