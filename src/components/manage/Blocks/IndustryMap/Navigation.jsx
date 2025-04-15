@@ -1,11 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 
-import { openlayers } from '@eeacms/volto-openlayers-map';
-
-import { getWhereStatement } from './index';
 import cx from 'classnames';
 
-import { Container, Menu, Dropdown, Grid } from 'semantic-ui-react';
+import { Container, Menu, Dropdown } from 'semantic-ui-react';
 import { UniversalLink } from '@plone/volto/components';
 import { getBaseUrl } from '@plone/volto/helpers';
 
@@ -38,7 +35,6 @@ const MenuWrapper = ({ children, data, className }) => {
 };
 
 const NavigationBlock = ({ data, screen, navigation }) => {
-  if (!data?.navigation) return null;
   data = data.navigation;
   const nav = useRef();
   const [items, setItems] = useState([]);
@@ -81,7 +77,7 @@ const NavigationBlock = ({ data, screen, navigation }) => {
     >
       <MenuWrapper data={data}>
         <Menu>
-          {items.map((item, index) => (
+          {items.map((item) => (
             <Menu.Item
               key={item.url}
               item-data={item.url}
