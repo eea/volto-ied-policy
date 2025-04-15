@@ -17,7 +17,6 @@ const IndustryDataTable = (props) => {
   const {
     data = {},
     pagination,
-    query = {},
     updatePagination = () => {},
     data_providers,
     loadingProviderData,
@@ -315,20 +314,18 @@ const IndustryDataTable = (props) => {
           className={`unstackable ${data.bordered ? 'no-borders' : ''}
         ${data.compact_table ? 'compact-table' : ''}`}
         >
-          {show_header ? (
-            <Table.Header>
-              <Table.Row>
-                {data?.columns?.map((header) => (
-                  <Table.HeaderCell
-                    key={header.column}
-                    className={header.textAlign || 'left'}
-                  >
-                    {header.title}
-                  </Table.HeaderCell>
-                ))}
-              </Table.Row>
-            </Table.Header>
-          ) : null}
+          <Table.Header>
+            <Table.Row>
+              {data?.columns?.map((header) => (
+                <Table.HeaderCell
+                  key={header.column}
+                  className={header.textAlign || 'left'}
+                >
+                  {header.title}
+                </Table.HeaderCell>
+              ))}
+            </Table.Row>
+          </Table.Header>
           <Table.Body>
             <Table.Row>
               <Table.Cell colSpan={data?.columns?.length || 1}>

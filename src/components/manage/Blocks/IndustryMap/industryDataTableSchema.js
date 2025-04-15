@@ -1,4 +1,4 @@
-export default () => ({
+const schema = () => ({
   title: 'Industry datatable',
   fieldsets: [
     {
@@ -15,3 +15,4 @@ export default () => ({
   },
   required: [],
 });
+export default schema;

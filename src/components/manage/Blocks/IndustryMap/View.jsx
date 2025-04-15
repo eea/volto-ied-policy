@@ -41,7 +41,7 @@ import navigationSVG from '@plone/volto/icons/navigation.svg';
 import './styles.less';
 import Filters from './Filters';
 import NavigationBlock from './Navigation';
-import IndustryDataTable from './IndustryDataTable';
+
 // let _REQS = 0;
 // const zoomSwitch = 6;
 let timer = [];
