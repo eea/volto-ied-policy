@@ -21,15 +21,20 @@ const IndustryDataTable = (props) => {
     updatePagination = () => {},
     data_providers,
     loadingProviderData,
-    rows
+    rows,
   } = props;
   const withPagination = data.withPagination;
-  const siteMapTableProvider = data_providers?.data?.['/data-connectors/site-map-table'];
-  const tableData = siteMapTableProvider?.[Object.keys(siteMapTableProvider ?? {})[Object.keys(siteMapTableProvider ?? {}).length - 1]];
+  const siteMapTableProvider =
+    data_providers?.data?.['/data-connectors/site-map-table'];
+  const tableData =
+    siteMapTableProvider?.[
+      Object.keys(siteMapTableProvider ?? {})[
+        Object.keys(siteMapTableProvider ?? {}).length - 1
+      ]
+    ];
   const row_size = data.itemsPerPage;
 
   return (
-
     <div ref={table} className="industry-table">
       {row_size && tableData ? (
         <Table
@@ -39,17 +44,14 @@ const IndustryDataTable = (props) => {
           ${data.compact_table ? 'compact-table' : ''}`}
         >
           <Table.Header>
-              <Table.Row>
-                {data.columnDefs.map((colDef, j) => (
-                  <Table.HeaderCell
-                    key={colDef.field}
-                    className={'left aligned'}
-                  >
-                    {colDef.headerName}
-                  </Table.HeaderCell>
-                ))}
-              </Table.Row>
-            </Table.Header>
+            <Table.Row>
+              {data.columnDefs.map((colDef, j) => (
+                <Table.HeaderCell key={colDef.field} className={'left aligned'}>
+                  {colDef.headerName}
+                </Table.HeaderCell>
+              ))}
+            </Table.Row>
+          </Table.Header>
           <Table.Body>
             {Array(Math.max(0, row_size))
               .fill()
@@ -99,7 +101,6 @@ const IndustryDataTable = (props) => {
                       })}
                     >
                       <Table.Cell colSpan={data.columnDefs.length + 1}>
-
                         <div className="hidden-row-container outline-button">
                           <div className="table-flex-container white">
                             <div>
@@ -262,7 +263,9 @@ const IndustryDataTable = (props) => {
                     <Menu.Item
                       as="a"
                       icon
-                      disabled={loadingProviderData || pagination.activePage === 1}
+                      disabled={
+                        loadingProviderData || pagination.activePage === 1
+                      }
                       onClick={() => {
                         if (pagination.activePage > 1) {
                           updatePagination({
@@ -343,7 +346,6 @@ const IndustryDataTable = (props) => {
   );
 };
 
-
 export default compose(
   connect(
     (state) => ({
@@ -352,4 +354,3 @@ export default compose(
     { setQuery },
   ),
 )(IndustryDataTable);
-
