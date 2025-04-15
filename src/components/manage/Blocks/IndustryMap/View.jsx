@@ -41,7 +41,7 @@ import navigationSVG from '@plone/volto/icons/navigation.svg';
 import './styles.less';
 import Filters from './Filters';
 import NavigationBlock from './Navigation';
-
+import IndustryDataTable from './IndustryDataTable';
 // let _REQS = 0;
 // const zoomSwitch = 6;
 let timer = [];
@@ -483,16 +483,17 @@ class View extends React.PureComponent {
       map_extent: extent,
     });
   }
-
   render() {
     const { proj, source } = openlayers;
     if (__SERVER__) return '';
     return (
+      <>
       <StyleWrapperView
         {...this.props}
         styleData={this.props.data.styles || {}}
         styled={true}
       >
+
         <div className="industry-map-wrapper">
           {!this.props.data?.hideFilters && (
             <Container>
@@ -666,6 +667,7 @@ class View extends React.PureComponent {
           </div>
         </div>
       </StyleWrapperView>
+      </>
     );
   }
 }

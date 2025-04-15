@@ -15,6 +15,8 @@ import getSchema from './components/manage/Blocks/ConnectedList/schema.js';
 import PollutantIndexView from './components/manage/Blocks/PolluantsTable/View';
 import PollutantIndexEdit from './components/manage/Blocks/PolluantsTable/Edit';
 import addonReducers from './reducers';
+import IndustryDataTable from './components/manage/Blocks/IndustryMap/IndustryDataTable.jsx';
+import industryDataTableSchema from './components/manage/Blocks/IndustryMap/industryDataTableSchema.js';
 const restrictedBlocks = ['imagecards', 'embed_eea_tableau_block'];
 
 const customBlocks = [
@@ -251,7 +253,22 @@ const applyConfig = (config) => {
       config.blocks.blocksConfig[block].group = 'custom_blocks';
     }
   });
-
+  if (config?.blocks?.blocksConfig?.data_table) {
+    config.blocks.blocksConfig.data_table = {
+      ...config.blocks.blocksConfig.data_table,
+      variations: [
+        ...config.blocks.blocksConfig.data_table.variations,
+         {
+          id: "industryTable",
+          title: 'Industry data table',
+          view: IndustryDataTable,
+          isDefault: true,
+          schema: industryDataTableSchema
+        },
+      ],
+      variationSelector: true,
+    };
+  }
   return config;
 };
 
