@@ -245,12 +245,12 @@ const applyConfig = (config) => {
       ...config.blocks.blocksConfig.data_table,
       variations: [
         ...config.blocks.blocksConfig.data_table.variations,
-         {
-          id: "industryTable",
+        {
+          id: 'industryTable',
           title: 'Industry data table',
           view: IndustryDataTable,
           isDefault: true,
-          schema: industryDataTableSchema
+          schema: industryDataTableSchema,
         },
       ],
       variationSelector: true,
