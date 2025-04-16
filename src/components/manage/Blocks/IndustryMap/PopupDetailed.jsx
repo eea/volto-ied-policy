@@ -27,19 +27,19 @@ class PopupDetailed extends React.PureComponent {
   componentDidMount() {
     document
       .querySelector("#industry-map")
-      .addEventListener("ol-click", this.onClick);
+      ?.addEventListener("ol-click", this.onClick);
   }
 
   componentWillUnmount() {
     document
       .querySelector("#industry-map")
-      .removeEventListener("ol-click", this.onClick);
+      ?.removeEventListener("ol-click", this.onClick);
   }
 
   render() {
     const { data } = this.state;
     const open = !!Object.keys(data).length;
-    let href = `/industrial-site/environmental-information?siteInspireId=${data.InspireSiteId}&siteName=${data.siteName}&siteReportingYear=${data.Site_reporting_year}`;
+    let href = `/industrial-site/environmental-information?siteInspireId=${data.InspireSiteId}&siteName=${data.siteName}&year=${data.Site_reporting_year}`;
 
     if (data.flatCoordinates) {
       const [lng, lat] = data.flatCoordinates;
