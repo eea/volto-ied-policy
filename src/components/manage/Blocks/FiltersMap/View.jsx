@@ -71,6 +71,7 @@ const View = ({ data, providers_data, query, dispatch }) => {
     filtersInitialized,
     permitTypes,
     setInitialFilters,
+    options,
   ]);
 
   useEffect(() => {

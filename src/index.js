@@ -15,7 +15,6 @@ import getSchema from './components/manage/Blocks/ConnectedList/schema.js';
 import PollutantIndexView from './components/manage/Blocks/PolluantsTable/View';
 import PollutantIndexEdit from './components/manage/Blocks/PolluantsTable/Edit';
 import addonReducers from './reducers';
-import EnvironmentalInformation from './views/EnvironmentalInformation';
 import IndustryDataTable from './components/IndustryDataTableVariation.jsx';
 import EnvironmentalSiteDetails from './components/manage/Blocks/SiteBlocks/EnvironmentalSiteDetails/View.jsx';
 import enviromentalSiteSchema from './components/manage/Blocks/SiteBlocks/EnvironmentalSiteDetails/schema.js';
@@ -131,7 +130,7 @@ const applyConfig = (config) => {
   config.blocks.blocksConfig.regulatory_bat = {
     view: RegulatoryBAT,
     edit: RegulatoryBAT,
-    schema: RegulatoryPermitsSchema,
+    schema: RegulatoryBATSchema,
     id: 'regulatory_bat',
     icon: documentIcon,
     group: 'eprtr_blocks',

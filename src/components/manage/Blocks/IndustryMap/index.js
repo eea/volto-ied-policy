@@ -335,7 +335,7 @@ export const getWhereStatement = (data) => {
   if (search?.type === 'facility' && search?.text) {
     where[filter++] = [`facilityNames LIKE '%${search.text.trim()}%'`];
   }
-  console.log(where);
+
   return where
     .filter((w) => w.length)
     .map((w) => `(${w.join(' OR ')})`)
@@ -379,6 +379,6 @@ export const mercatorToLatLon = (x, y) => {
   const lng = (x / R) * (180 / Math.PI);
   const lat = (2 * Math.atan(Math.exp(y / R)) - Math.PI / 2) * (180 / Math.PI);
   return { lat, lng };
-}
+};
 
 export default applyIndustryMapBlockConfig;
