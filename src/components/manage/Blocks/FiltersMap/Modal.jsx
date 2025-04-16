@@ -80,6 +80,12 @@ const setParamsQuery = (data) => {
   if (query?.filter_reporting_years?.length > 0) {
     urlParams.append('Site_reporting_year[in]', query.filter_reporting_years.join(','));
   }
+  if (query?.filter_industries?.length > 0) {
+    urlParams.append('eprtr_sectors[in]', query.filter_industries.join(','));
+  }
+  if (query?.filter_eprtr_AnnexIActivity?.length > 0) {
+    urlParams.append('eprtr_AnnexIActivity[in]', query.filter_eprtr_AnnexIActivity.join(','));
+  }
   if (facility_types?.filter(Boolean)?.length === 1) {
     const type = facility_types.includes('EPRTR') ? 'EPRTR' : 'NONEPRTR';
     urlParams.append('facilityTypes_like', type);
