@@ -18,8 +18,7 @@ const providerSchema = {
   },
   required: [],
 };
-
-export default {
+const schema = {
   title: 'Filters block',
   fieldsets: [
     {
@@ -40,3 +39,5 @@ export default {
   },
   required: [],
 };
+
+export default schema;

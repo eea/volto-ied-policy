@@ -4,7 +4,6 @@ import { connect, useSelector } from 'react-redux';
 import { Grid, Dropdown } from 'semantic-ui-react';
 
 import { connectToMultipleProviders } from '@eeacms/volto-datablocks/hocs';
-import RenderBlocks from '@plone/volto/components/theme/View/RenderBlocks.jsx';
 import qs from 'querystring';
 // import './style.css';
 import { setQuery } from '@eeacms/volto-ied-policy/actions';
@@ -69,7 +68,7 @@ function HeaderInformation(props) {
         }),
       );
     }
-  }, [props.location.search]);
+  }, [props.location.search, dispatch]);
 
   React.useEffect(() => {
     setSiteHeader(getSiteByYear(provider_data, siteReportingYear));

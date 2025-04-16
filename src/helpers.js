@@ -241,7 +241,7 @@ export const emitEvent = (el, eventName, options) => {
     event = document.createEvent('CustomEvent');
     event.initCustomEvent(eventName, true, true, options);
   }
-  el.dispatchEvent(event);
+  if (el) el.dispatchEvent(event);
 };
 
 export const getEncodedString = (str) => {

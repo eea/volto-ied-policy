@@ -17,6 +17,7 @@ import { StyleWrapperView } from '@eeacms/volto-block-style/StyleWrapper';
 import PrivacyProtection from '@eeacms/volto-ied-policy/components/manage/Blocks/PrivacyProtection';
 import { setQuery } from '@eeacms/volto-ied-policy/actions';
 import { emitEvent } from '@eeacms/volto-ied-policy/helpers.js';
+
 import {
   dataprotection,
   getStyles,
@@ -28,9 +29,8 @@ import {
   getFacilityExtent,
   getCountriesExtent,
   getWhereStatement,
+  mercatorToLatLon,
 } from './index';
-
-import { Container, Grid } from 'semantic-ui-react';
 
 import Sidebar from './Sidebar';
 import Popup from './Popup';
@@ -39,8 +39,6 @@ import PopupDetailed from './PopupDetailed';
 import navigationSVG from '@plone/volto/icons/navigation.svg';
 
 import './styles.less';
-import Filters from './Filters';
-import NavigationBlock from './Navigation';
 
 // let _REQS = 0;
 // const zoomSwitch = 6;
@@ -50,28 +48,24 @@ const debounce = (func, index, timeout = 200, ...args) => {
   if (timer[index]) clearTimeout(timer[index]);
   timer[index] = setTimeout(func, timeout, ...args);
 };
-const getWhereStatementFromUrl = (params) => {
-  let query = '';
-  for (const [key, value] of params.entries()) {
-    if(key == "siteName") {
-      query+=`siteName LIKE '${value}%'`
-    }
-    else {
-      query+=`(${key} = ${value})`
-    }
-  }
-}
+// const getWhereStatementFromUrl = (params) => {
+//   let query = '';
+//   for (const [key, value] of params.entries()) {
+//     if (key == 'siteName') {
+//       query += `siteName LIKE '${value}%'`;
+//     } else {
+//       query += `(${key} = ${value})`;
+//     }
+//   }
+// };
 const getSitesSource = (self) => {
   // return {};
   const { source } = openlayers;
-  const searchParams = new URLSearchParams(self.props.location.search);
-
-  console.log(getWhereStatementFromUrl(searchParams), getWhereStatement(self.props.query))
   return new source.TileArcGISRest({
     params: {
       layerDefs: JSON.stringify({
         0: getWhereStatement(self.props.query),
-      })
+      }),
     },
     url: 'https://air.discomap.eea.europa.eu/arcgis/rest/services/Air/IED_SiteMap/MapServer',
   });
@@ -100,6 +94,7 @@ const getClosestFeatureToCoordinate = (coordinate, features) => {
 
   return closestFeature;
 };
+
 class View extends React.PureComponent {
   /**
    * Property types.
@@ -134,15 +129,15 @@ class View extends React.PureComponent {
     this.layerSites = React.createRef();
     this.overlayPopup = React.createRef();
     this.overlayPopupDetailed = React.createRef();
+    this.lat = 0;
+    this.lng = 0;
+
+    const query = new URLSearchParams(this.props.location.search);
+    this.lat = query.get('lat');
+    this.lng = query.get('lng');
   }
 
   componentDidMount() {
-    const searchParams = new URLSearchParams(this.props.location.search);
-    for (const [key, value] of searchParams.entries()) {
-      console.log(key, value)
-
-    }
-    console.log(this.props.query)
     // window['__where'] = getWhereStatement(this.props.query);
   }
 
@@ -153,7 +148,6 @@ class View extends React.PureComponent {
   componentDidUpdate(prevProps, prevState) {
     if (!this.state.mapRendered || !this.map.current) return;
     const { extent, proj } = openlayers;
-    console.log(this.props.query)
 
     const { filter_change, filter_search } = this.props.query;
     // window['__where'] = getWhereStatement(this.props.query);
@@ -161,7 +155,20 @@ class View extends React.PureComponent {
       (value) => value,
     );
     if (!prevState.mapRendered) {
-      this.centerToUserLocation();
+      if (this.lat && this.lng) {
+        const formattedLatLng = mercatorToLatLon(this.lng, this.lat);
+        this.centerToQueryLocation(
+          {
+            coords: {
+              latitude: formattedLatLng.lat,
+              longitude: formattedLatLng.lng,
+            },
+          },
+          12,
+        );
+      } else {
+        this.centerToUserLocation();
+      }
     }
     if (filter_change?.counter !== prevProps.query.filter_change?.counter) {
       /* Trigger update of features style */
@@ -297,6 +304,18 @@ class View extends React.PureComponent {
     } else if (!loaded && !this.state.loading) {
       this.setState({ loading: true });
     }
+  }
+
+  centerToQueryLocation(position, zoom) {
+    const { proj } = openlayers;
+    return this.map.current.getView().animate({
+      center: proj.fromLonLat([
+        position.coords.longitude,
+        position.coords.latitude,
+      ]),
+      duration: 1000,
+      zoom,
+    });
   }
 
   centerToPosition(position, zoom) {
