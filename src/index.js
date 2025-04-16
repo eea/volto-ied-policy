@@ -16,6 +16,7 @@ import PollutantIndexView from './components/manage/Blocks/PolluantsTable/View';
 import PollutantIndexEdit from './components/manage/Blocks/PolluantsTable/Edit';
 import addonReducers from './reducers';
 import EnvironmentalInformation from './views/EnvironmentalInformation';
+import IndustryDataTable from './components/IndustryDataTableVariation.jsx';
 const restrictedBlocks = ['imagecards', 'embed_eea_tableau_block'];
 
 const customBlocks = [
@@ -238,7 +239,20 @@ const applyConfig = (config) => {
       config.blocks.blocksConfig[block].group = 'custom_blocks';
     }
   });
-
+  if (config?.blocks?.blocksConfig?.data_table) {
+    config.blocks.blocksConfig.data_table = {
+      ...config.blocks.blocksConfig.data_table,
+      variations: [
+        ...config.blocks.blocksConfig.data_table.variations,
+        {
+          id: 'industryTable',
+          title: 'Industry data table',
+          view: IndustryDataTable,
+        },
+      ],
+      variationSelector: true,
+    };
+  }
   return config;
 };
 
