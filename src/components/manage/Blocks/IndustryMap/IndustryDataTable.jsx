@@ -75,7 +75,7 @@ const IndustryDataTable = (props) => {
                           key={`${i}-${colDef.field}`}
                           textAlign={'left aligned'}
                         >
-                          {tableData[colDef.field][i]}
+                          {tableData[colDef.field]?.[i]}
                         </Table.Cell>
                       ))}
                       <Table.Cell>

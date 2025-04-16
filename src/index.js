@@ -249,8 +249,6 @@ const applyConfig = (config) => {
           id: 'industryTable',
           title: 'Industry data table',
           view: IndustryDataTable,
-          isDefault: true,
-          schema: industryDataTableSchema,
         },
       ],
       variationSelector: true,
