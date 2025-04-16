@@ -127,7 +127,7 @@ class PopupDetailed extends React.PureComponent {
         <Modal.Actions className="solid-button">
           <UniversalLink
             className="solid dark-blue display-inline-block"
-            href={`/industrial-site/environmental-information?siteInspireId=${data.InspireSiteId}&siteName=${data.siteName}&siteReportingYear=${data.Site_reporting_year}`}
+            href={`/industrial-site/environmental-information?siteInspireId=${data.InspireSiteId}&siteName=${data.siteName}&year=${data.Site_reporting_year}`}
           >
             Site details
           </UniversalLink>

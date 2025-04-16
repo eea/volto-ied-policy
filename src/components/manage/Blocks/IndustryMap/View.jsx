@@ -449,6 +449,7 @@ class View extends React.PureComponent {
         if (!error) {
           let features = esrijsonFormat.readFeatures(response);
           const feature = getClosestFeatureToCoordinate(e.coordinate, features);
+
           if (!feature) {
             emitEvent(mapElement, 'ol-click', {
               bubbles: false,
