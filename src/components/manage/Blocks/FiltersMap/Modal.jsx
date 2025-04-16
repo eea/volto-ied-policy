@@ -8,6 +8,7 @@ import { setQuery } from '@eeacms/volto-ied-policy/actions';
 import { inputsKeys, permitTypes } from './dictionary';
 import SelectWrapper from './SelectWrapper';
 import { filters } from '../IndustryMap';
+import { withRouter } from 'react-router-dom';
 
 
 
@@ -60,22 +61,25 @@ const setParamsQuery = (data) => {
 
   const urlParams = new URLSearchParams();
 
-  for (const { queryKey, featureKey } of filters) {
-    const values = query[queryKey];
-    if (Array.isArray(values)) {
-      values.forEach((value) => {
-        if (value) {
-          if (featureKey === 'pollutant_groups') {
-            urlParams.append('air_groups_like', value);
-            urlParams.append('water_groups_like', value);
-          } else {
-            urlParams.append(featureKey, value);
-          }
-        }
-      });
-    }
+  // for (const { queryKey, featureKey } of filters) {
+  //   const values = query[queryKey];
+  //   if (Array.isArray(values)) {
+  //     values.forEach((value) => {
+  //       if (value) {
+  //         if (featureKey === 'pollutant_groups') {
+  //           urlParams.append('air_groups_like', value);
+  //           urlParams.append('water_groups_like', value);
+  //         } else {
+  //           urlParams.append(featureKey, value);
+  //         }
+  //       }
+  //     });
+  //   }
+  // }
+  console.log(query)
+  if (query?.filter_reporting_years?.length > 0) {
+    urlParams.append('Site_reporting_year[in]', query.filter_reporting_years.join(','));
   }
-
   if (facility_types?.filter(Boolean)?.length === 1) {
     const type = facility_types.includes('EPRTR') ? 'EPRTR' : 'NONEPRTR';
     urlParams.append('facilityTypes_like', type);
@@ -174,9 +178,11 @@ const ModalView = ({
   query,
   setOpen,
   setQuery,
+  history,
+  location
 }) => {
   const [inputs, setInputs] = React.useState({});
-
+console.log(history)
   React.useEffect(() => {
     setInitialInputs();
     /* eslint-disable-next-line */
@@ -245,7 +251,6 @@ const ModalView = ({
     };
     setQuery(newQuery);
     const urlParams = setParamsQuery(inputs);
-    const newUrl = `${window.location.pathname}?${urlParams}`;
     trackSiteSearch({
       category: `Map/Table advanced-filter`,
       keyword: JSON.stringify({
@@ -262,8 +267,10 @@ const ModalView = ({
       }),
     });
     setOpen(false);
-    window.history.pushState({}, '', newUrl);
-
+    history.push({
+      pathname: location.pathname,
+      search: `?${urlParams.toString()}`
+    });
     /* eslint-disable-next-line */
   }, [inputs, query]);
 
@@ -566,6 +573,7 @@ const ModalView = ({
 };
 
 export default compose(
+  withRouter,
   connect(
     (state) => ({
       query: state.query.search,
