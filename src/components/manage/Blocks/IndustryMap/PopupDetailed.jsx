@@ -1,7 +1,6 @@
 import React from 'react';
 import { UniversalLink } from '@plone/volto/components';
 import { Modal } from 'semantic-ui-react';
-import { mercatorToLatLon } from './index';
 
 class PopupDetailed extends React.PureComponent {
   constructor(props) {
@@ -43,8 +42,7 @@ class PopupDetailed extends React.PureComponent {
 
     if (data.flatCoordinates) {
       const [lng, lat] = data.flatCoordinates;
-      const formattedLatLng = mercatorToLatLon(lng, lat);
-      href += `lat=${formattedLatLng.lat}&lng=${formattedLatLng.lng}`;
+      href += `&lat=${lat}&lng=${lng}`;
     }
 
     return (

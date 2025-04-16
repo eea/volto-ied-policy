@@ -129,8 +129,6 @@ class View extends React.PureComponent {
     this.layerSites = React.createRef();
     this.overlayPopup = React.createRef();
     this.overlayPopupDetailed = React.createRef();
-    this.lat = 0;
-    this.lng = 0;
 
     const query = new URLSearchParams(this.props.location.search);
     this.lat = query.get('lat');
@@ -138,6 +136,7 @@ class View extends React.PureComponent {
   }
 
   componentDidMount() {
+    console.log('HERE!');
     // window['__where'] = getWhereStatement(this.props.query);
   }
 
@@ -155,6 +154,7 @@ class View extends React.PureComponent {
       (value) => value,
     );
     if (!prevState.mapRendered) {
+      console.log('HERE: ', { lat: this.lat, lng: this.lng });
       if (this.lat && this.lng) {
         const formattedLatLng = mercatorToLatLon(this.lng, this.lat);
         this.centerToQueryLocation(
