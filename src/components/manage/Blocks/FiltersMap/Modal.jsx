@@ -7,6 +7,112 @@ import { trackSiteSearch } from '@eeacms/volto-matomo/utils';
 import { setQuery } from '@eeacms/volto-ied-policy/actions';
 import { inputsKeys, permitTypes } from './dictionary';
 import SelectWrapper from './SelectWrapper';
+import { filters } from '../IndustryMap';
+
+const getLatestRegions = (query) => {
+  const siteCountries = query.filter_countries;
+  const regions = query.filter_nuts_1;
+  const provinces = query.filter_nuts_2;
+  let nuts = [];
+  let nuts_latest = [];
+
+  siteCountries &&
+    siteCountries.forEach((country) => {
+      const filteredRegions = regions
+        ? regions.filter((region) => {
+            return region && region.includes(country);
+          })
+        : [];
+      if (filteredRegions.length) {
+        filteredRegions.forEach((region) => {
+          const filteredProvinces = provinces
+            ? provinces.filter((province) => {
+                return province && province.includes(region);
+              })
+            : [];
+          if (filteredProvinces.length) {
+            filteredProvinces.forEach((province) => {
+              nuts.push(`${province},${region},${country}`);
+              nuts_latest.push(province);
+            });
+          } else {
+            nuts.push(`${region},${country}`);
+            nuts_latest.push(region);
+          }
+        });
+      }
+    });
+
+  return {
+    nuts,
+    nuts_latest,
+  };
+};
+
+const setParamsQuery = (data) => {
+  const query = { ...data, nuts_latest: getLatestRegions(data).nuts_latest };
+  const facility_types = query.filter_facility_types || [];
+  const installation_types = query.filter_installation_types || [];
+  const thematic_information = query.filter_thematic_information || [];
+  const search = query.filter_search;
+
+  const urlParams = new URLSearchParams();
+
+  for (const { queryKey, featureKey } of filters) {
+    const values = query[queryKey];
+    if (Array.isArray(values)) {
+      values.forEach((value) => {
+        if (value) {
+          if (featureKey === 'pollutant_groups') {
+            urlParams.append('air_groups_like', value);
+            urlParams.append('water_groups_like', value);
+          } else {
+            urlParams.append(featureKey, value);
+          }
+        }
+      });
+    }
+  }
+
+  if (facility_types?.filter(Boolean)?.length === 1) {
+    const type = facility_types.includes('EPRTR') ? 'EPRTR' : 'NONEPRTR';
+    urlParams.append('facilityTypes_like', type);
+  }
+
+  if (installation_types.includes('IED')) {
+    urlParams.append('count_instype_IED_min', '1');
+  }
+
+  if (installation_types.includes('NONIED')) {
+    urlParams.append('count_instype_NONIED_min', '1');
+  }
+
+  if (thematic_information.includes('has_release')) {
+    urlParams.append('has_release_data_min', '1');
+  }
+
+  if (thematic_information.includes('has_transfer')) {
+    urlParams.append('has_transfer_data_min', '1');
+  }
+
+  if (thematic_information.includes('has_waste')) {
+    urlParams.append('has_waste_data_min', '1');
+  }
+
+  if (thematic_information.includes('has_seveso')) {
+    urlParams.append('has_seveso_min', '1');
+  }
+
+  if (search?.type === 'site' && search?.text) {
+    urlParams.append('siteName', search.text.trim());
+  }
+
+  if (search?.type === 'facility' && search?.text) {
+    urlParams.append('facilityNames', search.text.trim());
+  }
+
+  return urlParams.toString();
+};
 
 const filterOptionsByParent = (options, input) => {
   if (!options || !input) return [];
@@ -133,6 +239,8 @@ const ModalView = ({
       filter_search_value: '',
     };
     setQuery(newQuery);
+    const urlParams = setParamsQuery(inputs);
+    const newUrl = `${window.location.pathname}?${urlParams}`;
     trackSiteSearch({
       category: `Map/Table advanced-filter`,
       keyword: JSON.stringify({
@@ -149,6 +257,8 @@ const ModalView = ({
       }),
     });
     setOpen(false);
+    window.history.pushState({}, '', newUrl);
+
     /* eslint-disable-next-line */
   }, [inputs, query]);
 
