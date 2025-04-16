@@ -4,8 +4,13 @@ import { setQuery } from '@eeacms/volto-ied-policy/actions';
 import Search from './Search';
 import Modal from './Modal';
 import { getOptions, permitTypes } from './dictionary';
+import { connect } from 'react-redux';
+import { connectToMultipleProvidersUnfiltered } from '@eeacms/volto-datablocks/hocs';
+import { compose } from 'redux';
 
-const Filters = ({ data, providers_data, query, dispatch }) => {
+import './styles.less';
+
+const View = ({ data, providers_data, query, dispatch }) => {
   const [open, setOpenState] = useState(false);
   const [filtersInitialized, setFiltersInitialized] = useState(false);
   const [options, setOptions] = useState({});
@@ -36,9 +41,9 @@ const Filters = ({ data, providers_data, query, dispatch }) => {
     if (data.providers) {
       data.providers.forEach((source) => {
         if (
-          source.name &&
-          !newOptions[source.name] &&
-          providers_data[source.name]
+          source?.name &&
+          !newOptions?.[source.name] &&
+          providers_data?.[source.name]
         ) {
           newOptions[source.name] = getOptions(providers_data[source.name]);
         }
@@ -88,4 +93,11 @@ const Filters = ({ data, providers_data, query, dispatch }) => {
   );
 };
 
-export default Filters;
+export default compose(
+  connect((state) => ({
+    query: state.query.search,
+  })),
+  connectToMultipleProvidersUnfiltered((props) => ({
+    providers: props.data.providers,
+  })),
+)(View);

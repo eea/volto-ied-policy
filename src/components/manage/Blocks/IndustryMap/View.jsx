@@ -50,14 +50,28 @@ const debounce = (func, index, timeout = 200, ...args) => {
   if (timer[index]) clearTimeout(timer[index]);
   timer[index] = setTimeout(func, timeout, ...args);
 };
-
+const getWhereStatementFromUrl = (params) => {
+  let query = '';
+  for (const [key, value] of params.entries()) {
+    if(key == "siteName") {
+      query+=`siteName LIKE '${value}%'`
+    }
+    else {
+      query+=`(${key} = ${value})`
+    }
+  }
+}
 const getSitesSource = (self) => {
+  // return {};
   const { source } = openlayers;
+  const searchParams = new URLSearchParams(self.props.location.search);
+
+  console.log(getWhereStatementFromUrl(searchParams), getWhereStatement(self.props.query))
   return new source.TileArcGISRest({
     params: {
       layerDefs: JSON.stringify({
         0: getWhereStatement(self.props.query),
-      }),
+      })
     },
     url: 'https://air.discomap.eea.europa.eu/arcgis/rest/services/Air/IED_SiteMap/MapServer',
   });
@@ -123,7 +137,13 @@ class View extends React.PureComponent {
   }
 
   componentDidMount() {
-    window['__where'] = getWhereStatement(this.props.query);
+    const searchParams = new URLSearchParams(this.props.location.search);
+    for (const [key, value] of searchParams.entries()) {
+      console.log(key, value)
+
+    }
+    console.log(this.props.query)
+    // window['__where'] = getWhereStatement(this.props.query);
   }
 
   componentWillUnmount() {
@@ -133,8 +153,10 @@ class View extends React.PureComponent {
   componentDidUpdate(prevProps, prevState) {
     if (!this.state.mapRendered || !this.map.current) return;
     const { extent, proj } = openlayers;
+    console.log(this.props.query)
+
     const { filter_change, filter_search } = this.props.query;
-    window['__where'] = getWhereStatement(this.props.query);
+    // window['__where'] = getWhereStatement(this.props.query);
     const filter_countries = (this.props.query.filter_countries || []).filter(
       (value) => value,
     );
@@ -494,33 +516,6 @@ class View extends React.PureComponent {
           styled={true}
         >
           <div className="industry-map-wrapper">
-            {!this.props.data?.hideFilters && (
-              <Container>
-                <Grid>
-                  <Grid.Row>
-                    <Grid.Column width={4}>
-                      <div className="styled-navigationBlock type-1 has--style_name--type1 styled">
-                        <NavigationBlock
-                          data={this.props.data}
-                          screen={this.props.screen}
-                          navigation={this.props.navigation}
-                        />
-                      </div>
-                    </Grid.Column>
-                    <Grid.Column width={8}>
-                      <div>
-                        <Filters
-                          data={this.props.data}
-                          providers_data={this.props.providers_data}
-                          query={this.props.query}
-                          dispatch={this.props.dispatch}
-                        />
-                      </div>
-                    </Grid.Column>
-                  </Grid.Row>
-                </Grid>
-              </Container>
-            )}
             <div id="industry-map" className="industry-map">
               <PrivacyProtection data={{ dataprotection }}>
                 <Map

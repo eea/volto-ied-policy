@@ -19,13 +19,13 @@ class Popup extends React.PureComponent {
   componentDidMount() {
     document
       .querySelector('#industry-map')
-      .addEventListener('ol-pointermove', this.onPointermove);
+      ?.addEventListener('ol-pointermove', this.onPointermove);
   }
 
   componentWillUnmount() {
     document
       .querySelector('#industry-map')
-      .removeEventListener('ol-pointermove', this.onPointermove);
+      ?.removeEventListener('ol-pointermove', this.onPointermove);
   }
 
   render() {

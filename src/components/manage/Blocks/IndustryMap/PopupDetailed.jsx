@@ -26,13 +26,13 @@ class PopupDetailed extends React.PureComponent {
   componentDidMount() {
     document
       .querySelector('#industry-map')
-      .addEventListener('ol-click', this.onClick);
+      ?.addEventListener('ol-click', this.onClick);
   }
 
   componentWillUnmount() {
     document
       .querySelector('#industry-map')
-      .removeEventListener('ol-click', this.onClick);
+      ?.removeEventListener('ol-click', this.onClick);
   }
 
   render() {
