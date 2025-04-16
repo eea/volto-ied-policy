@@ -25,7 +25,7 @@ const IndustryDataTable = (props) => {
 
   const tableData = {};
 
-  rows.forEach(obj => {
+  rows.forEach((obj) => {
     for (const [key, value] of Object.entries(obj)) {
       if (!tableData[key]) {
         tableData[key] = [];

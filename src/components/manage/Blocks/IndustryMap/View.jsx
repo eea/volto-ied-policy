@@ -53,25 +53,27 @@ const debounce = (func, index, timeout = 200, ...args) => {
 const getWhereStatementFromUrl = (params) => {
   let query = '';
   for (const [key, value] of params.entries()) {
-    if(key == "siteName") {
-      query+=`siteName LIKE '${value}%'`
-    }
-    else {
-      query+=`(${key} = ${value})`
+    if (key == 'siteName') {
+      query += `siteName LIKE '${value}%'`;
+    } else {
+      query += `(${key} = ${value})`;
     }
   }
-}
+};
 const getSitesSource = (self) => {
   // return {};
   const { source } = openlayers;
   const searchParams = new URLSearchParams(self.props.location.search);
 
-  console.log(getWhereStatementFromUrl(searchParams), getWhereStatement(self.props.query))
+  console.log(
+    getWhereStatementFromUrl(searchParams),
+    getWhereStatement(self.props.query),
+  );
   return new source.TileArcGISRest({
     params: {
       layerDefs: JSON.stringify({
         0: getWhereStatement(self.props.query),
-      })
+      }),
     },
     url: 'https://air.discomap.eea.europa.eu/arcgis/rest/services/Air/IED_SiteMap/MapServer',
   });
@@ -139,10 +141,9 @@ class View extends React.PureComponent {
   componentDidMount() {
     const searchParams = new URLSearchParams(this.props.location.search);
     for (const [key, value] of searchParams.entries()) {
-      console.log(key, value)
-
+      console.log(key, value);
     }
-    console.log(this.props.query)
+    console.log(this.props.query);
     // window['__where'] = getWhereStatement(this.props.query);
   }
 
@@ -153,7 +154,7 @@ class View extends React.PureComponent {
   componentDidUpdate(prevProps, prevState) {
     if (!this.state.mapRendered || !this.map.current) return;
     const { extent, proj } = openlayers;
-    console.log(this.props.query)
+    console.log(this.props.query);
 
     const { filter_change, filter_search } = this.props.query;
     // window['__where'] = getWhereStatement(this.props.query);

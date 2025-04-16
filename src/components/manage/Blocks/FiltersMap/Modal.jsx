@@ -10,8 +10,6 @@ import SelectWrapper from './SelectWrapper';
 import { filters } from '../IndustryMap';
 import { withRouter } from 'react-router-dom';
 
-
-
 const getLatestRegions = (query) => {
   const siteCountries = query.filter_countries;
   const regions = query.filter_nuts_1;
@@ -76,15 +74,21 @@ const setParamsQuery = (data) => {
   //     });
   //   }
   // }
-  console.log(query)
+  console.log(query);
   if (query?.filter_reporting_years?.length > 0) {
-    urlParams.append('Site_reporting_year[in]', query.filter_reporting_years.join(','));
+    urlParams.append(
+      'Site_reporting_year[in]',
+      query.filter_reporting_years.join(','),
+    );
   }
   if (query?.filter_industries?.length > 0) {
     urlParams.append('eprtr_sectors[in]', query.filter_industries.join(','));
   }
   if (query?.filter_eprtr_AnnexIActivity?.length > 0) {
-    urlParams.append('eprtr_AnnexIActivity[in]', query.filter_eprtr_AnnexIActivity.join(','));
+    urlParams.append(
+      'eprtr_AnnexIActivity[in]',
+      query.filter_eprtr_AnnexIActivity.join(','),
+    );
   }
   if (facility_types?.filter(Boolean)?.length === 1) {
     const type = facility_types.includes('EPRTR') ? 'EPRTR' : 'NONEPRTR';
@@ -124,10 +128,7 @@ const setParamsQuery = (data) => {
   }
 
   return urlParams.toString();
-
-}
-
-
+};
 
 const filterOptionsByParent = (options, input) => {
   if (!options || !input) return [];
@@ -185,10 +186,10 @@ const ModalView = ({
   setOpen,
   setQuery,
   history,
-  location
+  location,
 }) => {
   const [inputs, setInputs] = React.useState({});
-console.log(history)
+  console.log(history);
   React.useEffect(() => {
     setInitialInputs();
     /* eslint-disable-next-line */
@@ -275,7 +276,7 @@ console.log(history)
     setOpen(false);
     history.push({
       pathname: location.pathname,
-      search: `?${urlParams.toString()}`
+      search: `?${urlParams.toString()}`,
     });
     /* eslint-disable-next-line */
   }, [inputs, query]);
@@ -284,14 +285,13 @@ console.log(history)
   const onIndustriesChange = React.useCallback(
     ({ inputs }) => {
       let newInputs = cloneDeep(inputs);
-      newInputs.filter_eprtr_AnnexIActivity = newInputs.filter_eprtr_AnnexIActivity.filter(
-        (input) => {
+      newInputs.filter_eprtr_AnnexIActivity =
+        newInputs.filter_eprtr_AnnexIActivity.filter((input) => {
           const sector = options.eprtr_AnnexIActivity.filter(
             (opt) => opt.value === input,
           )[0]?.sector;
           return newInputs.filter_industries.indexOf(sector) !== -1;
-        },
-      );
+        });
       setInputs(newInputs);
     },
     [options.eprtr_AnnexIActivity],

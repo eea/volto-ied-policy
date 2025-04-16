@@ -15,7 +15,7 @@ const config = (config) => {
     installMaesViewer,
     installNavigation,
     installIndustryMap,
-    FiltersMap
+    FiltersMap,
   ].reduce((acc, apply) => apply(acc), config);
 };
 
