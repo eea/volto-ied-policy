@@ -1,22 +1,23 @@
-import React from 'react';
-import { compose } from 'redux';
-import { connect } from 'react-redux';
-import jsonp from 'jsonp';
-import qs from 'querystring';
-import { toast } from 'react-toastify';
-import { doesNodeContainClick } from 'semantic-ui-react/dist/commonjs/lib';
-import { Icon, Toast } from '@plone/volto/components';
-import { connectToMultipleProvidersUnfiltered } from '@eeacms/volto-datablocks/hocs';
-import { Map } from '@eeacms/volto-openlayers-map/Map';
-import { Interactions } from '@eeacms/volto-openlayers-map/Interactions';
-import { Overlays } from '@eeacms/volto-openlayers-map/Overlays';
-import { Controls, Control } from '@eeacms/volto-openlayers-map/Controls';
-import { Layers, Layer } from '@eeacms/volto-openlayers-map/Layers';
-import { openlayers } from '@eeacms/volto-openlayers-map';
-import { StyleWrapperView } from '@eeacms/volto-block-style/StyleWrapper';
-import PrivacyProtection from '@eeacms/volto-ied-policy/components/manage/Blocks/PrivacyProtection';
-import { setQuery } from '@eeacms/volto-ied-policy/actions';
-import { emitEvent } from '@eeacms/volto-ied-policy/helpers.js';
+import React from "react";
+import { compose } from "redux";
+import { connect } from "react-redux";
+import jsonp from "jsonp";
+import qs from "querystring";
+import { toast } from "react-toastify";
+import { doesNodeContainClick } from "semantic-ui-react/dist/commonjs/lib";
+import { Icon, Toast } from "@plone/volto/components";
+import { connectToMultipleProvidersUnfiltered } from "@eeacms/volto-datablocks/hocs";
+import { Map } from "@eeacms/volto-openlayers-map/Map";
+import { Interactions } from "@eeacms/volto-openlayers-map/Interactions";
+import { Overlays } from "@eeacms/volto-openlayers-map/Overlays";
+import { Controls, Control } from "@eeacms/volto-openlayers-map/Controls";
+import { Layers, Layer } from "@eeacms/volto-openlayers-map/Layers";
+import { openlayers } from "@eeacms/volto-openlayers-map";
+import { StyleWrapperView } from "@eeacms/volto-block-style/StyleWrapper";
+import PrivacyProtection from "@eeacms/volto-ied-policy/components/manage/Blocks/PrivacyProtection";
+import { setQuery } from "@eeacms/volto-ied-policy/actions";
+import { emitEvent } from "@eeacms/volto-ied-policy/helpers.js";
+
 import {
   dataprotection,
   getStyles,
@@ -28,19 +29,20 @@ import {
   getFacilityExtent,
   getCountriesExtent,
   getWhereStatement,
-} from './index';
+  mercatorToLatLon,
+} from "./index";
 
-import { Container, Grid } from 'semantic-ui-react';
+import { Container, Grid } from "semantic-ui-react";
 
-import Sidebar from './Sidebar';
-import Popup from './Popup';
-import PopupDetailed from './PopupDetailed';
+import Sidebar from "./Sidebar";
+import Popup from "./Popup";
+import PopupDetailed from "./PopupDetailed";
 
-import navigationSVG from '@plone/volto/icons/navigation.svg';
+import navigationSVG from "@plone/volto/icons/navigation.svg";
 
-import './styles.less';
-import Filters from './Filters';
-import NavigationBlock from './Navigation';
+import "./styles.less";
+import Filters from "./Filters";
+import NavigationBlock from "./Navigation";
 
 // let _REQS = 0;
 // const zoomSwitch = 6;
@@ -59,7 +61,7 @@ const getSitesSource = (self) => {
         0: getWhereStatement(self.props.query),
       }),
     },
-    url: 'https://air.discomap.eea.europa.eu/arcgis/rest/services/Air/IED_SiteMap/MapServer',
+    url: "https://air.discomap.eea.europa.eu/arcgis/rest/services/Air/IED_SiteMap/MapServer",
   });
 };
 
@@ -77,7 +79,7 @@ const getClosestFeatureToCoordinate = (coordinate, features) => {
       x,
       y,
       closestPoint,
-      minSquaredDistance,
+      minSquaredDistance
     );
     if (minSquaredDistance < previousMinSquaredDistance) {
       closestFeature = feature;
@@ -86,6 +88,7 @@ const getClosestFeatureToCoordinate = (coordinate, features) => {
 
   return closestFeature;
 };
+
 class View extends React.PureComponent {
   /**
    * Property types.
@@ -120,10 +123,16 @@ class View extends React.PureComponent {
     this.layerSites = React.createRef();
     this.overlayPopup = React.createRef();
     this.overlayPopupDetailed = React.createRef();
+    this.lat = 0;
+    this.lng = 0;
+
+    const query = new URLSearchParams(window.location.search);
+    this.lat = query.get("lat");
+    this.lng = query.get("lng");
   }
 
   componentDidMount() {
-    window['__where'] = getWhereStatement(this.props.query);
+    window["__where"] = getWhereStatement(this.props.query);
   }
 
   componentWillUnmount() {
@@ -134,12 +143,25 @@ class View extends React.PureComponent {
     if (!this.state.mapRendered || !this.map.current) return;
     const { extent, proj } = openlayers;
     const { filter_change, filter_search } = this.props.query;
-    window['__where'] = getWhereStatement(this.props.query);
+    window["__where"] = getWhereStatement(this.props.query);
     const filter_countries = (this.props.query.filter_countries || []).filter(
-      (value) => value,
+      (value) => value
     );
     if (!prevState.mapRendered) {
-      this.centerToUserLocation();
+      if (this.lat && this.lng) {
+        const formattedLatLng = mercatorToLatLon(this.lng, this.lat);
+        this.centerToQueryLocation(
+          {
+            coords: {
+              latitude: formattedLatLng.lat,
+              longitude: formattedLatLng.lng,
+            },
+          },
+          12
+        );
+      } else {
+        this.centerToUserLocation();
+      }
     }
     if (filter_change?.counter !== prevProps.query.filter_change?.counter) {
       /* Trigger update of features style */
@@ -153,10 +175,10 @@ class View extends React.PureComponent {
           // this.layerRegions.current.changed();
         },
         1,
-        500,
+        500
       );
       /* Fit view if necessary */
-      if (filter_change.type === 'search-location') {
+      if (filter_change.type === "search-location") {
         getLocationExtent(filter_search).then(({ data }) => {
           if (data.candidates?.length > 0) {
             this.map.current
@@ -171,11 +193,11 @@ class View extends React.PureComponent {
                 {
                   maxZoom: 16,
                   duration: 1000,
-                },
+                }
               );
           }
         });
-      } else if (filter_change.type === 'search-site') {
+      } else if (filter_change.type === "search-site") {
         getSiteExtent(filter_search).then(({ data }) => {
           const extent = data?.results?.[0] || {};
           if (
@@ -189,7 +211,7 @@ class View extends React.PureComponent {
                 warn
                 title=""
                 content={`No results for ${filter_search.text}`}
-              />,
+              />
             );
           } else {
             this.map.current
@@ -200,7 +222,7 @@ class View extends React.PureComponent {
               });
           }
         });
-      } else if (filter_change.type === 'search-facility') {
+      } else if (filter_change.type === "search-facility") {
         getFacilityExtent(filter_search).then(({ data }) => {
           const extent = data?.results?.[0] || {};
           if (
@@ -214,7 +236,7 @@ class View extends React.PureComponent {
                 warn
                 title=""
                 content={`No results for ${filter_search.text}`}
-              />,
+              />
             );
           } else {
             this.map.current
@@ -226,8 +248,8 @@ class View extends React.PureComponent {
           }
         });
       } else if (
-        (filter_change.type === 'advanced-filter' ||
-          filter_change.type === 'simple-filter') &&
+        (filter_change.type === "advanced-filter" ||
+          filter_change.type === "simple-filter") &&
         filter_countries.length
       ) {
         const countriesOptions = this.props.providers_data.countries || {};
@@ -251,9 +273,9 @@ class View extends React.PureComponent {
                     reqExtent.xmax,
                     reqExtent.ymax,
                   ],
-                  'EPSG:4326',
-                  'EPSG:3857',
-                ),
+                  "EPSG:4326",
+                  "EPSG:3857"
+                )
               );
             }
           });
@@ -277,6 +299,18 @@ class View extends React.PureComponent {
     }
   }
 
+  centerToQueryLocation(position, zoom) {
+    const { proj } = openlayers;
+    return this.map.current.getView().animate({
+      center: proj.fromLonLat([
+        position.coords.longitude,
+        position.coords.latitude,
+      ]),
+      duration: 1000,
+      zoom,
+    });
+  }
+
   centerToPosition(position, zoom) {
     const { proj } = openlayers;
     return this.map.current.getView().animate({
@@ -298,7 +332,7 @@ class View extends React.PureComponent {
           return this.centerToPosition(position, 12);
         },
         // Errors
-        () => {},
+        () => {}
       );
     } else {
       this.map.current
@@ -333,7 +367,7 @@ class View extends React.PureComponent {
   }
 
   onPointermove(e) {
-    if (__SERVER__ || !this.overlayPopup.current || e.type !== 'pointermove')
+    if (__SERVER__ || !this.overlayPopup.current || e.type !== "pointermove")
       return;
     if (e.dragging) {
       // e.map.getTarget().style.cursor = 'grabbing';
@@ -341,17 +375,17 @@ class View extends React.PureComponent {
     }
     if (
       doesNodeContainClick(
-        document.querySelector('#map-sidebar'),
-        e.originalEvent,
+        document.querySelector("#map-sidebar"),
+        e.originalEvent
       )
     ) {
       this.overlayPopup.current?.setPosition(undefined);
-      e.map.getTarget().style.cursor = '';
+      e.map.getTarget().style.cursor = "";
       return;
     }
     const zoom = e.map.getView().getZoom();
     const { coordinate, proj } = openlayers;
-    const mapElement = document.querySelector('#industry-map');
+    const mapElement = document.querySelector("#industry-map");
     const resolution = e.map.getView().getResolution();
     const pointerExtent = [
       e.coordinate[0] - (zoom >= 8 ? 8 : 6) * resolution,
@@ -366,34 +400,34 @@ class View extends React.PureComponent {
         jsonp(
           getLayerSitesURL(pointerExtent),
           {
-            prefix: '__jps',
+            prefix: "__jps",
             param:
               (where
                 ? qs.stringify({
                     where,
                   })
-                : '') + '&callback',
+                : "") + "&callback",
           },
           (error, response) => {
             if (!error) {
               let features = esrijsonFormat.readFeatures(response);
               const feature = getClosestFeatureToCoordinate(
                 e.coordinate,
-                features,
+                features
               );
               if (!feature) {
                 this.overlayPopup.current.setPosition(undefined);
-                emitEvent(mapElement, 'ol-pointermove', {
+                emitEvent(mapElement, "ol-pointermove", {
                   bubbles: false,
                   detail: {},
                 });
                 return;
               }
               let hdms = coordinate.toStringHDMS(
-                proj.toLonLat(feature.getGeometry().flatCoordinates),
+                proj.toLonLat(feature.getGeometry().flatCoordinates)
               );
               const featuresProperties = feature.getProperties();
-              emitEvent(mapElement, 'ol-pointermove', {
+              emitEvent(mapElement, "ol-pointermove", {
                 bubbles: false,
                 detail: {
                   ...featuresProperties,
@@ -402,16 +436,16 @@ class View extends React.PureComponent {
                 },
               });
               this.overlayPopup.current.setPosition(e.coordinate);
-              e.map.getTarget().style.cursor = 'pointer';
+              e.map.getTarget().style.cursor = "pointer";
             }
-          },
+          }
         );
       },
       0,
-      250,
+      250
     );
     this.overlayPopup.current.setPosition(undefined);
-    e.map.getTarget().style.cursor = '';
+    e.map.getTarget().style.cursor = "";
   }
 
   onClick(e) {
@@ -426,7 +460,7 @@ class View extends React.PureComponent {
     const { coordinate, proj, format } = openlayers;
     const esrijsonFormat = new format.EsriJSON();
     const where = getWhereStatement(this.props.query);
-    const mapElement = document.querySelector('#industry-map');
+    const mapElement = document.querySelector("#industry-map");
     const resolution = e.map.getView().getResolution();
     const pointerExtent = [
       e.coordinate[0] - (zoom >= 8 ? 8 : 6) * resolution,
@@ -437,33 +471,33 @@ class View extends React.PureComponent {
     jsonp(
       getLayerSitesURL(pointerExtent),
       {
-        prefix: '__jps',
+        prefix: "__jps",
         param:
           (where
             ? qs.stringify({
                 where,
               })
-            : '') + '&callback',
+            : "") + "&callback",
       },
       (error, response) => {
         if (!error) {
           let features = esrijsonFormat.readFeatures(response);
           const feature = getClosestFeatureToCoordinate(e.coordinate, features);
           if (!feature) {
-            emitEvent(mapElement, 'ol-click', {
+            emitEvent(mapElement, "ol-click", {
               bubbles: false,
               detail: {},
             });
             return;
           }
           let hdms = coordinate.toStringHDMS(
-            proj.toLonLat(feature.getGeometry().flatCoordinates),
+            proj.toLonLat(feature.getGeometry().flatCoordinates)
           );
           const featuresProperties = feature.getProperties();
-          e.map.getTarget().style.cursor = '';
+          e.map.getTarget().style.cursor = "";
           this.overlayPopup.current.setPosition(undefined);
           this.overlayPopupDetailed.current.setPosition(e.coordinate);
-          emitEvent(mapElement, 'ol-click', {
+          emitEvent(mapElement, "ol-click", {
             bubbles: false,
             detail: {
               ...featuresProperties,
@@ -472,7 +506,7 @@ class View extends React.PureComponent {
             },
           });
         }
-      },
+      }
     );
   }
 
@@ -485,7 +519,7 @@ class View extends React.PureComponent {
   }
   render() {
     const { proj, source } = openlayers;
-    if (__SERVER__) return '';
+    if (__SERVER__) return "";
     return (
       <>
         <StyleWrapperView
@@ -507,7 +541,7 @@ class View extends React.PureComponent {
                         />
                       </div>
                     </Grid.Column>
-                    <Grid.Column width={8}>
+                    {/* <Grid.Column width={8}>
                       <div>
                         <Filters
                           data={this.props.data}
@@ -516,7 +550,7 @@ class View extends React.PureComponent {
                           dispatch={this.props.dispatch}
                         />
                       </div>
-                    </Grid.Column>
+                    </Grid.Column> */}
                   </Grid.Row>
                 </Grid>
               </Container>
@@ -659,7 +693,7 @@ class View extends React.PureComponent {
                   {this.state.loading ? (
                     <div className="loader">Loading...</div>
                   ) : (
-                    ''
+                    ""
                   )}
                 </Map>
               </PrivacyProtection>
@@ -675,7 +709,7 @@ export default compose(
   connect(
     (state) => ({
       query: {
-        ...qs.parse(state.router.location.search.replace('?', '')),
+        ...qs.parse(state.router.location.search.replace("?", "")),
         ...state.query.search,
       },
       location: state.router.location,
@@ -684,9 +718,9 @@ export default compose(
     }),
     {
       setQuery,
-    },
+    }
   ),
   connectToMultipleProvidersUnfiltered((props) => ({
     providers: props.data.providers,
-  })),
+  }))
 )(View);
