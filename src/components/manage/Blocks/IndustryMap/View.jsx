@@ -55,7 +55,7 @@ const debounce = (func, index, timeout = 200, ...args) => {
 const getWhereStatementFromUrl = (params) => {
   let query = "";
   for (const [key, value] of params.entries()) {
-    if (key == "siteName") {
+    if (key == 'siteName') {
       query += `siteName LIKE '${value}%'`;
     } else {
       query += `(${key} = ${value})`;
@@ -66,11 +66,6 @@ const getSitesSource = (self) => {
   // return {};
   const { source } = openlayers;
   const searchParams = new URLSearchParams(self.props.location.search);
-
-  console.log(
-    getWhereStatementFromUrl(searchParams),
-    getWhereStatement(self.props.query)
-  );
   return new source.TileArcGISRest({
     params: {
       layerDefs: JSON.stringify({
