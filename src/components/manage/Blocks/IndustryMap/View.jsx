@@ -154,7 +154,7 @@ class View extends React.PureComponent {
     const filter_countries = (this.props.query.filter_countries || []).filter(
       (value) => value,
     );
-    if (!prevState.mapRendered || prevProps.location !== this.props.location) {
+    if (!prevState.mapRendered) {
       if (this.lat && this.lng) {
         const formattedLatLng = mercatorToLatLon(this.lng, this.lat);
         this.centerToQueryLocation(
