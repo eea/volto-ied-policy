@@ -129,7 +129,10 @@ const View = (props) => {
                               !query.activeTab,
                           })}
                           href={`/industrial-site/environmental-information${getQueryString(
-                            newQuery,
+                            {
+                              ...newQuery,
+                              activeTab: '265771d8-d6e4-46d1-8ece-aeb402cd746b',
+                            },
                           )}`}
                           ignoreScroll={true}
                         >
@@ -144,8 +147,11 @@ const View = (props) => {
                               query.activeTab ===
                               '571297e7-195b-4528-80c8-5c95546a2eed',
                           })}
-                          href={`/industrial-site/regulatory-information${getQueryString(
-                            newQuery,
+                          href={`/industrial-site/environmental-information${getQueryString(
+                            {
+                              ...newQuery,
+                              activeTab: '571297e7-195b-4528-80c8-5c95546a2eed',
+                            },
                           )}`}
                           ignoreScroll={true}
                         >
