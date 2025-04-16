@@ -129,8 +129,6 @@ class View extends React.PureComponent {
     this.layerSites = React.createRef();
     this.overlayPopup = React.createRef();
     this.overlayPopupDetailed = React.createRef();
-    this.lat = 0;
-    this.lng = 0;
 
     const query = new URLSearchParams(this.props.location.search);
     this.lat = query.get('lat');
