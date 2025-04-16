@@ -17,9 +17,10 @@ const getAllIndexes = (arr, val) => {
 const View = (props) => {
   const [batConclusions, setBatConclusions] = React.useState({});
   const [installationsNth, setInstallationsNth] = React.useState({});
-  const provider_data = React.useMemo(() => props.provider_data || {}, [
-    props.provider_data,
-  ]);
+  const provider_data = React.useMemo(
+    () => props.provider_data || {},
+    [props.provider_data],
+  );
   const query = { ...props.query };
   const siteReportingYear = parseInt(query.siteReportingYear || '');
 

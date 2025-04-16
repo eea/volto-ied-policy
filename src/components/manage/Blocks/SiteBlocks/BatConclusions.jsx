@@ -45,9 +45,9 @@ const View = (props) => {
       {hasConclusions(data, installations) ? (
         <div className="bat-conclusions-wrapper">
           {installations.map((installation) => {
-            const conclusions = Object.keys(
-              data[installation] || {},
-            ).sort((a, b) => a.localeCompare(b));
+            const conclusions = Object.keys(data[installation] || {}).sort(
+              (a, b) => a.localeCompare(b),
+            );
 
             return conclusions.length ? (
               <div
