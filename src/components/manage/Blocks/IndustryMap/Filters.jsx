@@ -60,7 +60,7 @@ const Filters = ({ data, providers_data, query, dispatch }) => {
         });
       }
     }
-  }, [data, providers_data, filtersInitialized, options, setInitialFilters]);
+  }, [data, providers_data, filtersInitialized, permitTypes, setInitialFilters]);
 
   useEffect(() => {
     if (providers_data !== prevProvidersData.current) {
