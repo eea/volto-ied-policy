@@ -16,8 +16,7 @@ import PollutantIndexView from './components/manage/Blocks/PolluantsTable/View';
 import PollutantIndexEdit from './components/manage/Blocks/PolluantsTable/Edit';
 import addonReducers from './reducers';
 import EnvironmentalInformation from './views/EnvironmentalInformation';
-import IndustryDataTable from './components/manage/Blocks/IndustryMap/IndustryDataTable.jsx';
-import industryDataTableSchema from './components/manage/Blocks/IndustryMap/industryDataTableSchema.js';
+import IndustryDataTable from './components/IndustryDataTableVariation.jsx';
 const restrictedBlocks = ['imagecards', 'embed_eea_tableau_block'];
 
 const customBlocks = [
