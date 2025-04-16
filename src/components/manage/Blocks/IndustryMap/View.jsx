@@ -127,7 +127,7 @@ class View extends React.PureComponent {
   }
 
   componentWillUnmount() {
-    this.setState({ mapRendered: false });
+    // this.setState({ mapRendered: false });
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -279,14 +279,15 @@ class View extends React.PureComponent {
 
   centerToPosition(position, zoom) {
     const { proj } = openlayers;
-    return this.map.current.getView().animate({
-      center: proj.fromLonLat([
-        position.coords.longitude,
-        position.coords.latitude,
-      ]),
-      duration: 1000,
-      zoom,
-    });
+    if (this.map.current)
+      return this.map.current.getView().animate({
+        center: proj.fromLonLat([
+          position.coords.longitude,
+          position.coords.latitude,
+        ]),
+        duration: 1000,
+        zoom,
+      });
   }
 
   centerToUserLocation(ignoreExtent = false) {
@@ -494,33 +495,6 @@ class View extends React.PureComponent {
         styled={true}
       >
         <div className="industry-map-wrapper">
-          {!this.props.data?.hideFilters && (
-            <Container>
-              <Grid>
-                <Grid.Row>
-                  <Grid.Column width={4}>
-                    <div className="styled-navigationBlock type-1 has--style_name--type1 styled">
-                      <NavigationBlock
-                        data={this.props.data}
-                        screen={this.props.screen}
-                        navigation={this.props.navigation}
-                      />
-                    </div>
-                  </Grid.Column>
-                  <Grid.Column width={8}>
-                    <div>
-                      <Filters
-                        data={this.props.data}
-                        providers_data={this.props.providers_data}
-                        query={this.props.query}
-                        dispatch={this.props.dispatch}
-                      />
-                    </div>
-                  </Grid.Column>
-                </Grid.Row>
-              </Grid>
-            </Container>
-          )}
           <div id="industry-map" className="industry-map">
             <PrivacyProtection data={{ dataprotection }}>
               <Map

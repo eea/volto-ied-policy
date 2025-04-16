@@ -17,15 +17,17 @@ class Popup extends React.PureComponent {
   }
 
   componentDidMount() {
-    document
-      .querySelector('#industry-map')
-      .addEventListener('ol-pointermove', this.onPointermove);
+    if (document && document.querySelector('#industry-map'))
+      document
+        .querySelector('#industry-map')
+        .addEventListener('ol-pointermove', this.onPointermove);
   }
 
   componentWillUnmount() {
-    document
-      .querySelector('#industry-map')
-      .removeEventListener('ol-pointermove', this.onPointermove);
+    if (document && document.querySelector('#industry-map'))
+      document
+        .querySelector('#industry-map')
+        .removeEventListener('ol-pointermove', this.onPointermove);
   }
 
   render() {

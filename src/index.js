@@ -4,7 +4,6 @@ import { addStylingFieldsetSchemaEnhancer } from '@eeacms/volto-ied-policy/compo
 import documentIcon from '@plone/volto/icons/doument-details.svg';
 import installBlocks from './components/manage/Blocks';
 import installStyles from './styles-config';
-import installDataTable from './customizations/@eeacms/volto-datablocks/components/manage/Blocks/SimpleDataTable';
 import iconSVG from '@plone/volto/icons/tag.svg';
 import biseLogo from '@eeacms/volto-ied-policy/../theme/assets/images/Header/ied-logo.svg';
 import biseWhiteLogo from '@eeacms/volto-ied-policy/../theme/assets/images/Header/ied-logo.svg';
@@ -14,8 +13,20 @@ import EditView from './components/manage/Blocks/ConnectedList/Edit.jsx';
 import getSchema from './components/manage/Blocks/ConnectedList/schema.js';
 import PollutantIndexView from './components/manage/Blocks/PolluantsTable/View';
 import PollutantIndexEdit from './components/manage/Blocks/PolluantsTable/Edit';
+import siteHeaderSchema from './components/manage/Blocks/SiteBlocks/Header/schema.js';
+import SiteHeader from './components/manage/Blocks/SiteBlocks/Header/View.jsx';
 import addonReducers from './reducers';
-import EnvironmentalInformation from './views/EnvironmentalInformation';
+
+import installEnvironmentalFacilityDetails from './components/manage/Blocks/SiteBlocks/EnvironmentalFacilityDetails';
+import installEnvironmentalLcpDetails from './components/manage/Blocks/SiteBlocks/EnvironmentalLcpDetails';
+import installEnvironmentalSiteDetails from './components/manage/Blocks/SiteBlocks/EnvironmentalSiteDetails';
+import installRegulatoryBATConclusions from './components/manage/Blocks/SiteBlocks/RegulatoryBATConclusions';
+import installRegulatoryPermits from './components/manage/Blocks/SiteBlocks/RegulatoryPermits';
+import installRegulatorySiteDetails from './components/manage/Blocks/SiteBlocks/RegulatorySiteDetails';
+import installSiteHeader from './components/manage/Blocks/SiteBlocks/Header';
+import EnvironmentalSiteDetails from './components/manage/Blocks/SiteBlocks/EnvironmentalSiteDetails/View.jsx';
+import enviromentalSiteSchema from './components/manage/Blocks/SiteBlocks/EnvironmentalSiteDetails/schema.js';
+
 const restrictedBlocks = ['imagecards', 'embed_eea_tableau_block'];
 
 const customBlocks = [
@@ -54,12 +65,41 @@ const n2kLanguages = [
   { name: 'Svenska', code: 'sv' },
 ];
 
+// const installEprtrSpecificBlocks = (config) => {
+//   return [
+//     installEnvironmentalFacilityDetails,
+//     installEnvironmentalLcpDetails,
+//     installEnvironmentalSiteDetails,
+//     installRegulatoryBATConclusions,
+//     installRegulatoryPermits,
+//     installRegulatorySiteDetails,
+//     installSiteHeader,
+//   ].reduce((acc, apply) => apply(acc), config);
+// };
 const applyConfig = (config) => {
   // Volto specific settings
 
   config.settings = {
     ...config.settings,
     navDepth: 3,
+  };
+  config.blocks.blocksConfig.siteHeader = {
+    view: SiteHeader,
+    edit: SiteHeader,
+    title: 'Site header',
+    getSchema: siteHeaderSchema,
+    id: 'siteHeader',
+    icon: documentIcon,
+    group: 'eprtr_blocks',
+  };
+  config.blocks.blocksConfig.environmental_site_details = {
+    view: EnvironmentalSiteDetails,
+    edit: EnvironmentalSiteDetails,
+    schema: enviromentalSiteSchema,
+    id: 'environmental_site_details',
+    icon: documentIcon,
+    group: 'eprtr_blocks',
+    title: 'Environmenta Site Details',
   };
 
   config.blocks.blocksConfig.polluantTable = {
@@ -100,8 +140,6 @@ const applyConfig = (config) => {
     config.settings.eea?.defaultLanguage || 'en';
 
   // mega menu layout settings
-  config.views.contentTypesViews['environmental_information'] =
-    EnvironmentalInformation;
 
   // EEA customizations
   config.settings.eea = {
@@ -216,7 +254,7 @@ const applyConfig = (config) => {
       addStylingFieldsetSchemaEnhancer;
   }
 
-  config = [installBlocks, installStyles, installDataTable].reduce(
+  config = [installBlocks, installStyles].reduce(
     (acc, apply) => apply(acc),
     config,
   );
@@ -238,7 +276,23 @@ const applyConfig = (config) => {
       config.blocks.blocksConfig[block].group = 'custom_blocks';
     }
   });
-
+  config.blocks.blocksConfig.simpleDataConnectedTable.restricted = true;
+  config.blocks.blocksConfig.simpleDataConnectedTable.templates = {
+    ...(config.blocks.blocksConfig.simpleDataConnectedTable?.templates || {}),
+    industry: {
+      title: 'Industry',
+      view: () => <>test</>,
+    },
+  };
+  config.blocks.blocksConfig.data_table.variations = [
+    ...config.blocks.blocksConfig.data_table.variations,
+    {
+      id: 'default2',
+      title: 'Default 2',
+      isDefault: true,
+      view: () => <></>,
+    },
+  ];
   return config;
 };
 
