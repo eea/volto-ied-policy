@@ -136,7 +136,6 @@ class View extends React.PureComponent {
   }
 
   componentDidMount() {
-    console.log('HERE!');
     // window['__where'] = getWhereStatement(this.props.query);
   }
 
@@ -154,7 +153,6 @@ class View extends React.PureComponent {
       (value) => value,
     );
     if (!prevState.mapRendered) {
-      console.log('HERE: ', { lat: this.lat, lng: this.lng });
       if (this.lat && this.lng) {
         const formattedLatLng = mercatorToLatLon(this.lng, this.lat);
         this.centerToQueryLocation(
