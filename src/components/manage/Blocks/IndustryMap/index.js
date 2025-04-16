@@ -374,4 +374,11 @@ const applyIndustryMapBlockConfig = (config) => {
   return config;
 };
 
+export const mercatorToLatLon = (x, y) => {
+  const R = 6378137.0; // Radius of Earth in meters
+  const lng = (x / R) * (180 / Math.PI);
+  const lat = (2 * Math.atan(Math.exp(y / R)) - Math.PI / 2) * (180 / Math.PI);
+  return { lat, lng };
+}
+
 export default applyIndustryMapBlockConfig;
