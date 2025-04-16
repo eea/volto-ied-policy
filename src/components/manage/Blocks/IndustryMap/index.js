@@ -9,7 +9,7 @@ import {
 import IndustryMapEdit from './Edit';
 import IndustryMapView from './View';
 
-const filters = [
+export const filters = [
   {
     queryKey: 'filter_bat_conclusions',
     featureKey: 'batConclusionCode',
@@ -335,7 +335,7 @@ export const getWhereStatement = (data) => {
   if (search?.type === 'facility' && search?.text) {
     where[filter++] = [`facilityNames LIKE '%${search.text.trim()}%'`];
   }
-
+  console.log(where);
   return where
     .filter((w) => w.length)
     .map((w) => `(${w.join(' OR ')})`)

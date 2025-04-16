@@ -18,19 +18,21 @@ const IndustryDataTable = (props) => {
     data = {},
     pagination,
     updatePagination = () => {},
-    data_providers,
     loadingProviderData,
     rows,
   } = props;
   const withPagination = data.withPagination;
-  const siteMapTableProvider =
-    data_providers?.data?.['/data-connectors/site-map-table'];
-  const tableData =
-    siteMapTableProvider?.[
-      Object.keys(siteMapTableProvider ?? {})[
-        Object.keys(siteMapTableProvider ?? {}).length - 1
-      ]
-    ];
+
+  const tableData = {};
+
+  rows.forEach(obj => {
+    for (const [key, value] of Object.entries(obj)) {
+      if (!tableData[key]) {
+        tableData[key] = [];
+      }
+      tableData[key].push(value);
+    }
+  });
   const row_size = data.itemsPerPage;
 
   return (
