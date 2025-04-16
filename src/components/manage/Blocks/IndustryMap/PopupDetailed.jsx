@@ -1,7 +1,7 @@
-import React from "react";
-import { UniversalLink } from "@plone/volto/components";
-import { Modal } from "semantic-ui-react";
-import { mercatorToLatLon } from "./index";
+import React from 'react';
+import { UniversalLink } from '@plone/volto/components';
+import { Modal } from 'semantic-ui-react';
+import { mercatorToLatLon } from './index';
 
 class PopupDetailed extends React.PureComponent {
   constructor(props) {
@@ -26,14 +26,14 @@ class PopupDetailed extends React.PureComponent {
 
   componentDidMount() {
     document
-      .querySelector("#industry-map")
-      ?.addEventListener("ol-click", this.onClick);
+      .querySelector('#industry-map')
+      ?.addEventListener('ol-click', this.onClick);
   }
 
   componentWillUnmount() {
     document
-      .querySelector("#industry-map")
-      ?.removeEventListener("ol-click", this.onClick);
+      .querySelector('#industry-map')
+      ?.removeEventListener('ol-click', this.onClick);
   }
 
   render() {
@@ -62,59 +62,59 @@ class PopupDetailed extends React.PureComponent {
           <h3>Site contents</h3>
           {data.count_factype_EPRTR ? (
             <p className="info">
-              {data.count_factype_EPRTR} EPRTR{" "}
-              {data.count_factype_EPRTR > 1 ? "Facilities" : "Facility"}
+              {data.count_factype_EPRTR} EPRTR{' '}
+              {data.count_factype_EPRTR > 1 ? 'Facilities' : 'Facility'}
             </p>
           ) : (
-            ""
+            ''
           )}
           {data.count_factype_NONEPRTR ? (
             <p className="info">
-              {data.count_factype_NONEPRTR} NON-EPRTR{" "}
-              {data.count_factype_NONEPRTR > 1 ? "Facilities" : "Facility"}
+              {data.count_factype_NONEPRTR} NON-EPRTR{' '}
+              {data.count_factype_NONEPRTR > 1 ? 'Facilities' : 'Facility'}
             </p>
           ) : (
-            ""
+            ''
           )}
           {data.count_instype_IED ? (
             <p className="info">
               {data.count_instype_IED} IED Installation
-              {data.count_instype_IED > 1 ? "s" : ""}
+              {data.count_instype_IED > 1 ? 's' : ''}
             </p>
           ) : (
-            ""
+            ''
           )}
           {data.count_instype_NONIED ? (
             <p className="info">
               {data.count_instype_NONIED} NON-IED Installation
-              {data.count_instype_NONIED > 1 ? "s" : ""}
+              {data.count_instype_NONIED > 1 ? 's' : ''}
             </p>
           ) : (
-            ""
+            ''
           )}
           {data.count_plantType_LCP ? (
             <p className="info">
               {data.count_plantType_LCP} Large combustion plant
-              {data.count_plantType_LCP > 1 ? "s" : ""}
+              {data.count_plantType_LCP > 1 ? 's' : ''}
             </p>
           ) : (
-            ""
+            ''
           )}
           {data.count_plantType_WI ? (
             <p className="info">
               {data.count_plantType_WI} Waste incinerator
-              {data.count_plantType_WI > 1 ? "s" : ""}
+              {data.count_plantType_WI > 1 ? 's' : ''}
             </p>
           ) : (
-            ""
+            ''
           )}
           {data.count_plantType_coWI ? (
             <p className="info">
               {data.count_plantType_coWI} Co-waste incinerator
-              {data.count_plantType_coWI > 1 ? "s" : ""}
+              {data.count_plantType_coWI > 1 ? 's' : ''}
             </p>
           ) : (
-            ""
+            ''
           )}
           <h3>Pollutant emissions</h3>
           {data.pollutants ? (
@@ -125,11 +125,11 @@ class PopupDetailed extends React.PureComponent {
           <h3>Regulatory information</h3>
           {data.Site_reporting_year ? (
             <p>
-              Inspections in {data.Site_reporting_year}:{" "}
+              Inspections in {data.Site_reporting_year}:{' '}
               {data.numInspections || 0}
             </p>
           ) : (
-            ""
+            ''
           )}
         </Modal.Content>
         <Modal.Actions className="solid-button">

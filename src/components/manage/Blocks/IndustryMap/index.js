@@ -379,6 +379,6 @@ export const mercatorToLatLon = (x, y) => {
   const lng = (x / R) * (180 / Math.PI);
   const lat = (2 * Math.atan(Math.exp(y / R)) - Math.PI / 2) * (180 / Math.PI);
   return { lat, lng };
-}
+};
 
 export default applyIndustryMapBlockConfig;
