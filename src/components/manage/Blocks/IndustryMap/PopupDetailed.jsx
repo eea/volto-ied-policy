@@ -1,6 +1,7 @@
 import React from 'react';
 import { UniversalLink } from '@plone/volto/components';
 import { Modal } from 'semantic-ui-react';
+import { mercatorToLatLon } from './index';
 
 class PopupDetailed extends React.PureComponent {
   constructor(props) {
@@ -38,6 +39,13 @@ class PopupDetailed extends React.PureComponent {
   render() {
     const { data } = this.state;
     const open = !!Object.keys(data).length;
+    let href = `/industrial-site/environmental-information?siteInspireId=${data.InspireSiteId}&siteName=${data.siteName}&siteReportingYear=${data.Site_reporting_year}`;
+
+    if (data.flatCoordinates) {
+      const [lng, lat] = data.flatCoordinates;
+      const formattedLatLng = mercatorToLatLon(lng, lat);
+      href += `lat=${formattedLatLng.lat}&lng=${formattedLatLng.lng}`;
+    }
 
     return (
       <Modal
@@ -127,7 +135,7 @@ class PopupDetailed extends React.PureComponent {
         <Modal.Actions className="solid-button">
           <UniversalLink
             className="solid dark-blue display-inline-block"
-            href={`/industrial-site/environmental-information?siteInspireId=${data.InspireSiteId}&siteName=${data.siteName}&siteReportingYear=${data.Site_reporting_year}`}
+            href={href}
           >
             Site details
           </UniversalLink>
