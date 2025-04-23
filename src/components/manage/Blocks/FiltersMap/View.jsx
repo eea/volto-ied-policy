@@ -7,7 +7,6 @@ import { getOptions, permitTypes } from './dictionary';
 import { connect } from 'react-redux';
 import { connectToMultipleProvidersUnfiltered } from '@eeacms/volto-datablocks/hocs';
 import { compose } from 'redux';
-
 import './styles.less';
 
 const View = ({ data, providers_data, query, dispatch }) => {

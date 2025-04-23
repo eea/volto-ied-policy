@@ -90,35 +90,9 @@ const setParamsQuery = (data) => {
       query.filter_eprtr_AnnexIActivity.join(','),
     );
   }
-  if (facility_types?.filter(Boolean)?.length === 1) {
-    const type = facility_types.includes('EPRTR') ? 'EPRTR' : 'NONEPRTR';
-    urlParams.append('facilityTypes_like', type);
+  if (query?.filter_bat_conclusions?.length > 0) {
+    urlParams.append('bat_conclusions', query.filter_bat_conclusions.join(','));
   }
-
-  if (installation_types.includes('IED')) {
-    urlParams.append('count_instype_IED_min', '1');
-  }
-
-  if (installation_types.includes('NONIED')) {
-    urlParams.append('count_instype_NONIED_min', '1');
-  }
-
-  if (thematic_information.includes('has_release')) {
-    urlParams.append('has_release_data_min', '1');
-  }
-
-  if (thematic_information.includes('has_transfer')) {
-    urlParams.append('has_transfer_data_min', '1');
-  }
-
-  if (thematic_information.includes('has_waste')) {
-    urlParams.append('has_waste_data_min', '1');
-  }
-
-  if (thematic_information.includes('has_seveso')) {
-    urlParams.append('has_seveso_min', '1');
-  }
-
   if (search?.type === 'site' && search?.text) {
     urlParams.append('siteName', search.text.trim());
   }
