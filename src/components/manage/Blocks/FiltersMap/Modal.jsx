@@ -99,6 +99,11 @@ const setParamsQuery = (data) => {
   if (query?.filter_permit_years?.length > 0) {
     urlParams.append('permit_years[like]', query.filter_permit_years.map(year => (`%${year}%`)).join(','));
   }
+  if (query?.filter_pollutants?.length > 0) {
+    urlParams.append('pollutants[like]', query.filter_pollutants.map(pollutant=> (`%${pollutant}%`)).join(','));
+    urlParams.append('air_groups[like]', query.filter_pollutant_groups.map(group=> (`%${group}%`)).join(','));
+  }
+  
   if (search?.type === 'site' && search?.text) {
     urlParams.append('siteName', search.text.trim());
   }

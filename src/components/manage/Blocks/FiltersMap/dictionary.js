@@ -34,24 +34,6 @@ export const inputsKeys = [
   'filter_thematic_information',
 ];
 
-export const inputKeysToQueryPar = [
-  { filter_bat_conclusions: 'bat_conclusions' },
-  { filter_countries: 'countryCode' },
-  { filter_eprtr_AnnexIActivity: 'eprtr_AnnexIActivity' },
-  { filter_facility_types: '' },
-  { filter_industries: '' },
-  { filter_installation_types: '' },
-  { filter_nuts_1: '' },
-  { filter_nuts_2: '' },
-  { filter_permit_types: 'permit_types' },
-  { filter_permit_years: 'permit_years' },
-  { filter_plant_types: '' },
-  { filter_pollutant_groups: '' },
-  { filter_pollutants: '' },
-  { filter_reporting_years: 'Site_reporting_year' },
-  { filter_river_basin_districts: '' },
-  { filter_thematic_information: '' },
-];
 
 export const permitTypes = [
   { key: null, value: null, text: 'No value' },
