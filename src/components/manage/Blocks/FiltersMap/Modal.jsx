@@ -228,8 +228,12 @@ const ModalView = ({
       filter_search_value: '',
     });
     setOpen(false);
+    history.replace({
+      pathname: location.pathname,
+      search: ''
+    });
     /* eslint-disable-next-line */
-  }, [query]);
+  }, [query,history, location]);
 
   const applyFilters = React.useCallback(() => {
     const newQuery = {
