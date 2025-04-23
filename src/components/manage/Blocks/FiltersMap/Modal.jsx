@@ -75,35 +75,63 @@ const setParamsQuery = (data) => {
   //   }
   // }
   console.log(query);
-  if (query?.filter_reporting_years?.length > 0) {
+  const filteredReportingYears = query?.filter_reporting_years?.filter(year => year != null) ?? [];
+
+  if (filteredReportingYears.length > 0) {
     urlParams.append(
       'Site_reporting_year[in]',
-      query.filter_reporting_years.join(','),
+      filteredReportingYears.join(','),
     );
   }
-  if (query?.filter_industries?.length > 0) {
-    urlParams.append('eprtr_sectors[in]', query.filter_industries.join(','));
+
+  const filteredIndustries = query.filter_industries.filter(industry => industry != null) ?? [];
+  if (filteredIndustries.length > 0) {
+    urlParams.append('eprtr_sectors[in]', filteredIndustries.join(','));
   }
-  if (query?.filter_eprtr_AnnexIActivity?.length > 0) {
+
+  const filteredEprtrAnnexIActivity = query.filter_eprtr_AnnexIActivity.filter(activity => activity != null) ?? [];
+  if (filteredEprtrAnnexIActivity.length > 0) {
     urlParams.append(
       'eprtr_AnnexIActivity[in]',
-      query.filter_eprtr_AnnexIActivity.join(','),
+      filteredEprtrAnnexIActivity.join(','),
     );
   }
-  if (query?.filter_bat_conclusions?.length > 0) {
-    urlParams.append('bat_conclusions[like]', query.filter_bat_conclusions.map(conclusion => (`%${conclusion}%`)).join(','));
+
+  const filteredBatConclusions = query.filter_bat_conclusions.filter(conclusion => conclusion != null) ?? [];
+  if (filteredBatConclusions.length > 0) {
+    urlParams.append('bat_conclusions[like]', filteredBatConclusions.map(conclusion => (`%${conclusion}%`)).join(','));
   }
-  if (query?.filter_permit_types?.length > 0) {
-    urlParams.append('permit_types[like]', query.filter_permit_types.map(type => (`%${type}%`)).join(','));
+
+  const filteredPermitTypes = query.filter_permit_types.filter(type => type != null) ?? [];
+  if (filteredPermitTypes.length > 0) {
+    urlParams.append('permit_types[like]', filteredPermitTypes.map(type => (`%${type}%`)).join(','));
   }
-  if (query?.filter_permit_years?.length > 0) {
-    urlParams.append('permit_years[like]', query.filter_permit_years.map(year => (`%${year}%`)).join(','));
+
+  const filteredPermitYears = query.filter_permit_years.filter(year => year != null) ?? [];
+  if (filteredPermitYears.length > 0) {
+    urlParams.append('permit_years[like]', filteredPermitYears.map(year => (`%${year}%`)).join(','));
   }
-  if (query?.filter_pollutants?.length > 0) {
-    urlParams.append('pollutants[like]', query.filter_pollutants.map(pollutant=> (`%${pollutant}%`)).join(','));
-    urlParams.append('air_groups[like]', query.filter_pollutant_groups.map(group=> (`%${group}%`)).join(','));
+
+  const filteredPollutants = query.filter_pollutants.filter(pollutant => pollutant != null) ?? [];
+  if (filteredPollutants.length > 0) {
+    urlParams.append('pollutants[like]', filteredPollutants.map(pollutant => (`%${pollutant}%`)).join(','));
   }
-  
+
+  const filteredPollutantsGroups = query.filter_pollutant_groups.filter(group => group != null) ?? [];
+  if (filteredPollutantsGroups.length > 0) {
+    urlParams.append('air_groups[like]', filteredPollutantsGroups.map(group => (`%${group}%`)).join(','));
+  }
+
+  const filteredCountryCodes = query.filter_countries.filter(code => code != null) ?? [];
+  if (filteredCountryCodes.length > 0) {
+    urlParams.append('countryCode[in]', filteredCountryCodes.join(','));
+  }
+
+  const filteredNuts = query.nuts_latest.filter(nuts => nuts != null) ?? [];
+  if (filteredNuts.length > 0) {
+    urlParams.append('nuts_regions[like]', filteredNuts.map(nuts => (`%${nuts}%`)).join(','));
+  }
+
   if (search?.type === 'site' && search?.text) {
     urlParams.append('siteName', search.text.trim());
   }
