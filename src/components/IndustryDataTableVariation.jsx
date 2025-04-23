@@ -55,7 +55,7 @@ const IndustryDataTable = (props) => {
             </Table.Row>
           </Table.Header>
           <Table.Body>
-            {Array(Math.max(0, row_size))
+            {Array(Math.max(0, rows?.length))
               .fill()
               .map((_, i) => {
                 const countFactypeEprtr =
