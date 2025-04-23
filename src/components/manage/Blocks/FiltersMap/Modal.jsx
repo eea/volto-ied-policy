@@ -91,7 +91,13 @@ const setParamsQuery = (data) => {
     );
   }
   if (query?.filter_bat_conclusions?.length > 0) {
-    urlParams.append('bat_conclusions', query.filter_bat_conclusions.join(','));
+    urlParams.append('bat_conclusions[like]', query.filter_bat_conclusions.map(conclusion => (`%${conclusion}%`)).join(','));
+  }
+  if (query?.filter_permit_types?.length > 0) {
+    urlParams.append('permit_types[like]', query.filter_permit_types.map(type => (`%${type}%`)).join(','));
+  }
+  if (query?.filter_permit_years?.length > 0) {
+    urlParams.append('permit_years[like]', query.filter_permit_years.map(year => (`%${year}%`)).join(','));
   }
   if (search?.type === 'site' && search?.text) {
     urlParams.append('siteName', search.text.trim());
