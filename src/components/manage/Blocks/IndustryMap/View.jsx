@@ -152,7 +152,11 @@ class View extends React.PureComponent {
     const filter_countries = (this.props.query.filter_countries || []).filter(
       (value) => value,
     );
-    if (!prevState.mapRendered || prevProps.query.lat != this.props.query.lat || prevProps.query.lng != this.props.query.lng) {
+    if (
+      !prevState.mapRendered ||
+      prevProps.query.lat != this.props.query.lat ||
+      prevProps.query.lng != this.props.query.lng
+    ) {
       this.lat = this.props?.query?.lat;
       this.lng = this.props?.query?.lng;
       if (this.lat && this.lng) {
@@ -443,7 +447,7 @@ class View extends React.PureComponent {
                   flatCoordinates: feature.getGeometry().flatCoordinates,
                 },
               });
-              if (!this?.overlayPopup?.current) return
+              if (!this?.overlayPopup?.current) return;
               this.overlayPopup.current.setPosition(e.coordinate);
               e.map.getTarget().style.cursor = 'pointer';
             }
