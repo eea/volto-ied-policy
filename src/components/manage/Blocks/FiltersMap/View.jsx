@@ -77,7 +77,6 @@ const View = ({ data, providers_data, query, dispatch }) => {
   useEffect(() => {
     if (providers_data !== prevProvidersData.current) {
       updateOptions();
-      console.log(s);
     }
     prevProvidersData.current = providers_data;
   }, [providers_data, updateOptions]);
