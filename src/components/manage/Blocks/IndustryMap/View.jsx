@@ -130,9 +130,9 @@ class View extends React.PureComponent {
     this.overlayPopup = React.createRef();
     this.overlayPopupDetailed = React.createRef();
 
-    const query = new URLSearchParams(this.props.location.search);
-    this.lat = query.get('lat');
-    this.lng = query.get('lng');
+    // const query = new URLSearchParams(this.props.location.search);
+    // this.lat = query.get('lat');
+    // this.lng = query.get('lng');
   }
 
   componentDidMount() {
@@ -152,7 +152,13 @@ class View extends React.PureComponent {
     const filter_countries = (this.props.query.filter_countries || []).filter(
       (value) => value,
     );
-    if (!prevState.mapRendered) {
+    if (
+      !prevState.mapRendered ||
+      prevProps.query.lat !== this.props.query.lat ||
+      prevProps.query.lng !== this.props.query.lng
+    ) {
+      this.lat = this.props?.query?.lat;
+      this.lng = this.props?.query?.lng;
       if (this.lat && this.lng) {
         const formattedLatLng = mercatorToLatLon(this.lng, this.lat);
         this.centerToQueryLocation(
@@ -328,9 +334,10 @@ class View extends React.PureComponent {
     });
   }
 
-  centerToUserLocation(ignoreExtent = false) {
+  centerToUserLocation(ignoreExtent = true) {
     if (__SERVER__ || !this.map.current || !navigator?.geolocation) return;
     const extent = this.props.query.map_extent;
+
     if (!extent || ignoreExtent) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -440,6 +447,7 @@ class View extends React.PureComponent {
                   flatCoordinates: feature.getGeometry().flatCoordinates,
                 },
               });
+              if (!this?.overlayPopup?.current) return;
               this.overlayPopup.current.setPosition(e.coordinate);
               e.map.getTarget().style.cursor = 'pointer';
             }

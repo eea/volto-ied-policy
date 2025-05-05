@@ -1,6 +1,7 @@
 import React from 'react';
 import { UniversalLink } from '@plone/volto/components';
 import { Modal } from 'semantic-ui-react';
+import { withRouter } from 'react-router-dom';
 
 class PopupDetailed extends React.PureComponent {
   constructor(props) {
@@ -28,13 +29,11 @@ class PopupDetailed extends React.PureComponent {
       .querySelector('#industry-map')
       ?.addEventListener('ol-click', this.onClick);
   }
-
   componentWillUnmount() {
     document
       .querySelector('#industry-map')
       ?.removeEventListener('ol-click', this.onClick);
   }
-
   render() {
     const { data } = this.state;
     const open = !!Object.keys(data).length;
@@ -134,6 +133,7 @@ class PopupDetailed extends React.PureComponent {
           <UniversalLink
             className="solid dark-blue display-inline-block"
             href={href}
+            onClick={this.onClose}
           >
             Site details
           </UniversalLink>
@@ -143,4 +143,4 @@ class PopupDetailed extends React.PureComponent {
   }
 }
 
-export default PopupDetailed;
+export default withRouter(PopupDetailed);
