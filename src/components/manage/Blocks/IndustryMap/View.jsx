@@ -154,8 +154,8 @@ class View extends React.PureComponent {
     );
     if (
       !prevState.mapRendered ||
-      prevProps.query.lat != this.props.query.lat ||
-      prevProps.query.lng != this.props.query.lng
+      prevProps.query.lat !== this.props.query.lat ||
+      prevProps.query.lng !== this.props.query.lng
     ) {
       this.lat = this.props?.query?.lat;
       this.lng = this.props?.query?.lng;
