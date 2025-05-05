@@ -88,7 +88,9 @@
   border-left: 2px solid #4296b3 !important;
   content: '';
 }
-
+.entity.facilities {
+  border: none !important;
+}
 .sidebar-block .ui.menu .item,
 .sidebar-block .ui.menu .item.active {
   padding-bottom: 1rem;
@@ -134,4 +136,12 @@
 
 .sidebar-block .ui.menu .item.active.depth__3 {
   color: #333333;
+}
+.sidebar-block {
+  .menu {
+    border: none !important;
+  }
+  .menu {
+    box-shadow: none !important;
+  }
 }
