@@ -70,7 +70,7 @@ const View = ({ data, providers_data, query, dispatch }) => {
     providers_data,
     filtersInitialized,
     setInitialFilters,
-    permitTypes,
+    // permitTypes,
     options,
   ]);
 
