@@ -2,6 +2,8 @@ import { getBlocks } from '@plone/volto/helpers';
 import installLink from '@plone/volto-slate/editor/plugins/AdvancedLink';
 import { addStylingFieldsetSchemaEnhancer } from '@eeacms/volto-ied-policy/components/manage/Blocks/schema';
 import documentIcon from '@plone/volto/icons/doument-details.svg';
+import sliderSVG from '@plone/volto/icons/slider.svg';
+
 import installBlocks from './components/manage/Blocks';
 import installStyles from './styles-config';
 import installDataTable from './customizations/@eeacms/volto-datablocks/components/manage/Blocks/SimpleDataTable';
@@ -28,6 +30,10 @@ import RegulatoryPermitsSchema from './components/manage/Blocks/SiteBlocks/Regul
 import SiteStrucutre from './components/manage/Blocks/SiteBlocks/SiteStructureSidebar/View.jsx';
 import SiteStrucutreSchema from './components/manage/Blocks/SiteBlocks/SiteStructureSidebar/schema.js';
 import SiteHeader from './components/manage/Blocks/SiteBlocks/Header/View.jsx';
+
+import TableauEdit from './components/manage/Blocks/SiteTableau/Edit';
+import TableauView from './components/manage/Blocks/SiteTableau/View';
+
 const restrictedBlocks = ['imagecards', 'embed_eea_tableau_block'];
 
 const customBlocks = [
@@ -72,6 +78,29 @@ const applyConfig = (config) => {
   config.settings = {
     ...config.settings,
     navDepth: 3,
+  };
+
+  config.blocks.blocksConfig.site_tableau_block = {
+    id: 'site_tableau_block',
+    title: 'Site tableau',
+    icon: sliderSVG,
+    group: 'data_blocks',
+    edit: TableauEdit,
+    view: TableauView,
+    restricted: false,
+    mostUsed: false,
+    sidebarTab: 1,
+    blocks: {},
+    security: {
+      addPermission: [],
+      view: [],
+    },
+    breakpoints: {
+      desktop: [Infinity, 982],
+      tablet: [981, 768],
+      mobile: [767, 0],
+    },
+    defaultProviderUrl: '/data-connectors/site-flags',
   };
 
   config.blocks.blocksConfig.polluantTable = {

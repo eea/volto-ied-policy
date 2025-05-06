@@ -196,11 +196,11 @@ const View = (props) => {
                                     item: true,
                                     active:
                                       pathname ===
-                                        `/industrial-site/regulatory-information/installation-overview` &&
+                                        `/industrial-site/installation-overview` &&
                                       query.installationInspireId ===
                                         installation,
                                   })}
-                                  href={`/industrial-site/regulatory-information/installation-overview${getQueryString(
+                                  href={`/industrial-site/installation-overview${getQueryString(
                                     {
                                       ...newQuery,
                                       facilityInspireId: facility,
