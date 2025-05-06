@@ -46,11 +46,6 @@
   margin-left: auto !important;
 }
 
-.map-render {
-  min-height: 500px;
-  padding-top: 50px;
-}
-
 .site-header .ui.selection.dropdown {
   min-height: auto;
   flex-flow: row;

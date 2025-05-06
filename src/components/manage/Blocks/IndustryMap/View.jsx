@@ -489,7 +489,11 @@ const View = (props) => {
         styleData={props.data.styles || {}}
         styled={true}
       >
-        <div className="industry-map-wrapper">
+        <div
+          className={`industry-map-wrapper${
+            props.data?.navigation?.smallHeight ? ' small-height' : ''
+          }`}
+        >
           <div id="industry-map" className="industry-map">
             <PrivacyProtection data={{ dataprotection }}>
               <Map
