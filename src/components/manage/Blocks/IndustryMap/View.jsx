@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import jsonp from 'jsonp';
@@ -20,7 +20,6 @@ import { emitEvent } from '@eeacms/volto-ied-policy/helpers.js';
 
 import {
   dataprotection,
-  getStyles,
   getLayerSitesURL,
   // getLayerRegionsURL,
   getLayerBaseURL,
@@ -99,18 +98,12 @@ const View = (props) => {
   const [mapRendered, setMapRendered] = useState(false);
   const [loading, setLoading] = useState(false);
   const map = useRef(null);
-  const layerRegions = useRef(null);
   const layerSites = useRef(null);
   const overlayPopup = useRef(null);
   const overlayPopupDetailed = useRef(null);
-  const onFeatureLoad = (e) => {
-    const { loaded } = e.detail;
-    if (loaded && loading) {
-      setLoading(false);
-    } else if (!loaded && !loading) {
-      setLoading(true);
-    }
-  };
+
+  const { proj, source, extent } = openlayers;
+
   const centerToQueryLocation = (position, zoom) => {
     const { proj } = openlayers;
     return map.current.getView().animate({
@@ -122,6 +115,7 @@ const View = (props) => {
       zoom,
     });
   };
+
   const centerToPosition = (position, zoom) => {
     const { proj } = openlayers;
     return map.current.getView().animate({
@@ -133,46 +127,32 @@ const View = (props) => {
       zoom,
     });
   };
-  const centerToUserLocation = (ignoreExtent = true) => {
-    if (__SERVER__ || !map.current || !navigator?.geolocation) return;
-    const extent = props.query.map_extent;
 
-    if (!extent || ignoreExtent) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          return centerToPosition(position, 12);
-        },
-        // Errors
-        () => {},
-      );
-    } else {
-      map.current.getView().fit([extent[0], extent[1], extent[2], extent[3]], {
-        maxZoom: 16,
-        duration: 1000,
-      });
-    }
-  };
-  const getFeatureInRange = (map, point, range = 3) => {
-    let x = 0;
-    let y = 0;
-    let dx = 0;
-    let dy = -1;
-    for (let i = 0; i <= range * range; i++) {
-      const features =
-        map.getFeaturesAtPixel([point[0] + x, point[1] + y]) || null;
-      if (features?.length) {
-        return features;
+  const centerToUserLocation = useCallback(
+    (ignoreExtent = true) => {
+      if (__SERVER__ || !map.current || !navigator?.geolocation) return;
+      const extent = props.query.map_extent;
+
+      if (!extent || ignoreExtent) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            return centerToPosition(position, 12);
+          },
+          // Errors
+          () => {},
+        );
+      } else {
+        map.current
+          .getView()
+          .fit([extent[0], extent[1], extent[2], extent[3]], {
+            maxZoom: 16,
+            duration: 1000,
+          });
       }
-      if (x === y || (x < 0 && x === -y) || (x > 0 && x === 1 - y)) {
-        let temp = dx;
-        dx = -dy;
-        dy = temp;
-      }
-      x += dx;
-      y += dy;
-    }
-    return null;
-  };
+    },
+    [props.query.map_extent],
+  );
+
   const onPointermove = (e) => {
     if (__SERVER__ || !overlayPopup.current || e.type !== 'pointermove') return;
     if (e.dragging) {
@@ -254,6 +234,7 @@ const View = (props) => {
     overlayPopup.current.setPosition(undefined);
     e.map.getTarget().style.cursor = '';
   };
+
   const onClick = (e) => {
     const zoom = e.map.getView().getZoom();
     if (__SERVER__ || !overlayPopup.current || !overlayPopupDetailed.current) {
@@ -312,6 +293,7 @@ const View = (props) => {
       },
     );
   };
+
   const onMoveend = (e) => {
     if (!e.map) return;
     const extent = e.map.getView().calculateExtent(e.map.getSize());
@@ -345,7 +327,8 @@ const View = (props) => {
     } else {
       centerToUserLocation();
     }
-  }, [mapRendered, props?.query?.lat, props?.query?.lng]);
+  }, [mapRendered, props?.query?.lat, props?.query?.lng, centerToUserLocation]);
+
   useEffect(() => {
     const { filter_change, filter_search } = props.query;
     if (!filter_change) return;
@@ -476,8 +459,9 @@ const View = (props) => {
       });
     }
   }, [props.query]);
-  const { proj, source } = openlayers;
+
   if (__SERVER__) return '';
+
   return (
     <>
       <StyleWrapperView
