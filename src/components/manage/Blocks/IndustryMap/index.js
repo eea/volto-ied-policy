@@ -335,10 +335,7 @@ export const getWhereStatement = (data) => {
   if (search?.type === 'facility' && search?.text) {
     where[filter++] = [`facilityNames LIKE '%${search.text.trim()}%'`];
   }
-  console.log(where
-    .filter((w) => w.length)
-    .map((w) => `(${w.join(' OR ')})`)
-    .join(' AND '))
+
   return where
     .filter((w) => w.length)
     .map((w) => `(${w.join(' OR ')})`)
@@ -375,6 +372,13 @@ const applyIndustryMapBlockConfig = (config) => {
     },
   };
   return config;
+};
+
+export const mercatorToLatLon = (x, y) => {
+  const R = 6378137.0; // Radius of Earth in meters
+  const lng = (x / R) * (180 / Math.PI);
+  const lat = (2 * Math.atan(Math.exp(y / R)) - Math.PI / 2) * (180 / Math.PI);
+  return { lat, lng };
 };
 
 export default applyIndustryMapBlockConfig;

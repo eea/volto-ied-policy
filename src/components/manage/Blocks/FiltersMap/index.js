@@ -1,8 +1,7 @@
 import worldSVG from '@plone/volto/icons/world.svg';
 import FiltersBlockView from './View';
 import FiltersBlockEdit from './Edit';
-
-export default (config) => {
+const configFilters = (config) => {
   config.blocks.blocksConfig.filtersBlock = {
     id: 'filtersBlock',
     title: 'Filters Block',
@@ -20,3 +19,5 @@ export default (config) => {
   };
   return config;
 };
+
+export default configFilters;

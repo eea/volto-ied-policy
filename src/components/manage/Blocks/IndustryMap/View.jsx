@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import jsonp from 'jsonp';
@@ -17,6 +17,7 @@ import { StyleWrapperView } from '@eeacms/volto-block-style/StyleWrapper';
 import PrivacyProtection from '@eeacms/volto-ied-policy/components/manage/Blocks/PrivacyProtection';
 import { setQuery } from '@eeacms/volto-ied-policy/actions';
 import { emitEvent } from '@eeacms/volto-ied-policy/helpers.js';
+
 import {
   dataprotection,
   getStyles,
@@ -28,9 +29,8 @@ import {
   getFacilityExtent,
   getCountriesExtent,
   getWhereStatement,
+  mercatorToLatLon,
 } from './index';
-
-import { Container, Grid } from 'semantic-ui-react';
 
 import Sidebar from './Sidebar';
 import Popup from './Popup';
@@ -39,8 +39,6 @@ import PopupDetailed from './PopupDetailed';
 import navigationSVG from '@plone/volto/icons/navigation.svg';
 
 import './styles.less';
-import Filters from './Filters';
-import NavigationBlock from './Navigation';
 
 // let _REQS = 0;
 // const zoomSwitch = 6;
@@ -102,207 +100,26 @@ const getClosestFeatureToCoordinate = (coordinate, features) => {
 
   return closestFeature;
 };
-class View extends React.PureComponent {
-  /**
-   * Property types.
-   * @property {Object} propTypes Property types.
-   * @static
-   */
-  static propTypes = {};
 
-  /**
-   * Constructor
-   * @method constructor
-   * @param {Object} props Component properties
-   * @constructs Navigation
-   */
-  constructor(props) {
-    super(props);
-    const { style } = openlayers;
-    this.onFeatureLoad = this.onFeatureLoad.bind(this);
-    this.centerToPosition = this.centerToPosition.bind(this);
-    this.centerToUserLocation = this.centerToUserLocation.bind(this);
-    this.getFeatureInRange = this.getFeatureInRange.bind(this);
-    this.onPointermove = this.onPointermove.bind(this);
-    this.onClick = this.onClick.bind(this);
-    this.onMoveend = this.onMoveend.bind(this);
-    this.state = {
-      mapRendered: false,
-      loading: false,
-    };
-    this.styles = __CLIENT__ ? getStyles(style) : {};
-    this.map = React.createRef();
-    this.layerRegions = React.createRef();
-    this.layerSites = React.createRef();
-    this.overlayPopup = React.createRef();
-    this.overlayPopupDetailed = React.createRef();
-  }
-
-  componentDidMount() {
-    const searchParams = new URLSearchParams(this.props.location.search);
-    for (const [key, value] of searchParams.entries()) {
-      console.log(key, value);
-    }
-    console.log(this.props.query);
-    // window['__where'] = getWhereStatement(this.props.query);
-  }
-
-  componentWillUnmount() {
-    this.setState({ mapRendered: false });
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (!this.state.mapRendered || !this.map.current) return;
-    const { extent, proj } = openlayers;
-    console.log(this.props.query);
-
-    const { filter_change, filter_search } = this.props.query;
-    // window['__where'] = getWhereStatement(this.props.query);
-    const filter_countries = (this.props.query.filter_countries || []).filter(
-      (value) => value,
-    );
-    if (!prevState.mapRendered) {
-      this.centerToUserLocation();
-    }
-    if (filter_change?.counter !== prevProps.query.filter_change?.counter) {
-      /* Trigger update of features style */
-      debounce(
-        () => {
-          this.layerSites.current.getSource().updateParams({
-            layerDefs: JSON.stringify({
-              0: getWhereStatement(this.props.query),
-            }),
-          });
-          // this.layerRegions.current.changed();
-        },
-        1,
-        500,
-      );
-      /* Fit view if necessary */
-      if (filter_change.type === 'search-location') {
-        getLocationExtent(filter_search).then(({ data }) => {
-          if (data.candidates?.length > 0) {
-            this.map.current
-              .getView()
-              .fit(
-                [
-                  data.candidates[0].extent.xmin,
-                  data.candidates[0].extent.ymin,
-                  data.candidates[0].extent.xmax,
-                  data.candidates[0].extent.ymax,
-                ],
-                {
-                  maxZoom: 16,
-                  duration: 1000,
-                },
-              );
-          }
-        });
-      } else if (filter_change.type === 'search-site') {
-        getSiteExtent(filter_search).then(({ data }) => {
-          const extent = data?.results?.[0] || {};
-          if (
-            extent.MIN_X === null ||
-            extent.MIN_Y === null ||
-            extent.MAX_X === null ||
-            extent.MAX_Y === null
-          ) {
-            toast.warn(
-              <Toast
-                warn
-                title=""
-                content={`No results for ${filter_search.text}`}
-              />,
-            );
-          } else {
-            this.map.current
-              .getView()
-              .fit([extent.MIN_X, extent.MIN_Y, extent.MAX_X, extent.MAX_Y], {
-                maxZoom: 16,
-                duration: 1000,
-              });
-          }
-        });
-      } else if (filter_change.type === 'search-facility') {
-        getFacilityExtent(filter_search).then(({ data }) => {
-          const extent = data?.results?.[0] || {};
-          if (
-            extent.MIN_X === null ||
-            extent.MIN_Y === null ||
-            extent.MAX_X === null ||
-            extent.MAX_Y === null
-          ) {
-            toast.warn(
-              <Toast
-                warn
-                title=""
-                content={`No results for ${filter_search.text}`}
-              />,
-            );
-          } else {
-            this.map.current
-              .getView()
-              .fit([extent.MIN_X, extent.MIN_Y, extent.MAX_X, extent.MAX_Y], {
-                maxZoom: 16,
-                duration: 1000,
-              });
-          }
-        });
-      } else if (
-        (filter_change.type === 'advanced-filter' ||
-          filter_change.type === 'simple-filter') &&
-        filter_countries.length
-      ) {
-        const countriesOptions = this.props.providers_data.countries || {};
-        const countries = [];
-        (countriesOptions.opt_key || []).forEach((code, index) => {
-          if ((filter_countries || []).includes(code)) {
-            countries.push(countriesOptions.opt_text[index]);
-          }
-        });
-        getCountriesExtent(countries).then((responses) => {
-          let _extent = extent.createEmpty();
-          responses.forEach(({ data }) => {
-            const reqExtent = data.candidates?.[0]?.extent || null;
-            if (reqExtent) {
-              extent.extend(
-                _extent,
-                proj.transformExtent(
-                  [
-                    reqExtent.xmin,
-                    reqExtent.ymin,
-                    reqExtent.xmax,
-                    reqExtent.ymax,
-                  ],
-                  'EPSG:4326',
-                  'EPSG:3857',
-                ),
-              );
-            }
-          });
-          if (!extent.isEmpty(_extent)) {
-            this.map.current.getView().fit(_extent, {
-              maxZoom: 16,
-              duration: 1000,
-            });
-          }
-        });
-      }
-    }
-  }
-
-  onFeatureLoad(e) {
+const View = (props) => {
+  const [mapRendered, setMapRendered] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const map = useRef(null);
+  const layerRegions = useRef(null);
+  const layerSites = useRef(null);
+  const overlayPopup = useRef(null);
+  const overlayPopupDetailed = useRef(null);
+  const onFeatureLoad = (e) => {
     const { loaded } = e.detail;
-    if (loaded && this.state.loading) {
-      this.setState({ loading: false });
-    } else if (!loaded && !this.state.loading) {
-      this.setState({ loading: true });
+    if (loaded && loading) {
+      setLoading(false);
+    } else if (!loaded && !loading) {
+      setLoading(true);
     }
-  }
-
-  centerToPosition(position, zoom) {
+  };
+  const centerToQueryLocation = (position, zoom) => {
     const { proj } = openlayers;
-    return this.map.current.getView().animate({
+    return map.current.getView().animate({
       center: proj.fromLonLat([
         position.coords.longitude,
         position.coords.latitude,
@@ -310,30 +127,38 @@ class View extends React.PureComponent {
       duration: 1000,
       zoom,
     });
-  }
+  };
+  const centerToPosition = (position, zoom) => {
+    const { proj } = openlayers;
+    return map.current.getView().animate({
+      center: proj.fromLonLat([
+        position.coords.longitude,
+        position.coords.latitude,
+      ]),
+      duration: 1000,
+      zoom,
+    });
+  };
+  const centerToUserLocation = (ignoreExtent = true) => {
+    if (__SERVER__ || !map.current || !navigator?.geolocation) return;
+    const extent = props.query.map_extent;
 
-  centerToUserLocation(ignoreExtent = false) {
-    if (__SERVER__ || !this.map.current || !navigator?.geolocation) return;
-    const extent = this.props.query.map_extent;
     if (!extent || ignoreExtent) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          return this.centerToPosition(position, 12);
+          return centerToPosition(position, 12);
         },
         // Errors
         () => {},
       );
     } else {
-      this.map.current
-        .getView()
-        .fit([extent[0], extent[1], extent[2], extent[3]], {
-          maxZoom: 16,
-          duration: 1000,
-        });
+      map.current.getView().fit([extent[0], extent[1], extent[2], extent[3]], {
+        maxZoom: 16,
+        duration: 1000,
+      });
     }
-  }
-
-  getFeatureInRange(map, point, range = 3) {
+  };
+  const getFeatureInRange = (map, point, range = 3) => {
     let x = 0;
     let y = 0;
     let dx = 0;
@@ -353,11 +178,9 @@ class View extends React.PureComponent {
       y += dy;
     }
     return null;
-  }
-
-  onPointermove(e) {
-    if (__SERVER__ || !this.overlayPopup.current || e.type !== 'pointermove')
-      return;
+  };
+  const onPointermove = (e) => {
+    if (__SERVER__ || !overlayPopup.current || e.type !== 'pointermove') return;
     if (e.dragging) {
       // e.map.getTarget().style.cursor = 'grabbing';
       return;
@@ -368,7 +191,7 @@ class View extends React.PureComponent {
         e.originalEvent,
       )
     ) {
-      this.overlayPopup.current?.setPosition(undefined);
+      overlayPopup.current?.setPosition(undefined);
       e.map.getTarget().style.cursor = '';
       return;
     }
@@ -385,7 +208,7 @@ class View extends React.PureComponent {
     debounce(
       () => {
         const esrijsonFormat = new openlayers.format.EsriJSON();
-        const where = getWhereStatement(this.props.query);
+        const where = getWhereStatement(props.query);
         jsonp(
           getLayerSitesURL(pointerExtent),
           {
@@ -405,7 +228,7 @@ class View extends React.PureComponent {
                 features,
               );
               if (!feature) {
-                this.overlayPopup.current.setPosition(undefined);
+                overlayPopup.current.setPosition(undefined);
                 emitEvent(mapElement, 'ol-pointermove', {
                   bubbles: false,
                   detail: {},
@@ -424,7 +247,8 @@ class View extends React.PureComponent {
                   flatCoordinates: feature.getGeometry().flatCoordinates,
                 },
               });
-              this.overlayPopup.current.setPosition(e.coordinate);
+              if (!overlayPopup?.current) return;
+              overlayPopup.current.setPosition(e.coordinate);
               e.map.getTarget().style.cursor = 'pointer';
             }
           },
@@ -433,22 +257,17 @@ class View extends React.PureComponent {
       0,
       250,
     );
-    this.overlayPopup.current.setPosition(undefined);
+    overlayPopup.current.setPosition(undefined);
     e.map.getTarget().style.cursor = '';
-  }
-
-  onClick(e) {
+  };
+  const onClick = (e) => {
     const zoom = e.map.getView().getZoom();
-    if (
-      __SERVER__ ||
-      !this.overlayPopup.current ||
-      !this.overlayPopupDetailed.current
-    ) {
+    if (__SERVER__ || !overlayPopup.current || !overlayPopupDetailed.current) {
       return;
     }
     const { coordinate, proj, format } = openlayers;
     const esrijsonFormat = new format.EsriJSON();
-    const where = getWhereStatement(this.props.query);
+    const where = getWhereStatement(props.query);
     const mapElement = document.querySelector('#industry-map');
     const resolution = e.map.getView().getResolution();
     const pointerExtent = [
@@ -472,6 +291,7 @@ class View extends React.PureComponent {
         if (!error) {
           let features = esrijsonFormat.readFeatures(response);
           const feature = getClosestFeatureToCoordinate(e.coordinate, features);
+
           if (!feature) {
             emitEvent(mapElement, 'ol-click', {
               bubbles: false,
@@ -484,8 +304,8 @@ class View extends React.PureComponent {
           );
           const featuresProperties = feature.getProperties();
           e.map.getTarget().style.cursor = '';
-          this.overlayPopup.current.setPosition(undefined);
-          this.overlayPopupDetailed.current.setPosition(e.coordinate);
+          overlayPopup.current.setPosition(undefined);
+          overlayPopupDetailed.current.setPosition(e.coordinate);
           emitEvent(mapElement, 'ol-click', {
             bubbles: false,
             detail: {
@@ -497,79 +317,234 @@ class View extends React.PureComponent {
         }
       },
     );
-  }
-
-  onMoveend(e) {
+  };
+  const onMoveend = (e) => {
     if (!e.map) return;
     const extent = e.map.getView().calculateExtent(e.map.getSize());
-    this.props.setQuery({
+    props.setQuery({
       map_extent: extent,
     });
-  }
-  render() {
-    const { proj, source } = openlayers;
-    if (__SERVER__) return '';
-    return (
-      <>
-        <StyleWrapperView
-          {...this.props}
-          styleData={this.props.data.styles || {}}
-          styled={true}
-        >
-          <div className="industry-map-wrapper">
-            <div id="industry-map" className="industry-map">
-              <PrivacyProtection data={{ dataprotection }}>
-                <Map
-                  ref={(data) => {
-                    this.map.current = data?.map;
-                    if (data?.mapRendered && !this.state.mapRendered) {
-                      this.setState({ mapRendered: true });
+  };
+
+  useEffect(() => {
+    return () => {
+      setMapRendered(false);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!mapRendered || !map.current) return;
+
+    const lat = props?.query?.lat;
+    const lng = props?.query?.lng;
+    if (lat && lng) {
+      const formattedLatLng = mercatorToLatLon(lng, lat);
+      centerToQueryLocation(
+        {
+          coords: {
+            latitude: formattedLatLng.lat,
+            longitude: formattedLatLng.lng,
+          },
+        },
+        12,
+      );
+    } else {
+      centerToUserLocation();
+    }
+  }, [mapRendered, props?.query?.lat, props?.query?.lng]);
+  useEffect(() => {
+    const { filter_change, filter_search } = props.query;
+    if (!filter_change) return;
+    const filter_countries = (props.query.filter_countries || []).filter(
+      (value) => value,
+    );
+    /* Trigger update of features style */
+    debounce(
+      () => {
+        layerSites.current.getSource().updateParams({
+          layerDefs: JSON.stringify({
+            0: getWhereStatement(props.query),
+          }),
+        });
+        // this.layerRegions.current.changed();
+      },
+      1,
+      500,
+    );
+    /* Fit view if necessary */
+    if (filter_change.type === 'search-location') {
+      getLocationExtent(filter_search).then(({ data }) => {
+        if (data.candidates?.length > 0) {
+          map.current
+            .getView()
+            .fit(
+              [
+                data.candidates[0].extent.xmin,
+                data.candidates[0].extent.ymin,
+                data.candidates[0].extent.xmax,
+                data.candidates[0].extent.ymax,
+              ],
+              {
+                maxZoom: 16,
+                duration: 1000,
+              },
+            );
+        }
+      });
+    } else if (filter_change.type === 'search-site') {
+      getSiteExtent(filter_search).then(({ data }) => {
+        const extent = data?.results?.[0] || {};
+        if (
+          extent.MIN_X === null ||
+          extent.MIN_Y === null ||
+          extent.MAX_X === null ||
+          extent.MAX_Y === null
+        ) {
+          toast.warn(
+            <Toast
+              warn
+              title=""
+              content={`No results for ${filter_search.text}`}
+            />,
+          );
+        } else {
+          map.current
+            .getView()
+            .fit([extent.MIN_X, extent.MIN_Y, extent.MAX_X, extent.MAX_Y], {
+              maxZoom: 16,
+              duration: 1000,
+            });
+        }
+      });
+    } else if (filter_change.type === 'search-facility') {
+      getFacilityExtent(filter_search).then(({ data }) => {
+        const extent = data?.results?.[0] || {};
+        if (
+          extent.MIN_X === null ||
+          extent.MIN_Y === null ||
+          extent.MAX_X === null ||
+          extent.MAX_Y === null
+        ) {
+          toast.warn(
+            <Toast
+              warn
+              title=""
+              content={`No results for ${filter_search.text}`}
+            />,
+          );
+        } else {
+          map.current
+            .getView()
+            .fit([extent.MIN_X, extent.MIN_Y, extent.MAX_X, extent.MAX_Y], {
+              maxZoom: 16,
+              duration: 1000,
+            });
+        }
+      });
+    } else if (
+      (filter_change.type === 'advanced-filter' ||
+        filter_change.type === 'simple-filter') &&
+      filter_countries.length
+    ) {
+      const countriesOptions = props.providers_data.countries || {};
+      const countries = [];
+      (countriesOptions.opt_key || []).forEach((code, index) => {
+        if ((filter_countries || []).includes(code)) {
+          countries.push(countriesOptions.opt_text[index]);
+        }
+      });
+      getCountriesExtent(countries).then((responses) => {
+        let _extent = extent.createEmpty();
+        responses.forEach(({ data }) => {
+          const reqExtent = data.candidates?.[0]?.extent || null;
+          if (reqExtent) {
+            extent.extend(
+              _extent,
+              proj.transformExtent(
+                [
+                  reqExtent.xmin,
+                  reqExtent.ymin,
+                  reqExtent.xmax,
+                  reqExtent.ymax,
+                ],
+                'EPSG:4326',
+                'EPSG:3857',
+              ),
+            );
+          }
+        });
+        if (!extent.isEmpty(_extent)) {
+          map.current.getView().fit(_extent, {
+            maxZoom: 16,
+            duration: 1000,
+          });
+        }
+      });
+    }
+  }, [props.query]);
+  const { proj, source } = openlayers;
+  if (__SERVER__) return '';
+  return (
+    <>
+      <StyleWrapperView
+        {...props}
+        styleData={props.data.styles || {}}
+        styled={true}
+      >
+        <div className="industry-map-wrapper">
+          <div id="industry-map" className="industry-map">
+            <PrivacyProtection data={{ dataprotection }}>
+              <Map
+                ref={(data) => {
+                  map.current = data?.map;
+                  if (data?.mapRendered && !mapRendered) {
+                    setMapRendered(true);
+                  }
+                }}
+                view={{
+                  center: proj.fromLonLat([20, 50]),
+                  showFullExtent: true,
+                  // maxZoom: 1,
+                  minZoom: 1,
+                  zoom: 1,
+                }}
+                renderer="webgl"
+                onPointermove={onPointermove}
+                onClick={onClick}
+                onMoveend={onMoveend}
+              >
+                <Controls attribution={false} zoom={true}>
+                  <Control className="ol-custom">
+                    <button
+                      className="navigation-button"
+                      title="Center to user location"
+                      onClick={() => {
+                        centerToUserLocation(true);
+                      }}
+                    >
+                      <Icon name={navigationSVG} size="1em" fill="white" />
+                    </button>
+                  </Control>
+                </Controls>
+                <Interactions
+                  doubleClickZoom={true}
+                  keyboardZoom={true}
+                  mouseWheelZoom={true}
+                  pointer={true}
+                  select={false}
+                  pinchRotate={false}
+                  altShiftDragRotate={false}
+                />
+                <Layers>
+                  <Layer.Tile
+                    source={
+                      new source.XYZ({
+                        url: getLayerBaseURL(),
+                      })
                     }
-                  }}
-                  view={{
-                    center: proj.fromLonLat([20, 50]),
-                    showFullExtent: true,
-                    // maxZoom: 1,
-                    minZoom: 1,
-                    zoom: 1,
-                  }}
-                  renderer="webgl"
-                  onPointermove={this.onPointermove}
-                  onClick={this.onClick}
-                  onMoveend={this.onMoveend}
-                >
-                  <Controls attribution={false} zoom={true}>
-                    <Control className="ol-custom">
-                      <button
-                        className="navigation-button"
-                        title="Center to user location"
-                        onClick={() => {
-                          this.centerToUserLocation(true);
-                        }}
-                      >
-                        <Icon name={navigationSVG} size="1em" fill="white" />
-                      </button>
-                    </Control>
-                  </Controls>
-                  <Interactions
-                    doubleClickZoom={true}
-                    keyboardZoom={true}
-                    mouseWheelZoom={true}
-                    pointer={true}
-                    select={false}
-                    pinchRotate={false}
-                    altShiftDragRotate={false}
+                    zIndex={0}
                   />
-                  <Layers>
-                    <Layer.Tile
-                      source={
-                        new source.XYZ({
-                          url: getLayerBaseURL(),
-                        })
-                      }
-                      zIndex={0}
-                    />
-                    {/* <Layer.VectorImage
+                  {/* <Layer.VectorImage
                   className="ol-layer-regions"
                   ref={(data) => {
                     this.layerRegions.current = data?.layer;
@@ -609,63 +584,58 @@ class View extends React.PureComponent {
                   title="1.Regions"
                   zIndex={1}
                 /> */}
-                    <Layer.Tile
-                      ref={(data) => {
-                        this.layerSites.current = data?.layer;
-                      }}
-                      className="ol-layer-sites"
-                      source={getSitesSource(this)}
-                      title="2.Sites"
-                      zIndex={1}
+                  <Layer.Tile
+                    ref={(data) => {
+                      layerSites.current = data?.layer;
+                    }}
+                    className="ol-layer-sites"
+                    source={getSitesSource(props.query)}
+                    title="2.Sites"
+                    zIndex={1}
+                  />
+                </Layers>
+                <Overlays
+                  ref={(data) => {
+                    overlayPopup.current = data?.overlay;
+                  }}
+                  className="ol-popup"
+                  positioning="center-center"
+                  stopEvent={true}
+                >
+                  <Popup overlay={overlayPopup} />
+                </Overlays>
+                <Overlays
+                  ref={(data) => {
+                    overlayPopupDetailed.current = data?.overlay;
+                  }}
+                  className="ol-popup-detailed"
+                  positioning="center-center"
+                  stopEvent={true}
+                >
+                  <PopupDetailed overlay={overlayPopupDetailed} />
+                </Overlays>
+                {!props.data?.hideFilters && (
+                  <Overlays
+                    className="ol-dynamic-filter"
+                    positioning="center-center"
+                    stopEvent={true}
+                  >
+                    <Sidebar
+                      data={props.data}
+                      providers_data={props.providers_data}
                     />
-                  </Layers>
-                  <Overlays
-                    ref={(data) => {
-                      this.overlayPopup.current = data?.overlay;
-                    }}
-                    className="ol-popup"
-                    positioning="center-center"
-                    stopEvent={true}
-                  >
-                    <Popup overlay={this.overlayPopup} />
                   </Overlays>
-                  <Overlays
-                    ref={(data) => {
-                      this.overlayPopupDetailed.current = data?.overlay;
-                    }}
-                    className="ol-popup-detailed"
-                    positioning="center-center"
-                    stopEvent={true}
-                  >
-                    <PopupDetailed overlay={this.overlayPopupDetailed} />
-                  </Overlays>
-                  {!this.props.data?.hideFilters && (
-                    <Overlays
-                      className="ol-dynamic-filter"
-                      positioning="center-center"
-                      stopEvent={true}
-                    >
-                      <Sidebar
-                        data={this.props.data}
-                        providers_data={this.props.providers_data}
-                      />
-                    </Overlays>
-                  )}
+                )}
 
-                  {this.state.loading ? (
-                    <div className="loader">Loading...</div>
-                  ) : (
-                    ''
-                  )}
-                </Map>
-              </PrivacyProtection>
-            </div>
+                {loading ? <div className="loader">Loading...</div> : ''}
+              </Map>
+            </PrivacyProtection>
           </div>
-        </StyleWrapperView>
-      </>
-    );
-  }
-}
+        </div>
+      </StyleWrapperView>
+    </>
+  );
+};
 
 export default compose(
   connect(

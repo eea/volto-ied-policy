@@ -15,8 +15,19 @@ import getSchema from './components/manage/Blocks/ConnectedList/schema.js';
 import PollutantIndexView from './components/manage/Blocks/PolluantsTable/View';
 import PollutantIndexEdit from './components/manage/Blocks/PolluantsTable/Edit';
 import addonReducers from './reducers';
-import EnvironmentalInformation from './views/EnvironmentalInformation';
 import IndustryDataTable from './components/IndustryDataTableVariation.jsx';
+import EnvironmentalSiteDetails from './components/manage/Blocks/SiteBlocks/EnvironmentalSiteDetails/View.jsx';
+import enviromentalSiteSchema from './components/manage/Blocks/SiteBlocks/EnvironmentalSiteDetails/schema.js';
+import RegulatorySiteDetails from './components/manage/Blocks/SiteBlocks/RegulatorySiteDetails/View.jsx';
+import siteHeaderSchema from './components/manage/Blocks/SiteBlocks/Header/schema.js';
+import RegulatorySiteDetailsSchema from './components/manage/Blocks/SiteBlocks/RegulatorySiteDetails/schema.js';
+import RegulatoryBAT from './components/manage/Blocks/SiteBlocks/RegulatoryBATConclusions/View.jsx';
+import RegulatoryBATSchema from './components/manage/Blocks/SiteBlocks/RegulatoryBATConclusions/schema.js';
+import RegulatoryPermits from './components/manage/Blocks/SiteBlocks/RegulatoryPermits/View.jsx';
+import RegulatoryPermitsSchema from './components/manage/Blocks/SiteBlocks/RegulatoryPermits/schema.js';
+import SiteStrucutre from './components/manage/Blocks/SiteBlocks/SiteStructureSidebar/View.jsx';
+import SiteStrucutreSchema from './components/manage/Blocks/SiteBlocks/SiteStructureSidebar/schema.js';
+import SiteHeader from './components/manage/Blocks/SiteBlocks/Header/View.jsx';
 const restrictedBlocks = ['imagecards', 'embed_eea_tableau_block'];
 
 const customBlocks = [
@@ -79,7 +90,61 @@ const applyConfig = (config) => {
       view: [],
     },
   };
+  config.blocks.blocksConfig.siteHeader = {
+    view: SiteHeader,
+    edit: SiteHeader,
+    title: 'Site header',
+    getSchema: siteHeaderSchema,
+    id: 'siteHeader',
+    icon: documentIcon,
+    group: 'eprtr_blocks',
+  };
+  config.blocks.blocksConfig.environmental_site_details = {
+    view: EnvironmentalSiteDetails,
+    edit: EnvironmentalSiteDetails,
+    schema: enviromentalSiteSchema,
+    id: 'environmental_site_details',
+    icon: documentIcon,
+    group: 'eprtr_blocks',
+    title: 'Environmenta Site Details',
+  };
+  config.blocks.blocksConfig.regularitory_site_details = {
+    view: RegulatorySiteDetails,
+    edit: RegulatorySiteDetails,
+    schema: RegulatorySiteDetailsSchema,
+    id: 'regularitory_site_details',
+    icon: documentIcon,
+    group: 'eprtr_blocks',
+    title: 'Regulatory Site Details',
+  };
 
+  config.blocks.blocksConfig.regularitory_site_permits = {
+    view: RegulatoryPermits,
+    edit: RegulatoryPermits,
+    schema: RegulatoryPermitsSchema,
+    id: 'regularitory_site_permits',
+    icon: documentIcon,
+    group: 'eprtr_blocks',
+    title: 'Regulatory Permits',
+  };
+  config.blocks.blocksConfig.regulatory_bat = {
+    view: RegulatoryBAT,
+    edit: RegulatoryBAT,
+    schema: RegulatoryBATSchema,
+    id: 'regulatory_bat',
+    icon: documentIcon,
+    group: 'eprtr_blocks',
+    title: 'Regulatory BAT',
+  };
+  config.blocks.blocksConfig.site_structure = {
+    view: SiteStrucutre,
+    edit: SiteStrucutre,
+    schema: SiteStrucutreSchema,
+    id: 'site_structure',
+    icon: documentIcon,
+    group: 'eprtr_blocks',
+    title: 'Site Structure Sidebar',
+  };
   config.addonReducers = {
     ...config.addonReducers,
     ...addonReducers,
@@ -101,8 +166,6 @@ const applyConfig = (config) => {
     config.settings.eea?.defaultLanguage || 'en';
 
   // mega menu layout settings
-  config.views.contentTypesViews['environmental_information'] =
-    EnvironmentalInformation;
 
   // EEA customizations
   config.settings.eea = {
