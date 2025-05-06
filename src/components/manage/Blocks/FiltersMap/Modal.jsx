@@ -52,29 +52,10 @@ const getLatestRegions = (query) => {
 
 const setParamsQuery = (data) => {
   const query = { ...data, nuts_latest: getLatestRegions(data).nuts_latest };
-  const facility_types = query.filter_facility_types || [];
-  const installation_types = query.filter_installation_types || [];
-  const thematic_information = query.filter_thematic_information || [];
   const search = query.filter_search;
 
   const urlParams = new URLSearchParams();
 
-  // for (const { queryKey, featureKey } of filters) {
-  //   const values = query[queryKey];
-  //   if (Array.isArray(values)) {
-  //     values.forEach((value) => {
-  //       if (value) {
-  //         if (featureKey === 'pollutant_groups') {
-  //           urlParams.append('air_groups_like', value);
-  //           urlParams.append('water_groups_like', value);
-  //         } else {
-  //           urlParams.append(featureKey, value);
-  //         }
-  //       }
-  //     });
-  //   }
-  // }
-  console.log(query);
   const filteredReportingYears = query?.filter_reporting_years?.filter(year => year != null) ?? [];
 
   if (filteredReportingYears.length > 0) {
@@ -113,6 +94,7 @@ const setParamsQuery = (data) => {
   }
 
   const filteredPollutants = query.filter_pollutants.filter(pollutant => pollutant != null) ?? [];
+  console.log(query.filter_pollutants)
   if (filteredPollutants.length > 0) {
     urlParams.append('pollutants[like]', filteredPollutants.map(pollutant => (`%${pollutant}%`)).join(','));
   }
@@ -120,6 +102,7 @@ const setParamsQuery = (data) => {
   const filteredPollutantsGroups = query.filter_pollutant_groups.filter(group => group != null) ?? [];
   if (filteredPollutantsGroups.length > 0) {
     urlParams.append('air_groups[like]', filteredPollutantsGroups.map(group => (`%${group}%`)).join(','));
+    urlParams.append('water_groups[like]', filteredPollutantsGroups.map(group => (`%${group}%`)).join(','));
   }
 
   const filteredCountryCodes = query.filter_countries.filter(code => code != null) ?? [];
@@ -131,6 +114,7 @@ const setParamsQuery = (data) => {
   if (filteredNuts.length > 0) {
     urlParams.append('nuts_regions[like]', filteredNuts.map(nuts => (`%${nuts}%`)).join(','));
   }
+
   const filteredThematicInformation = query.filter_thematic_information.filter(info => info != null) ?? [];
   if (filteredThematicInformation.length > 0) {
     if (filteredThematicInformation.indexOf("has_release") !== -1) {
@@ -146,6 +130,7 @@ const setParamsQuery = (data) => {
       urlParams.append('has_seveso[gt]', 0);
     }
   }
+
   const filteredInstallationTypes = query.filter_installation_types.filter(type => type != null) ?? [];
   if (filteredInstallationTypes.length > 0) {
     if (filteredInstallationTypes.indexOf("IED") !== -1) {
@@ -225,7 +210,7 @@ const ModalView = ({
   location,
 }) => {
   const [inputs, setInputs] = React.useState({});
-  console.log(history);
+  
   React.useEffect(() => {
     setInitialInputs();
     /* eslint-disable-next-line */
@@ -237,8 +222,55 @@ const ModalView = ({
     inputsKeys.forEach((key) => {
       inputs[key] = [...(query[key] || [])];
     });
+    const searchParams = new URLSearchParams(location.search);
+    for (const [key, value] of searchParams.entries()) {
+      if (!value) continue;
+      if (key === "Site_reporting_year[in]") {
+        inputs["filter_reporting_years"]  =  value.split(",").filter(year => !isNaN(year)).map((year) => parseInt(year));
+      }
+      else if (key === "eprtr_sectors[in]") {
+        inputs["filter_industries"]  =  value.split(",");
+      }
+      else if (key === "eprtr_AnnexIActivity[in]") {
+        inputs["filter_eprtr_AnnexIActivity"]  =  value.split(",");
+      }
+      else if (key === "bat_conclusions[like]") {
+        inputs["filter_bat_conclusions"]  =  value.split(",").map(group => group.replaceAll('%', ''));
+      }
+      else if (key === "permit_types[like]") {
+        inputs["filter_permit_types"]  =  value.split(",").map(group => group.replaceAll('%', ''));
+      }
+      else if (key === "permit_years[like]") {
+        inputs["filter_permit_years"]  =  value.split(",").map(group => group.replaceAll('%', '')).filter(year => !isNaN(year)).map((year) => parseInt(year));
+      }
+      else if (key === "pollutants[like]") {
+        inputs["filter_pollutants"]  =  value.split(",").map(group => group.replaceAll('%', ''));
+      }
+      else if (key === "air_groups[like]" || key === "water_groups[like]") {
+        inputs["filter_pollutant_groups"]  =  value.split(",").map(group => group.replaceAll('%', ''));
+      }
+      else if (key === "countryCode[in]") {
+        inputs["filter_countries"]  =  value.split(",");
+      }
+
+      // nuts, regions
+
+      else if (key === "has_release_data[gt]") {
+        inputs["filter_thematic_information"] = [...(inputs?.["filter_thematic_information"] ? inputs["filter_thematic_information"] : []), 'has_release'];
+      }
+      else if (key === "has_transfer_data[gt]") {
+        inputs["filter_thematic_information"] = [...(inputs?.["filter_thematic_information"] ? inputs["filter_thematic_information"] : []), 'has_transfer'];
+      }
+      else if (key === "has_waste_data[gt]") {
+        inputs["filter_thematic_information"] = [...(inputs?.["filter_thematic_information"] ? inputs["filter_thematic_information"] : []), 'has_waste'];
+      }
+      else if (key === "has_seveso[gt]") {
+        inputs["filter_thematic_information"] = [...(inputs?.["filter_thematic_information"] ? inputs["filter_thematic_information"] : []), 'has_seveso'];
+      }
+    }
+    console.log(inputs)
     setInputs(inputs);
-  }, [query]);
+  }, [query, location.search]);
 
   const isChecked = React.useCallback(
     (filter, label) => {
@@ -265,6 +297,10 @@ const ModalView = ({
   );
 
   const clearFilters = React.useCallback(() => {
+    history.replace({
+      pathname: location.pathname,
+      search: ''
+    });
     const newInputs = {};
     inputsKeys.forEach((key) => {
       newInputs[key] = [];
@@ -279,10 +315,7 @@ const ModalView = ({
       filter_search_value: '',
     });
     setOpen(false);
-    history.replace({
-      pathname: location.pathname,
-      search: ''
-    });
+
     /* eslint-disable-next-line */
   }, [query,history, location]);
 

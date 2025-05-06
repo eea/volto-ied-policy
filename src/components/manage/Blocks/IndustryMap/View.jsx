@@ -103,6 +103,8 @@ const View = (props) => {
   const layerSites = useRef(null);
   const overlayPopup = useRef(null);
   const overlayPopupDetailed = useRef(null);
+  const { proj, source, extent } = openlayers;
+
   const onFeatureLoad = (e) => {
     const { loaded } = e.detail;
     if (loaded && loading) {
@@ -480,7 +482,6 @@ const View = (props) => {
       });
     }
   }, [props.query]);
-  const { proj, source } = openlayers;
   if (__SERVER__) return '';
   return (
     <>
