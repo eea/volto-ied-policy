@@ -1,4 +1,5 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useEffect, useRef, useState } from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import jsonp from 'jsonp';
@@ -102,8 +103,6 @@ const View = (props) => {
   const overlayPopup = useRef(null);
   const overlayPopupDetailed = useRef(null);
 
-  const { proj, source, extent } = openlayers;
-
   const centerToQueryLocation = (position, zoom) => {
     const { proj } = openlayers;
     return map.current.getView().animate({
@@ -128,30 +127,25 @@ const View = (props) => {
     });
   };
 
-  const centerToUserLocation = useCallback(
-    (ignoreExtent = true) => {
-      if (__SERVER__ || !map.current || !navigator?.geolocation) return;
-      const extent = props.query.map_extent;
+  const centerToUserLocation = (ignoreExtent = true) => {
+    if (__SERVER__ || !map.current || !navigator?.geolocation) return;
+    const extent = props.query.map_extent;
 
-      if (!extent || ignoreExtent) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            return centerToPosition(position, 12);
-          },
-          // Errors
-          () => {},
-        );
-      } else {
-        map.current
-          .getView()
-          .fit([extent[0], extent[1], extent[2], extent[3]], {
-            maxZoom: 16,
-            duration: 1000,
-          });
-      }
-    },
-    [props.query.map_extent],
-  );
+    if (!extent || ignoreExtent) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          return centerToPosition(position, 12);
+        },
+        // Errors
+        () => {},
+      );
+    } else {
+      map.current.getView().fit([extent[0], extent[1], extent[2], extent[3]], {
+        maxZoom: 16,
+        duration: 1000,
+      });
+    }
+  };
 
   const onPointermove = (e) => {
     if (__SERVER__ || !overlayPopup.current || e.type !== 'pointermove') return;
@@ -327,7 +321,7 @@ const View = (props) => {
     } else {
       centerToUserLocation();
     }
-  }, [mapRendered, props?.query?.lat, props?.query?.lng, centerToUserLocation]);
+  }, [mapRendered, props?.query?.lat, props?.query?.lng]);
 
   useEffect(() => {
     const { filter_change, filter_search } = props.query;
@@ -459,6 +453,8 @@ const View = (props) => {
       });
     }
   }, [props.query]);
+
+  const { proj, source } = openlayers;
 
   if (__SERVER__) return '';
 
