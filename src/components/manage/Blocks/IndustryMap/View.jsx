@@ -97,11 +97,12 @@ const getClosestFeatureToCoordinate = (coordinate, features) => {
 
 const View = (props) => {
   const [mapRendered, setMapRendered] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
   const map = useRef(null);
   const layerSites = useRef(null);
   const overlayPopup = useRef(null);
   const overlayPopupDetailed = useRef(null);
+  const { proj, source, extent } = openlayers;
 
   const centerToQueryLocation = (position, zoom) => {
     const { proj } = openlayers;
@@ -453,8 +454,6 @@ const View = (props) => {
       });
     }
   }, [props.query]);
-
-  const { proj, source } = openlayers;
 
   if (__SERVER__) return '';
 
