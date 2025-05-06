@@ -146,7 +146,15 @@ const setParamsQuery = (data) => {
       urlParams.append('has_seveso[gt]', 0);
     }
   }
-  console.log(query.filter_thematic_information)
+  const filteredInstallationTypes = query.filter_installation_types.filter(type => type != null) ?? [];
+  if (filteredInstallationTypes.length > 0) {
+    if (filteredInstallationTypes.indexOf("IED") !== -1) {
+      urlParams.append('count_instype_IED[gte]', 1);
+    }
+    if (filteredInstallationTypes.indexOf("NONIED") !== -1) {
+      urlParams.append('count_instype_NONIED[gte]', 1);
+    }
+  }
   if (search?.type === 'site' && search?.text) {
     urlParams.append('siteName', search.text.trim());
   }
