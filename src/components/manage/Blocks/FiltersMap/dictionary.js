@@ -34,7 +34,6 @@ export const inputsKeys = [
   'filter_thematic_information',
 ];
 
-
 export const permitTypes = [
   { key: null, value: null, text: 'No value' },
   {

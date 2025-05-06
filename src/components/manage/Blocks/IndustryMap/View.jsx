@@ -332,7 +332,7 @@ const View = (props) => {
       (value) => value,
     );
     /* Trigger update of features style */
-    if( layerSites.current) {
+    if (layerSites.current) {
       debounce(
         () => {
           layerSites.current.getSource().updateParams({
@@ -346,7 +346,7 @@ const View = (props) => {
         500,
       );
     }
- 
+
     /* Fit view if necessary */
     if (filter_change.type === 'search-location') {
       getLocationExtent(filter_search).then(({ data }) => {

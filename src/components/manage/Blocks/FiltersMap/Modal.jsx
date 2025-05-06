@@ -56,7 +56,8 @@ const setParamsQuery = (data) => {
 
   const urlParams = new URLSearchParams();
 
-  const filteredReportingYears = query?.filter_reporting_years?.filter(year => year != null) ?? [];
+  const filteredReportingYears =
+    query?.filter_reporting_years?.filter((year) => year != null) ?? [];
 
   if (filteredReportingYears.length > 0) {
     urlParams.append(
@@ -65,12 +66,15 @@ const setParamsQuery = (data) => {
     );
   }
 
-  const filteredIndustries = query.filter_industries.filter(industry => industry != null) ?? [];
+  const filteredIndustries =
+    query.filter_industries.filter((industry) => industry != null) ?? [];
   if (filteredIndustries.length > 0) {
     urlParams.append('eprtr_sectors[in]', filteredIndustries.join(','));
   }
 
-  const filteredEprtrAnnexIActivity = query.filter_eprtr_AnnexIActivity.filter(activity => activity != null) ?? [];
+  const filteredEprtrAnnexIActivity =
+    query.filter_eprtr_AnnexIActivity.filter((activity) => activity != null) ??
+    [];
   if (filteredEprtrAnnexIActivity.length > 0) {
     urlParams.append(
       'eprtr_AnnexIActivity[in]',
@@ -78,65 +82,95 @@ const setParamsQuery = (data) => {
     );
   }
 
-  const filteredBatConclusions = query.filter_bat_conclusions.filter(conclusion => conclusion != null) ?? [];
+  const filteredBatConclusions =
+    query.filter_bat_conclusions.filter((conclusion) => conclusion != null) ??
+    [];
   if (filteredBatConclusions.length > 0) {
-    urlParams.append('bat_conclusions[like]', filteredBatConclusions.map(conclusion => (`%${conclusion}%`)).join(','));
+    urlParams.append(
+      'bat_conclusions[like]',
+      filteredBatConclusions.map((conclusion) => `%${conclusion}%`).join(','),
+    );
   }
 
-  const filteredPermitTypes = query.filter_permit_types.filter(type => type != null) ?? [];
+  const filteredPermitTypes =
+    query.filter_permit_types.filter((type) => type != null) ?? [];
   if (filteredPermitTypes.length > 0) {
-    urlParams.append('permit_types[like]', filteredPermitTypes.map(type => (`%${type}%`)).join(','));
+    urlParams.append(
+      'permit_types[like]',
+      filteredPermitTypes.map((type) => `%${type}%`).join(','),
+    );
   }
 
-  const filteredPermitYears = query.filter_permit_years.filter(year => year != null) ?? [];
+  const filteredPermitYears =
+    query.filter_permit_years.filter((year) => year != null) ?? [];
   if (filteredPermitYears.length > 0) {
-    urlParams.append('permit_years[like]', filteredPermitYears.map(year => (`%${year}%`)).join(','));
+    urlParams.append(
+      'permit_years[like]',
+      filteredPermitYears.map((year) => `%${year}%`).join(','),
+    );
   }
 
-  const filteredPollutants = query.filter_pollutants.filter(pollutant => pollutant != null) ?? [];
-  console.log(query.filter_pollutants)
+  const filteredPollutants =
+    query.filter_pollutants.filter((pollutant) => pollutant != null) ?? [];
+  console.log(query.filter_pollutants);
   if (filteredPollutants.length > 0) {
-    urlParams.append('pollutants[like]', filteredPollutants.map(pollutant => (`%${pollutant}%`)).join(','));
+    urlParams.append(
+      'pollutants[like]',
+      filteredPollutants.map((pollutant) => `%${pollutant}%`).join(','),
+    );
   }
 
-  const filteredPollutantsGroups = query.filter_pollutant_groups.filter(group => group != null) ?? [];
+  const filteredPollutantsGroups =
+    query.filter_pollutant_groups.filter((group) => group != null) ?? [];
   if (filteredPollutantsGroups.length > 0) {
-    urlParams.append('air_groups[like]', filteredPollutantsGroups.map(group => (`%${group}%`)).join(','));
-    urlParams.append('water_groups[like]', filteredPollutantsGroups.map(group => (`%${group}%`)).join(','));
+    urlParams.append(
+      'air_groups[like]',
+      filteredPollutantsGroups.map((group) => `%${group}%`).join(','),
+    );
+    urlParams.append(
+      'water_groups[like]',
+      filteredPollutantsGroups.map((group) => `%${group}%`).join(','),
+    );
   }
 
-  const filteredCountryCodes = query.filter_countries.filter(code => code != null) ?? [];
+  const filteredCountryCodes =
+    query.filter_countries.filter((code) => code != null) ?? [];
   if (filteredCountryCodes.length > 0) {
     urlParams.append('countryCode[in]', filteredCountryCodes.join(','));
   }
 
-  const filteredNuts = query.nuts_latest.filter(nuts => nuts != null) ?? [];
+  const filteredNuts = query.nuts_latest.filter((nuts) => nuts != null) ?? [];
   if (filteredNuts.length > 0) {
-    urlParams.append('nuts_regions[like]', filteredNuts.map(nuts => (`%${nuts}%`)).join(','));
+    urlParams.append(
+      'nuts_regions[like]',
+      filteredNuts.map((nuts) => `%${nuts}%`).join(','),
+    );
   }
 
-  const filteredThematicInformation = query.filter_thematic_information.filter(info => info != null) ?? [];
+  const filteredThematicInformation =
+    query.filter_thematic_information.filter((info) => info != null) ?? [];
   if (filteredThematicInformation.length > 0) {
-    if (filteredThematicInformation.indexOf("has_release") !== -1) {
+    if (filteredThematicInformation.indexOf('has_release') !== -1) {
       urlParams.append('has_release_data[gt]', 0);
     }
-    if (filteredThematicInformation.indexOf("has_transfer") !== -1) {
+    if (filteredThematicInformation.indexOf('has_transfer') !== -1) {
       urlParams.append('has_transfer_data[gt]', 0);
     }
-    if (filteredThematicInformation.indexOf("has_waste") !== -1) {
+    if (filteredThematicInformation.indexOf('has_waste') !== -1) {
       urlParams.append('has_waste_data[gt]', 0);
     }
-    if (filteredThematicInformation.indexOf("has_seveso") !== -1) {
+    if (filteredThematicInformation.indexOf('has_seveso') !== -1) {
       urlParams.append('has_seveso[gt]', 0);
     }
   }
 
-  const filteredInstallationTypes = query.filter_installation_types.filter(type => type != null) ?? [];
+  const filteredInstallationTypes =
+    query.filter_installation_types.filter((type) => type != null) ?? [];
   if (filteredInstallationTypes.length > 0) {
-    if (filteredInstallationTypes.indexOf("IED") !== -1) {
+    if (filteredInstallationTypes.indexOf('IED') !== -1) {
       urlParams.append('count_instype_IED[gte]', 1);
     }
-    if (filteredInstallationTypes.indexOf("NONIED") !== -1) {
+    if (filteredInstallationTypes.indexOf('NONIED') !== -1) {
       urlParams.append('count_instype_NONIED[gte]', 1);
     }
   }
@@ -210,7 +244,7 @@ const ModalView = ({
   location,
 }) => {
   const [inputs, setInputs] = React.useState({});
-  
+
   React.useEffect(() => {
     setInitialInputs();
     /* eslint-disable-next-line */
@@ -225,50 +259,73 @@ const ModalView = ({
     const searchParams = new URLSearchParams(location.search);
     for (const [key, value] of searchParams.entries()) {
       if (!value) continue;
-      if (key === "Site_reporting_year[in]") {
-        inputs["filter_reporting_years"]  =  value.split(",").filter(year => !isNaN(year)).map((year) => parseInt(year));
-      }
-      else if (key === "eprtr_sectors[in]") {
-        inputs["filter_industries"]  =  value.split(",");
-      }
-      else if (key === "eprtr_AnnexIActivity[in]") {
-        inputs["filter_eprtr_AnnexIActivity"]  =  value.split(",");
-      }
-      else if (key === "bat_conclusions[like]") {
-        inputs["filter_bat_conclusions"]  =  value.split(",").map(group => group.replaceAll('%', ''));
-      }
-      else if (key === "permit_types[like]") {
-        inputs["filter_permit_types"]  =  value.split(",").map(group => group.replaceAll('%', ''));
-      }
-      else if (key === "permit_years[like]") {
-        inputs["filter_permit_years"]  =  value.split(",").map(group => group.replaceAll('%', '')).filter(year => !isNaN(year)).map((year) => parseInt(year));
-      }
-      else if (key === "pollutants[like]") {
-        inputs["filter_pollutants"]  =  value.split(",").map(group => group.replaceAll('%', ''));
-      }
-      else if (key === "air_groups[like]" || key === "water_groups[like]") {
-        inputs["filter_pollutant_groups"]  =  value.split(",").map(group => group.replaceAll('%', ''));
-      }
-      else if (key === "countryCode[in]") {
-        inputs["filter_countries"]  =  value.split(",");
+      if (key === 'Site_reporting_year[in]') {
+        inputs['filter_reporting_years'] = value
+          .split(',')
+          .filter((year) => !isNaN(year))
+          .map((year) => parseInt(year));
+      } else if (key === 'eprtr_sectors[in]') {
+        inputs['filter_industries'] = value.split(',');
+      } else if (key === 'eprtr_AnnexIActivity[in]') {
+        inputs['filter_eprtr_AnnexIActivity'] = value.split(',');
+      } else if (key === 'bat_conclusions[like]') {
+        inputs['filter_bat_conclusions'] = value
+          .split(',')
+          .map((group) => group.replaceAll('%', ''));
+      } else if (key === 'permit_types[like]') {
+        inputs['filter_permit_types'] = value
+          .split(',')
+          .map((group) => group.replaceAll('%', ''));
+      } else if (key === 'permit_years[like]') {
+        inputs['filter_permit_years'] = value
+          .split(',')
+          .map((group) => group.replaceAll('%', ''))
+          .filter((year) => !isNaN(year))
+          .map((year) => parseInt(year));
+      } else if (key === 'pollutants[like]') {
+        inputs['filter_pollutants'] = value
+          .split(',')
+          .map((group) => group.replaceAll('%', ''));
+      } else if (key === 'air_groups[like]' || key === 'water_groups[like]') {
+        inputs['filter_pollutant_groups'] = value
+          .split(',')
+          .map((group) => group.replaceAll('%', ''));
+      } else if (key === 'countryCode[in]') {
+        inputs['filter_countries'] = value.split(',');
       }
 
       // nuts, regions
-
-      else if (key === "has_release_data[gt]") {
-        inputs["filter_thematic_information"] = [...(inputs?.["filter_thematic_information"] ? inputs["filter_thematic_information"] : []), 'has_release'];
-      }
-      else if (key === "has_transfer_data[gt]") {
-        inputs["filter_thematic_information"] = [...(inputs?.["filter_thematic_information"] ? inputs["filter_thematic_information"] : []), 'has_transfer'];
-      }
-      else if (key === "has_waste_data[gt]") {
-        inputs["filter_thematic_information"] = [...(inputs?.["filter_thematic_information"] ? inputs["filter_thematic_information"] : []), 'has_waste'];
-      }
-      else if (key === "has_seveso[gt]") {
-        inputs["filter_thematic_information"] = [...(inputs?.["filter_thematic_information"] ? inputs["filter_thematic_information"] : []), 'has_seveso'];
+      else if (key === 'has_release_data[gt]') {
+        inputs['filter_thematic_information'] = [
+          ...(inputs?.['filter_thematic_information']
+            ? inputs['filter_thematic_information']
+            : []),
+          'has_release',
+        ];
+      } else if (key === 'has_transfer_data[gt]') {
+        inputs['filter_thematic_information'] = [
+          ...(inputs?.['filter_thematic_information']
+            ? inputs['filter_thematic_information']
+            : []),
+          'has_transfer',
+        ];
+      } else if (key === 'has_waste_data[gt]') {
+        inputs['filter_thematic_information'] = [
+          ...(inputs?.['filter_thematic_information']
+            ? inputs['filter_thematic_information']
+            : []),
+          'has_waste',
+        ];
+      } else if (key === 'has_seveso[gt]') {
+        inputs['filter_thematic_information'] = [
+          ...(inputs?.['filter_thematic_information']
+            ? inputs['filter_thematic_information']
+            : []),
+          'has_seveso',
+        ];
       }
     }
-    console.log(inputs)
+    console.log(inputs);
     setInputs(inputs);
   }, [query, location.search]);
 
@@ -299,7 +356,7 @@ const ModalView = ({
   const clearFilters = React.useCallback(() => {
     history.replace({
       pathname: location.pathname,
-      search: ''
+      search: '',
     });
     const newInputs = {};
     inputsKeys.forEach((key) => {
@@ -317,7 +374,7 @@ const ModalView = ({
     setOpen(false);
 
     /* eslint-disable-next-line */
-  }, [query,history, location]);
+  }, [query, history, location]);
 
   const applyFilters = React.useCallback(() => {
     const newQuery = {
