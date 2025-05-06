@@ -65,7 +65,14 @@ const View = ({ data, providers_data, query, dispatch }) => {
         });
       }
     }
-  }, [data, providers_data, filtersInitialized, setInitialFilters, options]);
+  }, [
+    data,
+    providers_data,
+    filtersInitialized,
+    setInitialFilters,
+    // permitTypes,
+    options,
+  ]);
 
   useEffect(() => {
     if (providers_data !== prevProvidersData.current) {
