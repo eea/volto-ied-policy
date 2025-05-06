@@ -131,7 +131,22 @@ const setParamsQuery = (data) => {
   if (filteredNuts.length > 0) {
     urlParams.append('nuts_regions[like]', filteredNuts.map(nuts => (`%${nuts}%`)).join(','));
   }
-
+  const filteredThematicInformation = query.filter_thematic_information.filter(info => info != null) ?? [];
+  if (filteredThematicInformation.length > 0) {
+    if (filteredThematicInformation.indexOf("has_release") !== -1) {
+      urlParams.append('has_release_data[gt]', 0);
+    }
+    if (filteredThematicInformation.indexOf("has_transfer") !== -1) {
+      urlParams.append('has_transfer_data[gt]', 0);
+    }
+    if (filteredThematicInformation.indexOf("has_waste") !== -1) {
+      urlParams.append('has_waste_data[gt]', 0);
+    }
+    if (filteredThematicInformation.indexOf("has_seveso") !== -1) {
+      urlParams.append('has_seveso[gt]', 0);
+    }
+  }
+  console.log(query.filter_thematic_information)
   if (search?.type === 'site' && search?.text) {
     urlParams.append('siteName', search.text.trim());
   }

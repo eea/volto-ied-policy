@@ -33,7 +33,6 @@ const IndustryDataTable = (props) => {
       tableData[key].push(value);
     }
   });
-  console.log(props)
   const row_size = data.itemsPerPage;
 
   return (
