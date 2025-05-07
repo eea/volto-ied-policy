@@ -59,10 +59,7 @@ const setParamsQuery = (data, location) => {
     query?.filter_reporting_years?.filter((year) => year != null) ?? [];
 
   if (filteredReportingYears.length > 0) {
-    urlParams.set(
-      'Site_reporting_year[in]',
-      filteredReportingYears.join(','),
-    );
+    urlParams.set('Site_reporting_year[in]', filteredReportingYears.join(','));
   }
 
   const filteredIndustries =
@@ -200,7 +197,6 @@ const setParamsQuery = (data, location) => {
       filteredPlantTypes.map((type) => `%${type}%`).join(','),
     );
   }
-
 
   return urlParams.toString();
 };
