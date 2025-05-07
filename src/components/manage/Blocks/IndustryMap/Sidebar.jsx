@@ -143,7 +143,7 @@ class Sidebar extends React.Component {
 
   clearFilters(e) {
     this.props.history.replace({
-      pathname: location.pathname,
+      pathname: this.props.location.pathname,
       search: '',
     });
     const { query, dispatch } = this.props;
