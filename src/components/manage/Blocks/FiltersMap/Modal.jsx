@@ -110,9 +110,7 @@ const setParamsQuery = (data) => {
     );
   }
 
-  const filteredPollutants =
-    query.filter_pollutants.filter((pollutant) => pollutant != null) ?? [];
-  console.log(query.filter_pollutants);
+  const filteredPollutants = query.filter_pollutants.filter(pollutant => pollutant != null) ?? [];
   if (filteredPollutants.length > 0) {
     urlParams.append(
       'pollutants[like]',
@@ -323,6 +321,11 @@ const ModalView = ({
       }
       else if (key === "count_instype_NONIED[gte]") {
         inputs["filter_installation_types"] = [...(inputs?.["filter_installation_types"] ? inputs["filter_installation_types"] : []), 'NONIED'];
+      }
+
+      else if(key === "nuts_regions[like]") {
+        inputs["filter_nuts_2"] = [value.replaceAll('%', '')];
+        inputs["filter_nuts_1"] = [value.replaceAll('%', '').substring(0, value.replaceAll('%', '').length - 1)];
       }
     }
     setInputs(inputs);
