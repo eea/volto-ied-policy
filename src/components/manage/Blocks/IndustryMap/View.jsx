@@ -205,11 +205,14 @@ const View = (props) => {
                 features,
               );
               if (!feature) {
-                overlayPopup.current.setPosition(undefined);
-                emitEvent(mapElement, 'ol-pointermove', {
-                  bubbles: false,
-                  detail: {},
-                });
+                if (typeof overlayPopup?.current?.setPosition == 'function') {
+                  overlayPopup.current.setPosition(undefined);
+                  emitEvent(mapElement, 'ol-pointermove', {
+                    bubbles: false,
+                    detail: {},
+                  });
+                }
+
                 return;
               }
               let hdms = coordinate.toStringHDMS(
@@ -359,20 +362,23 @@ const View = (props) => {
       (value) => value,
     );
     /* Trigger update of features style */
-    if (layerSites.current) {
-      debounce(
-        () => {
+    debounce(
+      () => {
+        if (
+          layerSites.current &&
+          typeof layerSites.current.getSource === 'function'
+        ) {
           layerSites.current.getSource().updateParams({
             layerDefs: JSON.stringify({
               0: getWhereStatement(props.query),
             }),
           });
-          // this.layerRegions.current.changed();
-        },
-        1,
-        500,
-      );
-    }
+        }
+        // this.layerRegions.current.changed();
+      },
+      1,
+      500,
+    );
 
     /* Fit view if necessary */
     if (filter_change.type === 'search-location') {
