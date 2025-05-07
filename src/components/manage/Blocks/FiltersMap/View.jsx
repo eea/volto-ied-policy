@@ -8,8 +8,9 @@ import { connect } from 'react-redux';
 import { connectToMultipleProvidersUnfiltered } from '@eeacms/volto-datablocks/hocs';
 import { compose } from 'redux';
 import './styles.less';
+import { withRouter } from 'react-router-dom';
 
-const View = ({ data, providers_data, query, dispatch }) => {
+const View = ({ data, providers_data, query, dispatch, location }) => {
   const [open, setOpenState] = useState(false);
   const [filtersInitialized, setFiltersInitialized] = useState(false);
   const [options, setOptions] = useState({});
@@ -55,8 +56,75 @@ const View = ({ data, providers_data, query, dispatch }) => {
         const latestYear = newOptions.reporting_years
           .filter((opt) => opt.value)
           .sort((a, b) => b.value - a.value)[0].value;
+          const inputs = {};
+          const searchParams = new URLSearchParams(location.search);
+          for (const [key, value] of searchParams.entries()) {
+            if (!value) continue;
+            if (key === "Site_reporting_year[in]") {
+              inputs["filter_reporting_years"]  =  value.split(",").filter(year => !isNaN(year)).map((year) => parseInt(year));
+            }
+            else if (key === "eprtr_sectors[in]") {
+              inputs["filter_industries"]  =  value.split(",");
+            }
+            else if (key === "eprtr_AnnexIActivity[in]") {
+              inputs["filter_eprtr_AnnexIActivity"]  =  value.split(",");
+            }
+            else if (key === "bat_conclusions[like]") {
+              inputs["filter_bat_conclusions"]  =  value.split(",").map(group => group.replaceAll('%', ''));
+            }
+            else if (key === "permit_types[like]") {
+              inputs["filter_permit_types"]  =  value.split(",").map(group => group.replaceAll('%', ''));
+            }
+            else if (key === "permit_years[like]") {
+              inputs["filter_permit_years"]  =  value.split(",").map(group => group.replaceAll('%', '')).filter(year => !isNaN(year)).map((year) => parseInt(year));
+            }
+            else if (key === "pollutants[like]") {
+              inputs["filter_pollutants"]  =  value.split("%,").map(group => group.replaceAll('%', ''));
+            }
+            else if (key === "air_groups[like]" || key === "water_groups[like]") {
+              inputs["filter_pollutant_groups"]  =  value.split(",").map(group => group.replaceAll('%', ''));
+            }
+            else if (key === "countryCode[in]") {
+              inputs["filter_countries"]  =  value.split(",");
+            }
+            
+            else if (key === "has_release_data[gt]") {
+              inputs["filter_thematic_information"] = [...(inputs?.["filter_thematic_information"] ? inputs["filter_thematic_information"] : []), 'has_release'];
+            }
+            else if (key === "has_transfer_data[gt]") {
+              inputs["filter_thematic_information"] = [...(inputs?.["filter_thematic_information"] ? inputs["filter_thematic_information"] : []), 'has_transfer'];
+            }
+            else if (key === "has_waste_data[gt]") {
+              inputs["filter_thematic_information"] = [...(inputs?.["filter_thematic_information"] ? inputs["filter_thematic_information"] : []), 'has_waste'];
+            }
+            else if (key === "has_seveso[gt]") {
+              inputs["filter_thematic_information"] = [...(inputs?.["filter_thematic_information"] ? inputs["filter_thematic_information"] : []), 'has_seveso'];
+            }
+      
+            else if (key === "count_instype_IED[gte]") {
+              inputs["filter_installation_types"] = [...(inputs?.["filter_installation_types"] ? inputs["filter_installation_types"] : []), 'IED'];
+            }
+            else if (key === "count_instype_NONIED[gte]") {
+              inputs["filter_installation_types"] = [...(inputs?.["filter_installation_types"] ? inputs["filter_installation_types"] : []), 'NONIED'];
+            }
+      
+            else if(key === "nuts_regions[like]") {
+              inputs["filter_nuts_2"] = [value.replaceAll('%', '')];
+              inputs["filter_nuts_1"] = [value.replaceAll('%', '').substring(0, value.replaceAll('%', '').length - 1)];
+            }
+            else if (key === "facility_types") {
+              inputs["filter_facility_types"] = value.split("%,").map(group => group.replaceAll('%', ''));
+            }
+            else if (key === "river_basin") {
+              inputs["filter_river_basin_districts"] = value.split("%,").map(group => group.replaceAll('%', ''));
+            }
+            else if (key === "plant_types") {
+              inputs["filter_plant_types"] = value.split("%,").map(group => group.replaceAll('%', ''));
+            }
+          }
         setInitialFilters({
           filter_reporting_years: [latestYear],
+          ...inputs,
           filter_change: {
             counter: 1,
             type: 'simple-filter',
@@ -99,6 +167,7 @@ const View = ({ data, providers_data, query, dispatch }) => {
 };
 
 export default compose(
+  withRouter,
   connect((state) => ({
     query: state.query.search,
   })),

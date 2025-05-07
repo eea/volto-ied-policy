@@ -172,6 +172,21 @@ const setParamsQuery = (data) => {
       urlParams.append('count_instype_NONIED[gte]', 1);
     }
   }
+
+  const filteredFacilityTypes = query.filter_facility_types.filter(type => type != null) ?? [];
+  if (filteredFacilityTypes.length > 0) {
+    urlParams.append('facility_types', filteredFacilityTypes.map(type => (`%${type}%`)).join(','));
+  }
+
+  const filteredRiverBasinDistricts = query.filter_river_basin_districts.filter(district => district != null) ?? [];
+  if (filteredRiverBasinDistricts.length > 0) {
+    urlParams.append('river_basin', filteredRiverBasinDistricts.map(district => (`%${district}%`)).join(','));
+  }
+
+  const filteredPlantTypes = query.filter_plant_types.filter(type => type != null) ?? [];
+  if (filteredPlantTypes.length > 0) {
+    urlParams.append('plant_types', filteredPlantTypes.map(type => (`%${type}%`)).join(','));
+  }
   if (search?.type === 'site' && search?.text) {
     urlParams.append('siteName', search.text.trim());
   }
@@ -254,82 +269,75 @@ const ModalView = ({
     inputsKeys.forEach((key) => {
       inputs[key] = [...(query[key] || [])];
     });
-    const searchParams = new URLSearchParams(location.search);
-    for (const [key, value] of searchParams.entries()) {
-      if (!value) continue;
-      if (key === "Site_reporting_year[in]") {
-        inputs["filter_reporting_years"]  =  value.split(",").filter(year => !isNaN(year)).map((year) => parseInt(year));
-      }
-      else if (key === "eprtr_sectors[in]") {
-        inputs["filter_industries"]  =  value.split(",");
-      }
-      else if (key === "eprtr_AnnexIActivity[in]") {
-        inputs["filter_eprtr_AnnexIActivity"]  =  value.split(",");
-      }
-      else if (key === "bat_conclusions[like]") {
-        inputs["filter_bat_conclusions"]  =  value.split(",").map(group => group.replaceAll('%', ''));
-      }
-      else if (key === "permit_types[like]") {
-        inputs["filter_permit_types"]  =  value.split(",").map(group => group.replaceAll('%', ''));
-      }
-      else if (key === "permit_years[like]") {
-        inputs["filter_permit_years"]  =  value.split(",").map(group => group.replaceAll('%', '')).filter(year => !isNaN(year)).map((year) => parseInt(year));
-      }
-      else if (key === "pollutants[like]") {
-        inputs["filter_pollutants"]  =  value.split("%,").map(group => group.replaceAll('%', ''));
-      }
-      else if (key === "air_groups[like]" || key === "water_groups[like]") {
-        inputs["filter_pollutant_groups"]  =  value.split(",").map(group => group.replaceAll('%', ''));
-      }
-      else if (key === "countryCode[in]") {
-        inputs["filter_countries"]  =  value.split(",");
-      }
+    // const searchParams = new URLSearchParams(location.search);
+    // for (const [key, value] of searchParams.entries()) {
+    //   if (!value) continue;
+    //   if (key === "Site_reporting_year[in]") {
+    //     inputs["filter_reporting_years"]  =  value.split(",").filter(year => !isNaN(year)).map((year) => parseInt(year));
+    //   }
+    //   else if (key === "eprtr_sectors[in]") {
+    //     inputs["filter_industries"]  =  value.split(",");
+    //   }
+    //   else if (key === "eprtr_AnnexIActivity[in]") {
+    //     inputs["filter_eprtr_AnnexIActivity"]  =  value.split(",");
+    //   }
+    //   else if (key === "bat_conclusions[like]") {
+    //     inputs["filter_bat_conclusions"]  =  value.split(",").map(group => group.replaceAll('%', ''));
+    //   }
+    //   else if (key === "permit_types[like]") {
+    //     inputs["filter_permit_types"]  =  value.split(",").map(group => group.replaceAll('%', ''));
+    //   }
+    //   else if (key === "permit_years[like]") {
+    //     inputs["filter_permit_years"]  =  value.split(",").map(group => group.replaceAll('%', '')).filter(year => !isNaN(year)).map((year) => parseInt(year));
+    //   }
+    //   else if (key === "pollutants[like]") {
+    //     inputs["filter_pollutants"]  =  value.split("%,").map(group => group.replaceAll('%', ''));
+    //   }
+    //   else if (key === "air_groups[like]" || key === "water_groups[like]") {
+    //     inputs["filter_pollutant_groups"]  =  value.split(",").map(group => group.replaceAll('%', ''));
+    //   }
+    //   else if (key === "countryCode[in]") {
+    //     inputs["filter_countries"]  =  value.split(",");
+    //   }
 
-      // nuts, regions
-      else if (key === 'has_release_data[gt]') {
-        inputs['filter_thematic_information'] = [
-          ...(inputs?.['filter_thematic_information']
-            ? inputs['filter_thematic_information']
-            : []),
-          'has_release',
-        ];
-      } else if (key === 'has_transfer_data[gt]') {
-        inputs['filter_thematic_information'] = [
-          ...(inputs?.['filter_thematic_information']
-            ? inputs['filter_thematic_information']
-            : []),
-          'has_transfer',
-        ];
-      } else if (key === 'has_waste_data[gt]') {
-        inputs['filter_thematic_information'] = [
-          ...(inputs?.['filter_thematic_information']
-            ? inputs['filter_thematic_information']
-            : []),
-          'has_waste',
-        ];
-      } else if (key === 'has_seveso[gt]') {
-        inputs['filter_thematic_information'] = [
-          ...(inputs?.['filter_thematic_information']
-            ? inputs['filter_thematic_information']
-            : []),
-          'has_seveso',
-        ];
-      }
+    //   // nuts, regions
 
-      else if (key === "count_instype_IED[gte]") {
-        inputs["filter_installation_types"] = [...(inputs?.["filter_installation_types"] ? inputs["filter_installation_types"] : []), 'IED'];
-      }
-      else if (key === "count_instype_NONIED[gte]") {
-        inputs["filter_installation_types"] = [...(inputs?.["filter_installation_types"] ? inputs["filter_installation_types"] : []), 'NONIED'];
-      }
+    //   else if (key === "has_release_data[gt]") {
+    //     inputs["filter_thematic_information"] = [...(inputs?.["filter_thematic_information"] ? inputs["filter_thematic_information"] : []), 'has_release'];
+    //   }
+    //   else if (key === "has_transfer_data[gt]") {
+    //     inputs["filter_thematic_information"] = [...(inputs?.["filter_thematic_information"] ? inputs["filter_thematic_information"] : []), 'has_transfer'];
+    //   }
+    //   else if (key === "has_waste_data[gt]") {
+    //     inputs["filter_thematic_information"] = [...(inputs?.["filter_thematic_information"] ? inputs["filter_thematic_information"] : []), 'has_waste'];
+    //   }
+    //   else if (key === "has_seveso[gt]") {
+    //     inputs["filter_thematic_information"] = [...(inputs?.["filter_thematic_information"] ? inputs["filter_thematic_information"] : []), 'has_seveso'];
+    //   }
 
-      else if(key === "nuts_regions[like]") {
-        inputs["filter_nuts_2"] = [value.replaceAll('%', '')];
-        inputs["filter_nuts_1"] = [value.replaceAll('%', '').substring(0, value.replaceAll('%', '').length - 1)];
-      }
-    }
+    //   else if (key === "count_instype_IED[gte]") {
+    //     inputs["filter_installation_types"] = [...(inputs?.["filter_installation_types"] ? inputs["filter_installation_types"] : []), 'IED'];
+    //   }
+    //   else if (key === "count_instype_NONIED[gte]") {
+    //     inputs["filter_installation_types"] = [...(inputs?.["filter_installation_types"] ? inputs["filter_installation_types"] : []), 'NONIED'];
+    //   }
+
+    //   else if(key === "nuts_regions[like]") {
+    //     inputs["filter_nuts_2"] = [value.replaceAll('%', '')];
+    //     inputs["filter_nuts_1"] = [value.replaceAll('%', '').substring(0, value.replaceAll('%', '').length - 1)];
+    //   }
+    //   else if (key === "facility_types") {
+    //     inputs["filter_facility_types"] = value.split("%,").map(group => group.replaceAll('%', ''));
+    //   }
+    //   else if (key === "river_basin") {
+    //     inputs["filter_river_basin_districts"] = value.split("%,").map(group => group.replaceAll('%', ''));
+    //   }
+    //   else if (key === "plant_types") {
+    //     inputs["filter_plant_types"] = value.split("%,").map(group => group.replaceAll('%', ''));
+    //   }
+    // }
     setInputs(inputs);
-  }, [query, location.search]);
+  }, [query]);
 
   const isChecked = React.useCallback(
     (filter, label) => {
