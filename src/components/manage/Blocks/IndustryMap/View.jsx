@@ -457,7 +457,7 @@ const View = (props) => {
         }
       });
     }
-  }, [props.query]);
+  }, [props.query?.filter_change?.counter]);
 
   if (__SERVER__) return '';
 

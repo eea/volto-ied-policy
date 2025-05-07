@@ -86,8 +86,7 @@ const View = ({ data, providers_data, query, dispatch, location }) => {
             }
             else if (key === "countryCode[in]") {
               inputs["filter_countries"]  =  value.split(",");
-            }
-            
+            }      
             else if (key === "has_release_data[gt]") {
               inputs["filter_thematic_information"] = [...(inputs?.["filter_thematic_information"] ? inputs["filter_thematic_information"] : []), 'has_release'];
             }
@@ -138,6 +137,7 @@ const View = ({ data, providers_data, query, dispatch, location }) => {
     filtersInitialized,
     permitTypes,
     setInitialFilters,
+    location.search
   ]);
 
   useEffect(() => {
