@@ -51,10 +51,14 @@ const getLatestRegions = (query) => {
 };
 
 const setParamsQuery = (data, location) => {
+  const oldParams = new URLSearchParams(location.search);
+  const activeTab = oldParams.get('activeTab');
   const query = { ...data, nuts_latest: getLatestRegions(data).nuts_latest };
 
-  const urlParams = new URLSearchParams(location.search);
-
+  const urlParams = new URLSearchParams();
+  if (activeTab) {
+    urlParams.set('activeTab', activeTab);
+  }
   const filteredReportingYears =
     query?.filter_reporting_years?.filter((year) => year != null) ?? [];
 

@@ -11,7 +11,15 @@ import { compose } from 'redux';
 import './styles.less';
 import { withRouter } from 'react-router-dom';
 
-const View = ({ data, providers_data, query, dispatch, location, history }) => {
+const View = ({
+  data,
+  providers_data,
+  query,
+  dispatch,
+  location,
+  history,
+  ...props
+}) => {
   const [open, setOpenState] = useState(false);
   const [filtersInitialized, setFiltersInitialized] = useState(false);
   const [options, setOptions] = useState({});
@@ -167,13 +175,16 @@ const View = ({ data, providers_data, query, dispatch, location, history }) => {
           },
         });
         const urlParams = new URLSearchParams(location.search);
-        if (!urlParams.get('Site_reporting_year[in]')) {
+        if (
+          !urlParams.get('Site_reporting_year[in]') &&
+          props.mode !== 'edit'
+        ) {
           urlParams.set('Site_reporting_year[in]', latestYear);
+          history.push({
+            pathname: location.pathname,
+            search: `?${urlParams.toString()}`,
+          });
         }
-        history.push({
-          pathname: location.pathname,
-          search: `?${urlParams.toString()}`,
-        });
       }
     }
   }, [

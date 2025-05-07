@@ -33,11 +33,10 @@ const IndustryDataTable = (props) => {
       tableData[key].push(value);
     }
   });
-  const row_size = data.itemsPerPage;
   const loading = tableData?.rowType != null;
   return (
     <div ref={table} className="industry-table">
-      {row_size && tableData && !loading && (
+      {tableData && !loading && (
         <Table
           textAlign="left"
           striped={data.striped}
@@ -46,7 +45,7 @@ const IndustryDataTable = (props) => {
         >
           <Table.Header>
             <Table.Row>
-              {data.columnDefs.map((colDef, j) => (
+              {data?.columnDefs?.map((colDef, j) => (
                 <Table.HeaderCell key={colDef.field} className={'left aligned'}>
                   {colDef.headerName}
                 </Table.HeaderCell>
