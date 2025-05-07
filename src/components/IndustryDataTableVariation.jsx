@@ -34,10 +34,11 @@ const IndustryDataTable = (props) => {
     }
   });
   const row_size = data.itemsPerPage;
-
+  const loading = tableData?.rowType != null;
   return (
+
     <div ref={table} className="industry-table">
-      {row_size && tableData ? (
+      {row_size && tableData && !loading && (
         <Table
           textAlign="left"
           striped={data.striped}
@@ -308,39 +309,13 @@ const IndustryDataTable = (props) => {
             </Table.Footer>
           ) : null}
         </Table>
-      ) : tableData ? (
-        // TODO: find a better solution to keep headers
-        <Table
-          textAlign="left"
-          striped={data.striped}
-          className={`unstackable ${data.bordered ? 'no-borders' : ''}
-        ${data.compact_table ? 'compact-table' : ''}`}
-        >
-          <Table.Header>
-            <Table.Row>
-              {data?.columns?.map((header) => (
-                <Table.HeaderCell
-                  key={header.column}
-                  className={header.textAlign || 'left'}
-                >
-                  {header.title}
-                </Table.HeaderCell>
-              ))}
-            </Table.Row>
-          </Table.Header>
-          <Table.Body>
-            <Table.Row>
-              <Table.Cell colSpan={data?.columns?.length || 1}>
-                <p>Placeholder</p>
-              </Table.Cell>
-            </Table.Row>
-          </Table.Body>
-        </Table>
-      ) : (
-        <Loader active inline="centered">
-          European Environment Agency
-        </Loader>
       )}
+      {loading && (
+      <Loader active inline="centered">
+        European Environment Agency
+      </Loader>
+      )}
+
     </div>
   );
 };
