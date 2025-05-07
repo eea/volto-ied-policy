@@ -308,8 +308,14 @@ const View = (props) => {
 
     const lat = props?.query?.lat;
     const lng = props?.query?.lng;
+
     if (lat && lng) {
       const formattedLatLng = mercatorToLatLon(lng, lat);
+      const coords = proj.fromLonLat([
+        formattedLatLng.lng,
+        formattedLatLng.lat,
+      ]);
+
       centerToQueryLocation(
         {
           coords: {
@@ -319,6 +325,24 @@ const View = (props) => {
         },
         12,
       );
+
+      // Show persistent popup at selected location
+      if (overlayPopup.current) {
+        console.log('here siteName', props.query?.siteName);
+        overlayPopup.current.setPosition(coords);
+        emitEvent(document.querySelector('#industry-map'), 'ol-pointermove', {
+          bubbles: false,
+          detail: {
+            siteName: props.query?.siteName || 'Selected site',
+            // lat: formattedLatLng.lat,
+            // lng: formattedLatLng.lng,
+            // hdms: `${formattedLatLng.lat.toFixed(
+            //   2,
+            // )}° N ${formattedLatLng.lng.toFixed(2)}° E`,
+            // flatCoordinates: coords,
+          },
+        });
+      }
     } else {
       centerToUserLocation();
     }
@@ -457,6 +481,8 @@ const View = (props) => {
 
   if (__SERVER__) return '';
 
+  console.log('here', props.query?.siteName);
+
   return (
     <>
       <StyleWrapperView
@@ -579,7 +605,13 @@ const View = (props) => {
                   positioning="center-center"
                   stopEvent={true}
                 >
-                  <Popup overlay={overlayPopup} />
+                  <Popup
+                    overlay={overlayPopup}
+                    lock={!!props.query?.siteName}
+                    staticData={{
+                      siteName: props.query?.siteName || 'No site name',
+                    }}
+                  />
                 </Overlays>
                 <Overlays
                   ref={(data) => {

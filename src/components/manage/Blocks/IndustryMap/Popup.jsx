@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { Grid } from 'semantic-ui-react';
 
-const Popup = () => {
-  const [data, setData] = useState({});
+const Popup = ({ lock = false, staticData = null }) => {
+  const [data, setData] = useState(staticData || {});
 
   useEffect(() => {
+    console.log('here lock', lock);
+    if (lock && staticData) {
+      setData(staticData);
+      return;
+    }
+
     const handler = (e) => {
       if (JSON.stringify(e.detail) !== JSON.stringify(data)) {
         setData(e.detail);
@@ -17,7 +23,7 @@ const Popup = () => {
     return () => {
       mapElement?.removeEventListener('ol-pointermove', handler);
     };
-  }, [data]);
+  }, [lock, staticData]);
 
   return (
     <div
