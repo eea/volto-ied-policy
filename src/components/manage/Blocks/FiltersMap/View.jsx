@@ -91,9 +91,7 @@ const View = ({ data, providers_data, query, dispatch, location, history }) => {
             key === 'air_groups[like]' ||
             key === 'water_groups[like]'
           ) {
-            inputs['filter_pollutant_groups'] = value
-              .split(',')
-              .map((group) => group.replaceAll('%', ''));
+            inputs['filter_pollutant_groups'] = value.split(',');
           } else if (key === 'countryCode[in]') {
             inputs['filter_countries'] = value.split(',');
           } else if (key === 'has_release_data[gt]') {
