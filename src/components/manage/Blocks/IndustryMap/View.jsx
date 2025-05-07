@@ -48,16 +48,16 @@ const debounce = (func, index, timeout = 200, ...args) => {
   if (timer[index]) clearTimeout(timer[index]);
   timer[index] = setTimeout(func, timeout, ...args);
 };
-// const getWhereStatementFromUrl = (params) => {
-//   let query = '';
-//   for (const [key, value] of params.entries()) {
-//     if (key == 'siteName') {
-//       query += `siteName LIKE '${value}%'`;
-//     } else {
-//       query += `(${key} = ${value})`;
-//     }
-//   }
-// };
+const getWhereStatementFromUrl = (params) => {
+  let query = '';
+  for (const [key, value] of params.entries()) {
+    if (key == 'siteName') {
+      query += `siteName LIKE '${value}%'`;
+    } else {
+      query += `(${key} = ${value})`;
+    }
+  }
+};
 const getSitesSource = (query) => {
   // return {};
   const { source } = openlayers;
@@ -178,6 +178,8 @@ const View = (props) => {
       e.coordinate[0] + (zoom >= 8 ? 8 : 6) * resolution,
       e.coordinate[1] + (zoom >= 8 ? 8 : 6) * resolution,
     ];
+    if (!overlayPopup?.current) return;
+
     debounce(
       () => {
         const esrijsonFormat = new openlayers.format.EsriJSON();
@@ -220,7 +222,6 @@ const View = (props) => {
                   flatCoordinates: feature.getGeometry().flatCoordinates,
                 },
               });
-              if (!overlayPopup?.current) return;
               overlayPopup.current.setPosition(e.coordinate);
               e.map.getTarget().style.cursor = 'pointer';
             }
@@ -356,18 +357,21 @@ const View = (props) => {
       (value) => value,
     );
     /* Trigger update of features style */
-    debounce(
-      () => {
-        layerSites.current.getSource().updateParams({
-          layerDefs: JSON.stringify({
-            0: getWhereStatement(props.query),
-          }),
-        });
-        // this.layerRegions.current.changed();
-      },
-      1,
-      500,
-    );
+    if (layerSites.current) {
+      debounce(
+        () => {
+          layerSites.current.getSource().updateParams({
+            layerDefs: JSON.stringify({
+              0: getWhereStatement(props.query),
+            }),
+          });
+          // this.layerRegions.current.changed();
+        },
+        1,
+        500,
+      );
+    }
+
     /* Fit view if necessary */
     if (filter_change.type === 'search-location') {
       getLocationExtent(filter_search).then(({ data }) => {
@@ -478,7 +482,7 @@ const View = (props) => {
         }
       });
     }
-  }, [props.query]);
+  }, [props.query?.filter_change?.counter]);
 
   if (__SERVER__) return '';
 
