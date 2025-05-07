@@ -153,15 +153,15 @@ const applyConfig = (config) => {
     ...config.addonReducers,
     ...addonReducers,
   };
-  // config.blocks.blocksConfig.custom_connected_block = {
-  //   id: 'custom_connected_block',
-  //   title: 'Connected Tags',
-  //   group: 'common',
-  //   view: ListView,
-  //   edit: EditView,
-  //   schema: getSchema,
-  //   icon: iconSVG,
-  // };
+  config.blocks.blocksConfig.custom_connected_tags = {
+    id: 'custom_connected_tags',
+    title: 'Connected Tags',
+    group: 'common',
+    view: ListView,
+    edit: EditView,
+    schema: getSchema,
+    icon: iconSVG,
+  };
 
   config.blocks.blocksConfig.tableau_block.restricted = false;
   // Multi-lingual
