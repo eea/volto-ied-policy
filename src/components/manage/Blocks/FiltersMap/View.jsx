@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { setQuery } from '@eeacms/volto-ied-policy/actions';
 
@@ -91,9 +92,7 @@ const View = ({ data, providers_data, query, dispatch, location, history }) => {
             key === 'air_groups[like]' ||
             key === 'water_groups[like]'
           ) {
-            inputs['filter_pollutant_groups'] = value
-              .split(',')
-              .map((group) => group.replaceAll('%', ''));
+            inputs['filter_pollutant_groups'] = value.split(',');
           } else if (key === 'countryCode[in]') {
             inputs['filter_countries'] = value.split(',');
           } else if (key === 'has_release_data[gt]') {
@@ -169,10 +168,7 @@ const View = ({ data, providers_data, query, dispatch, location, history }) => {
         });
         const urlParams = new URLSearchParams(location.search);
         if (!urlParams.get('Site_reporting_year[in]')) {
-          urlParams.set(
-            'Site_reporting_year[in]',
-            latestYear,
-          );       
+          urlParams.set('Site_reporting_year[in]', latestYear);
         }
         history.push({
           pathname: location.pathname,

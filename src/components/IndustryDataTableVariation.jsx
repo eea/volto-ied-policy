@@ -36,7 +36,6 @@ const IndustryDataTable = (props) => {
   const row_size = data.itemsPerPage;
   const loading = tableData?.rowType != null;
   return (
-
     <div ref={table} className="industry-table">
       {row_size && tableData && !loading && (
         <Table
@@ -311,11 +310,10 @@ const IndustryDataTable = (props) => {
         </Table>
       )}
       {loading && (
-      <Loader active inline="centered">
-        European Environment Agency
-      </Loader>
+        <Loader active inline="centered">
+          European Environment Agency
+        </Loader>
       )}
-
     </div>
   );
 };

@@ -56,7 +56,7 @@ const breakpointUrlSchema = (config) => {
   };
 };
 
-export default (config, provider_keys = []) => ({
+const tableauSchema = (config, provider_keys = []) => ({
   title: 'Tableau',
   fieldsets: [
     {
@@ -101,7 +101,11 @@ export default (config, provider_keys = []) => ({
       title: 'Allowed params',
       type: 'array',
       items: {
-        choices: [['siteInspireId', 'siteInspireId']],
+        choices: [
+          ['siteInspireId', 'siteInspireId'],
+          ['facilityInspireId', 'facilityInspireId'],
+          ['installationInspireId', 'installationInspireId'],
+        ],
       },
     },
     disabledKey: {
@@ -155,3 +159,5 @@ export default (config, provider_keys = []) => ({
   },
   required: ['version', 'url'],
 });
+
+export default tableauSchema;
