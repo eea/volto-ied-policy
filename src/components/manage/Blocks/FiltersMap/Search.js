@@ -88,7 +88,7 @@ const Search = ({
       return urlParams.get('searchLocation');
     }
     return null;
-  }, [query.filter_search_value]);
+  }, [query.filter_search_value, location.search]);
 
   const setValue = React.useCallback((value) => {
     setQuery({ filter_search_value: value });
@@ -263,7 +263,7 @@ const Search = ({
         });
       }
     },
-    [query, onChange, setQuery],
+    [query, onChange, setQuery, history, location.pathname, location.search],
   );
 
   return (
