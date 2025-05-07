@@ -259,39 +259,32 @@ const ModalView = ({
     const searchParams = new URLSearchParams(location.search);
     for (const [key, value] of searchParams.entries()) {
       if (!value) continue;
-      if (key === 'Site_reporting_year[in]') {
-        inputs['filter_reporting_years'] = value
-          .split(',')
-          .filter((year) => !isNaN(year))
-          .map((year) => parseInt(year));
-      } else if (key === 'eprtr_sectors[in]') {
-        inputs['filter_industries'] = value.split(',');
-      } else if (key === 'eprtr_AnnexIActivity[in]') {
-        inputs['filter_eprtr_AnnexIActivity'] = value.split(',');
-      } else if (key === 'bat_conclusions[like]') {
-        inputs['filter_bat_conclusions'] = value
-          .split(',')
-          .map((group) => group.replaceAll('%', ''));
-      } else if (key === 'permit_types[like]') {
-        inputs['filter_permit_types'] = value
-          .split(',')
-          .map((group) => group.replaceAll('%', ''));
-      } else if (key === 'permit_years[like]') {
-        inputs['filter_permit_years'] = value
-          .split(',')
-          .map((group) => group.replaceAll('%', ''))
-          .filter((year) => !isNaN(year))
-          .map((year) => parseInt(year));
-      } else if (key === 'pollutants[like]') {
-        inputs['filter_pollutants'] = value
-          .split(',')
-          .map((group) => group.replaceAll('%', ''));
-      } else if (key === 'air_groups[like]' || key === 'water_groups[like]') {
-        inputs['filter_pollutant_groups'] = value
-          .split(',')
-          .map((group) => group.replaceAll('%', ''));
-      } else if (key === 'countryCode[in]') {
-        inputs['filter_countries'] = value.split(',');
+      if (key === "Site_reporting_year[in]") {
+        inputs["filter_reporting_years"]  =  value.split(",").filter(year => !isNaN(year)).map((year) => parseInt(year));
+      }
+      else if (key === "eprtr_sectors[in]") {
+        inputs["filter_industries"]  =  value.split(",");
+      }
+      else if (key === "eprtr_AnnexIActivity[in]") {
+        inputs["filter_eprtr_AnnexIActivity"]  =  value.split(",");
+      }
+      else if (key === "bat_conclusions[like]") {
+        inputs["filter_bat_conclusions"]  =  value.split(",").map(group => group.replaceAll('%', ''));
+      }
+      else if (key === "permit_types[like]") {
+        inputs["filter_permit_types"]  =  value.split(",").map(group => group.replaceAll('%', ''));
+      }
+      else if (key === "permit_years[like]") {
+        inputs["filter_permit_years"]  =  value.split(",").map(group => group.replaceAll('%', '')).filter(year => !isNaN(year)).map((year) => parseInt(year));
+      }
+      else if (key === "pollutants[like]") {
+        inputs["filter_pollutants"]  =  value.split("%,").map(group => group.replaceAll('%', ''));
+      }
+      else if (key === "air_groups[like]" || key === "water_groups[like]") {
+        inputs["filter_pollutant_groups"]  =  value.split(",").map(group => group.replaceAll('%', ''));
+      }
+      else if (key === "countryCode[in]") {
+        inputs["filter_countries"]  =  value.split(",");
       }
 
       // nuts, regions
@@ -324,8 +317,14 @@ const ModalView = ({
           'has_seveso',
         ];
       }
+
+      else if (key === "count_instype_IED[gte]") {
+        inputs["filter_installation_types"] = [...(inputs?.["filter_installation_types"] ? inputs["filter_installation_types"] : []), 'IED'];
+      }
+      else if (key === "count_instype_NONIED[gte]") {
+        inputs["filter_installation_types"] = [...(inputs?.["filter_installation_types"] ? inputs["filter_installation_types"] : []), 'NONIED'];
+      }
     }
-    console.log(inputs);
     setInputs(inputs);
   }, [query, location.search]);
 
