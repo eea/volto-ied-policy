@@ -21,20 +21,17 @@ const setParamsQuery = (filters, location) => {
     query?.filter_reporting_years?.filter((year) => year != null) ?? [];
 
   if (filteredReportingYears.length > 0) {
-    urlParams.set(
-      'Site_reporting_year[in]',
-      filteredReportingYears.join(','),
-    );
+    urlParams.set('Site_reporting_year[in]', filteredReportingYears.join(','));
   }
   const filteredCountryCodes =
-  query?.filter_countries?.filter((code) => code != null) ?? [];
+    query?.filter_countries?.filter((code) => code != null) ?? [];
   if (filteredCountryCodes.length > 0) {
     urlParams.set('countryCode[in]', filteredCountryCodes.join(','));
     urlParams.delete('nuts_regions[like]');
   }
 
   const filteredInstallationTypes =
-  query?.filter_installation_types?.filter((type) => type != null) ?? [];
+    query?.filter_installation_types?.filter((type) => type != null) ?? [];
   if (filteredInstallationTypes.length > 0) {
     if (filteredInstallationTypes.indexOf('IED') !== -1) {
       urlParams.set('count_instype_IED[gte]', 1);
@@ -43,17 +40,21 @@ const setParamsQuery = (filters, location) => {
       urlParams.set('count_instype_NONIED[gte]', 1);
     }
   }
-  const filteredFacilityTypes = query?.filter_facility_types?.filter(type => type != null) ?? [];
+  const filteredFacilityTypes =
+    query?.filter_facility_types?.filter((type) => type != null) ?? [];
   if (filteredFacilityTypes.length > 0) {
-    urlParams.set('facility_types', filteredFacilityTypes.map(type => (`%${type}%`)).join(','));
+    urlParams.set(
+      'facility_types',
+      filteredFacilityTypes.map((type) => `%${type}%`).join(','),
+    );
   }
   const filteredIndustries =
-  query?.filter_industries?.filter((industry) => industry != null) ?? [];
+    query?.filter_industries?.filter((industry) => industry != null) ?? [];
   if (filteredIndustries.length > 0) {
     urlParams.set('eprtr_sectors[in]', filteredIndustries.join(','));
   }
   return urlParams;
-}
+};
 class Sidebar extends React.Component {
   constructor(props) {
     super(props);
@@ -308,6 +309,9 @@ class Sidebar extends React.Component {
   }
 }
 
-export default compose(withRouter, connect((state) => ({
-  query: state.query.search,
-})))(Sidebar);
+export default compose(
+  withRouter,
+  connect((state) => ({
+    query: state.query.search,
+  })),
+)(Sidebar);

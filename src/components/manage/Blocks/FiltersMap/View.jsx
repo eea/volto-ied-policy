@@ -169,10 +169,7 @@ const View = ({ data, providers_data, query, dispatch, location, history }) => {
         });
         const urlParams = new URLSearchParams(location.search);
         if (!urlParams.get('Site_reporting_year[in]')) {
-          urlParams.set(
-            'Site_reporting_year[in]',
-            latestYear,
-          );       
+          urlParams.set('Site_reporting_year[in]', latestYear);
         }
         history.push({
           pathname: location.pathname,
