@@ -48,16 +48,18 @@ const debounce = (func, index, timeout = 200, ...args) => {
   if (timer[index]) clearTimeout(timer[index]);
   timer[index] = setTimeout(func, timeout, ...args);
 };
-const getWhereStatementFromUrl = (params) => {
-  let query = '';
-  for (const [key, value] of params.entries()) {
-    if (key == 'siteName') {
-      query += `siteName LIKE '${value}%'`;
-    } else {
-      query += `(${key} = ${value})`;
-    }
-  }
-};
+
+// const getWhereStatementFromUrl = (params) => {
+//   let query = '';
+//   for (const [key, value] of params.entries()) {
+//     if (key === 'siteName') {
+//       query += `siteName LIKE '${value}%'`;
+//     } else {
+//       query += `(${key} = ${value})`;
+//     }
+//   }
+// };
+
 const getSitesSource = (query) => {
   // return {};
   const { source } = openlayers;
