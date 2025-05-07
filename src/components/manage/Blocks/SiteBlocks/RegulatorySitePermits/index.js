@@ -1,7 +1,7 @@
 import RegulatorySitePermits from './View';
 import getSchema from './schema';
 
-export default (config) => {
+const install = (config) => {
   config.blocks.blocksConfig.custom_connected_block = {
     ...config.blocks.blocksConfig.custom_connected_block,
     blocks: {
@@ -15,3 +15,5 @@ export default (config) => {
   };
   return config;
 };
+
+export default install;
