@@ -110,7 +110,8 @@ const setParamsQuery = (data) => {
     );
   }
 
-  const filteredPollutants = query.filter_pollutants.filter(pollutant => pollutant != null) ?? [];
+  const filteredPollutants =
+    query.filter_pollutants.filter((pollutant) => pollutant != null) ?? [];
   if (filteredPollutants.length > 0) {
     urlParams.append(
       'pollutants[like]',
@@ -173,19 +174,32 @@ const setParamsQuery = (data) => {
     }
   }
 
-  const filteredFacilityTypes = query.filter_facility_types.filter(type => type != null) ?? [];
+  const filteredFacilityTypes =
+    query.filter_facility_types.filter((type) => type != null) ?? [];
   if (filteredFacilityTypes.length > 0) {
-    urlParams.append('facility_types', filteredFacilityTypes.map(type => (`%${type}%`)).join(','));
+    urlParams.append(
+      'facility_types',
+      filteredFacilityTypes.map((type) => `%${type}%`).join(','),
+    );
   }
 
-  const filteredRiverBasinDistricts = query.filter_river_basin_districts.filter(district => district != null) ?? [];
+  const filteredRiverBasinDistricts =
+    query.filter_river_basin_districts.filter((district) => district != null) ??
+    [];
   if (filteredRiverBasinDistricts.length > 0) {
-    urlParams.append('river_basin', filteredRiverBasinDistricts.map(district => (`%${district}%`)).join(','));
+    urlParams.append(
+      'river_basin',
+      filteredRiverBasinDistricts.map((district) => `%${district}%`).join(','),
+    );
   }
 
-  const filteredPlantTypes = query.filter_plant_types.filter(type => type != null) ?? [];
+  const filteredPlantTypes =
+    query.filter_plant_types.filter((type) => type != null) ?? [];
   if (filteredPlantTypes.length > 0) {
-    urlParams.append('plant_types', filteredPlantTypes.map(type => (`%${type}%`)).join(','));
+    urlParams.append(
+      'plant_types',
+      filteredPlantTypes.map((type) => `%${type}%`).join(','),
+    );
   }
   if (search?.type === 'site' && search?.text) {
     urlParams.append('siteName', search.text.trim());
