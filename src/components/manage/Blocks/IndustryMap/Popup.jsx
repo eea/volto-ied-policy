@@ -5,7 +5,6 @@ const Popup = ({ lock = false, staticData = null }) => {
   const [data, setData] = useState(staticData || {});
 
   useEffect(() => {
-    console.log('here lock', lock);
     if (lock && staticData) {
       setData(staticData);
       return;

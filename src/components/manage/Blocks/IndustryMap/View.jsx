@@ -150,6 +150,10 @@ const View = (props) => {
 
   const onPointermove = (e) => {
     if (__SERVER__ || !overlayPopup.current || e.type !== 'pointermove') return;
+
+    // If the popup is currently locked, ignore pointermove events
+    if (props.query?.siteName) return;
+
     if (e.dragging) {
       // e.map.getTarget().style.cursor = 'grabbing';
       return;
@@ -328,18 +332,15 @@ const View = (props) => {
 
       // Show persistent popup at selected location
       if (overlayPopup.current) {
-        console.log('here siteName', props.query?.siteName);
+        let hdms = openlayers.coordinate.toStringHDMS(
+          proj.toLonLat([lng, lat]),
+        );
         overlayPopup.current.setPosition(coords);
         emitEvent(document.querySelector('#industry-map'), 'ol-pointermove', {
           bubbles: false,
           detail: {
             siteName: props.query?.siteName || 'Selected site',
-            // lat: formattedLatLng.lat,
-            // lng: formattedLatLng.lng,
-            // hdms: `${formattedLatLng.lat.toFixed(
-            //   2,
-            // )}° N ${formattedLatLng.lng.toFixed(2)}° E`,
-            // flatCoordinates: coords,
+            hdms,
           },
         });
       }
@@ -481,7 +482,14 @@ const View = (props) => {
 
   if (__SERVER__) return '';
 
-  console.log('here', props.query?.siteName);
+  const lat = props?.query?.lat;
+  const lng = props?.query?.lng;
+
+  let hdms = null;
+  if (lat && lng) {
+    const { lat: latWGS84, lng: lngWGS84 } = mercatorToLatLon(lng, lat);
+    hdms = openlayers.coordinate.toStringHDMS([lngWGS84, latWGS84]);
+  }
 
   return (
     <>
@@ -607,9 +615,11 @@ const View = (props) => {
                 >
                   <Popup
                     overlay={overlayPopup}
+                    className={props.query?.siteName ? 'fixed-popup' : ''}
                     lock={!!props.query?.siteName}
                     staticData={{
                       siteName: props.query?.siteName || 'No site name',
+                      hdms,
                     }}
                   />
                 </Overlays>
