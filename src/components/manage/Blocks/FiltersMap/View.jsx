@@ -10,7 +10,7 @@ import { compose } from 'redux';
 import './styles.less';
 import { withRouter } from 'react-router-dom';
 
-const View = ({ data, providers_data, query, dispatch, location }) => {
+const View = ({ data, providers_data, query, dispatch, location, history }) => {
   const [open, setOpenState] = useState(false);
   const [filtersInitialized, setFiltersInitialized] = useState(false);
   const [options, setOptions] = useState({});
@@ -166,6 +166,17 @@ const View = ({ data, providers_data, query, dispatch, location }) => {
             counter: 1,
             type: 'simple-filter',
           },
+        });
+        const urlParams = new URLSearchParams(location.search);
+        if (!urlParams.get('Site_reporting_year[in]')) {
+          urlParams.set(
+            'Site_reporting_year[in]',
+            latestYear,
+          );       
+        }
+        history.push({
+          pathname: location.pathname,
+          search: `?${urlParams.toString()}`,
         });
       }
     }

@@ -8,9 +8,52 @@ import { BodyClass } from '@plone/volto/helpers';
 import { trackSiteSearch } from '@eeacms/volto-matomo/utils';
 import { setQuery } from '@eeacms/volto-ied-policy/actions';
 import { getOptions, noOptions, inputsKeys } from './dictionary';
+import { withRouter } from 'react-router-dom';
+import { compose } from 'redux';
 
 import menuSVG from '@plone/volto/icons/menu-alt.svg';
 
+const setParamsQuery = (filters, location) => {
+  const query = { ...filters };
+  const urlParams = new URLSearchParams(location.search);
+
+  const filteredReportingYears =
+    query?.filter_reporting_years?.filter((year) => year != null) ?? [];
+
+  if (filteredReportingYears.length > 0) {
+    urlParams.set(
+      'Site_reporting_year[in]',
+      filteredReportingYears.join(','),
+    );
+  }
+  const filteredCountryCodes =
+  query?.filter_countries?.filter((code) => code != null) ?? [];
+  if (filteredCountryCodes.length > 0) {
+    urlParams.set('countryCode[in]', filteredCountryCodes.join(','));
+    urlParams.delete('nuts_regions[like]');
+  }
+
+  const filteredInstallationTypes =
+  query?.filter_installation_types?.filter((type) => type != null) ?? [];
+  if (filteredInstallationTypes.length > 0) {
+    if (filteredInstallationTypes.indexOf('IED') !== -1) {
+      urlParams.set('count_instype_IED[gte]', 1);
+    }
+    if (filteredInstallationTypes.indexOf('NONIED') !== -1) {
+      urlParams.set('count_instype_NONIED[gte]', 1);
+    }
+  }
+  const filteredFacilityTypes = query?.filter_facility_types?.filter(type => type != null) ?? [];
+  if (filteredFacilityTypes.length > 0) {
+    urlParams.set('facility_types', filteredFacilityTypes.map(type => (`%${type}%`)).join(','));
+  }
+  const filteredIndustries =
+  query?.filter_industries?.filter((industry) => industry != null) ?? [];
+  if (filteredIndustries.length > 0) {
+    urlParams.set('eprtr_sectors[in]', filteredIndustries.join(','));
+  }
+  return urlParams;
+}
 class Sidebar extends React.Component {
   constructor(props) {
     super(props);
@@ -64,6 +107,7 @@ class Sidebar extends React.Component {
     inputsKeys.forEach((key) => {
       newInputs[key] = query[key] || [];
     });
+    const urlParams = setParamsQuery(filters, this.props.location);
     const newQuery = {
       ...newInputs,
       ...filters,
@@ -90,9 +134,17 @@ class Sidebar extends React.Component {
           }, {}),
       }),
     });
+    this.props.history.push({
+      pathname: this.props.location.pathname,
+      search: `?${urlParams.toString()}`,
+    });
   }
 
   clearFilters(e) {
+    this.props.history.replace({
+      pathname: location.pathname,
+      search: '',
+    });
     const { query, dispatch } = this.props;
     const newInputs = {};
     inputsKeys.forEach((key) => {
@@ -256,6 +308,6 @@ class Sidebar extends React.Component {
   }
 }
 
-export default connect((state) => ({
+export default compose(withRouter, connect((state) => ({
   query: state.query.search,
-}))(Sidebar);
+})))(Sidebar);
