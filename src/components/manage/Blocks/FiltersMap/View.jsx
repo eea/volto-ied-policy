@@ -179,7 +179,6 @@ const View = ({
           !urlParams.get('Site_reporting_year[in]') &&
           props.mode !== 'edit'
         ) {
-          console.log(props.mode);
           urlParams.set('Site_reporting_year[in]', latestYear);
           history.push({
             pathname: location.pathname,
