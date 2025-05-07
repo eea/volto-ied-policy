@@ -1,19 +1,17 @@
-import Edit from './Edit';
-import View from './View';
-import schema from './schema';
-import documentIcon from '@plone/volto/icons/doument-details.svg';
+import EnvironmentalSiteDetails from './View';
+import getSchema from './schema';
 
-const apply = (config) => {
-  config.blocks.blocksConfig.environmental_site_details = {
-    view: View,
-    edit: Edit,
-    schema: schema,
-    id: 'environmental_site_details',
-    icon: documentIcon,
-    group: 'eprtr_blocks',
-    title: 'Environmenta Site Details',
+export default (config) => {
+  config.blocks.blocksConfig.custom_connected_block = {
+    ...config.blocks.blocksConfig.custom_connected_block,
+    blocks: {
+      ...config.blocks.blocksConfig.custom_connected_block.blocks,
+      environmental_site_details: {
+        view: EnvironmentalSiteDetails,
+        title: 'Environmental site details',
+        getSchema: getSchema,
+      },
+    },
   };
   return config;
 };
-
-export default apply;

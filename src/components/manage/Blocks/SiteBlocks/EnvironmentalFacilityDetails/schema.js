@@ -1,19 +1,19 @@
-const schema = {
-  title: 'Env. Facility Details',
-  fieldsets: [
-    {
-      id: 'default',
-      title: 'Default',
-      fields: ['provider_url'],
-    },
-  ],
-  properties: {
-    provider_url: {
-      title: 'Providers',
-      schema: providerSchema,
-      widget: 'url',
-    },
-  },
-  required: [],
+const getSchema = (props) => {
+  return {
+    title: 'Environmental facility details',
+
+    fieldsets: [
+      {
+        id: 'default',
+        title: 'Default',
+        fields: [],
+      },
+    ],
+
+    properties: {},
+
+    required: [],
+  };
 };
-export default schema;
+
+export default getSchema;

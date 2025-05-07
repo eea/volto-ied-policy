@@ -1,4 +1,4 @@
-import SiteStructureSidebar from './View';
+import EnvironmentalFacilityDetails from './View';
 import getSchema from './schema';
 
 export default (config) => {
@@ -6,9 +6,9 @@ export default (config) => {
     ...config.blocks.blocksConfig.custom_connected_block,
     blocks: {
       ...config.blocks.blocksConfig.custom_connected_block.blocks,
-      site_structure_sidebar: {
-        view: SiteStructureSidebar,
-        title: 'Site structure sidebar',
+      environmental_facility_details: {
+        view: EnvironmentalFacilityDetails,
+        title: 'Enivornmental facility details',
         getSchema: getSchema,
       },
     },

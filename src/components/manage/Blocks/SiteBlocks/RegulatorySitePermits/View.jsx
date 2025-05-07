@@ -5,7 +5,6 @@ import PermitingAuthority from '../PermitingAuthority';
 import { getDate } from '../helpers';
 import qs from 'querystring';
 import '../style.css';
-import { connectToMultipleProviders } from '@eeacms/volto-datablocks/hocs';
 
 const getAllIndexes = (arr, val) => {
   const indexes = [];
@@ -18,11 +17,9 @@ const getAllIndexes = (arr, val) => {
 
 const View = (props) => {
   const [permits, setPermits] = React.useState([]);
-  const provider_data = React.useMemo(
-    () => props.providers_data?.siteDetails || {},
-    [props.providers_data],
-  );
-
+  const provider_data = React.useMemo(() => props.provider_data || {}, [
+    props.provider_data,
+  ]);
   const query = { ...props.query };
   const siteReportingYear = parseInt(query.siteReportingYear || '');
 
@@ -97,15 +94,4 @@ export default compose(
   connect((state, props) => ({
     query: qs.parse(state.router.location.search.replace('?', '')),
   })),
-  connectToMultipleProviders((props) => {
-    return {
-      providers: [
-        {
-          '@id': 'site_regulatory_details',
-          url: props?.content?.regularitory_permits,
-          name: 'siteDetails',
-        },
-      ],
-    };
-  }),
 )(View);

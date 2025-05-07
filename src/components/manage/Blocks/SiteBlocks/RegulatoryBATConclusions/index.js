@@ -1,4 +1,4 @@
-import SiteStructureSidebar from './View';
+import RegulatoryBATConclusions from './View';
 import getSchema from './schema';
 
 export default (config) => {
@@ -6,9 +6,9 @@ export default (config) => {
     ...config.blocks.blocksConfig.custom_connected_block,
     blocks: {
       ...config.blocks.blocksConfig.custom_connected_block.blocks,
-      site_structure_sidebar: {
-        view: SiteStructureSidebar,
-        title: 'Site structure sidebar',
+      regulatory_bat_conclusions: {
+        view: RegulatoryBATConclusions,
+        title: 'Regulatory BAT conclusions',
         getSchema: getSchema,
       },
     },

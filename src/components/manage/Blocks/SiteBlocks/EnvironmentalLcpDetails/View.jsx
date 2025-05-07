@@ -7,10 +7,9 @@ import '../style.css';
 
 const View = (props) => {
   const [lcp, setLcp] = React.useState({});
-  const provider_data = React.useMemo(
-    () => props.provider_data || {},
-    [props.provider_data],
-  );
+  const provider_data = React.useMemo(() => props.provider_data || {}, [
+    props.provider_data,
+  ]);
   const query = { ...props.query };
   const { lcpInspireId = null } = query;
   const siteReportingYear = parseInt(query.siteReportingYear || '');

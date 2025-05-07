@@ -18,23 +18,10 @@ import PollutantIndexView from './components/manage/Blocks/PolluantsTable/View';
 import PollutantIndexEdit from './components/manage/Blocks/PolluantsTable/Edit';
 import addonReducers from './reducers';
 import IndustryDataTable from './components/IndustryDataTableVariation.jsx';
-import EnvironmentalSiteDetails from './components/manage/Blocks/SiteBlocks/EnvironmentalSiteDetails/View.jsx';
-import enviromentalSiteSchema from './components/manage/Blocks/SiteBlocks/EnvironmentalSiteDetails/schema.js';
-import RegulatorySiteDetails from './components/manage/Blocks/SiteBlocks/RegulatorySiteDetails/View.jsx';
-import siteHeaderSchema from './components/manage/Blocks/SiteBlocks/Header/schema.js';
-import RegulatorySiteDetailsSchema from './components/manage/Blocks/SiteBlocks/RegulatorySiteDetails/schema.js';
-import RegulatoryBAT from './components/manage/Blocks/SiteBlocks/RegulatoryBATConclusions/View.jsx';
-import RegulatoryBATSchema from './components/manage/Blocks/SiteBlocks/RegulatoryBATConclusions/schema.js';
-import RegulatoryPermits from './components/manage/Blocks/SiteBlocks/RegulatoryPermits/View.jsx';
-import RegulatoryPermitsSchema from './components/manage/Blocks/SiteBlocks/RegulatoryPermits/schema.js';
-import SiteStrucutre from './components/manage/Blocks/SiteBlocks/SiteStructureSidebar/View.jsx';
-import SiteStrucutreSchema from './components/manage/Blocks/SiteBlocks/SiteStructureSidebar/schema.js';
-import SiteHeader from './components/manage/Blocks/SiteBlocks/Header/View.jsx';
-
 import TableauEdit from './components/manage/Blocks/SiteTableau/Edit';
 import TableauView from './components/manage/Blocks/SiteTableau/View';
 
-import installSiteBlocks from './components/manage/Blocks/SiteBlocks';
+import installSiteBlocks from './components/manage/Blocks/SiteBlocks/index.js';
 
 const restrictedBlocks = ['imagecards', 'embed_eea_tableau_block'];
 
@@ -82,6 +69,7 @@ const applyConfig = (config) => {
     navDepth: 3,
   };
 
+  config = installSiteBlocks(config);
   config = installSiteBlocks(config);
   config.blocks.blocksConfig.site_tableau_block = {
     id: 'site_tableau_block',
@@ -165,15 +153,15 @@ const applyConfig = (config) => {
     ...config.addonReducers,
     ...addonReducers,
   };
-  config.blocks.blocksConfig.custom_connected_block = {
-    id: 'custom_connected_block',
-    title: 'Connected Tags',
-    group: 'common',
-    view: ListView,
-    edit: EditView,
-    schema: getSchema,
-    icon: iconSVG,
-  };
+  // config.blocks.blocksConfig.custom_connected_block = {
+  //   id: 'custom_connected_block',
+  //   title: 'Connected Tags',
+  //   group: 'common',
+  //   view: ListView,
+  //   edit: EditView,
+  //   schema: getSchema,
+  //   icon: iconSVG,
+  // };
 
   config.blocks.blocksConfig.tableau_block.restricted = false;
   // Multi-lingual

@@ -4,14 +4,12 @@ import { connect } from 'react-redux';
 import CompetentAuthority from '../CompetentAuthority';
 import { getDate, getLonLat } from '../helpers';
 import { Grid } from 'semantic-ui-react';
-import { connectToMultipleProviders } from '@eeacms/volto-datablocks/hocs';
 import qs from 'querystring';
 import '../style.css';
 
 const getAllIndexes = (arr, val) => {
   const indexes = [];
   let i = -1;
-
   while ((i = arr.indexOf(val, i + 1)) !== -1) {
     indexes.push(i);
   }
@@ -21,14 +19,11 @@ const getAllIndexes = (arr, val) => {
 const View = (props) => {
   const [siteDetails, setSiteDetails] = React.useState({});
   const [facilities, setFacilities] = React.useState([]);
-  const provider_data = React.useMemo(
-    () => props.providers_data?.siteDetails || {},
-    [props.providers_data],
-  );
-
-  console.log({ props });
+  const provider_data = React.useMemo(() => props.provider_data || {}, [
+    props.provider_data,
+  ]);
   const query = { ...props.query };
-  const siteReportingYear = parseInt(query.year || '');
+  const siteReportingYear = parseInt(query.siteReportingYear || '');
 
   const facilityList = [
     ...new Set(facilities.map((facility) => facility.facilityInspireId).sort()),
@@ -53,7 +48,6 @@ const View = (props) => {
         provider_data?.euregReportingYear || [],
         siteReportingYear,
       );
-
       const newSiteDetails = {};
       const newFacilities = [];
       indexes.forEach((index, i) => {
@@ -146,15 +140,4 @@ export default compose(
   connect((state, props) => ({
     query: qs.parse(state.router.location.search.replace('?', '')),
   })),
-  connectToMultipleProviders((props) => {
-    return {
-      providers: [
-        {
-          '@id': 'site_details_information',
-          url: props.data.provider_url,
-          name: 'siteDetails',
-        },
-      ],
-    };
-  }),
 )(View);

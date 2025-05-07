@@ -37,14 +37,17 @@ const PermitingAuthority = (props) => {
         ''
       )}
       {permitingAuthority.length > 1 ||
-      (permitingAuthority.length === 1 && entity === 'site') ? (
+      (permitingAuthority.length === 1 &&
+        (entity === 'site' ||
+          (entity?.length === 1 && entity?.[0] === 'site'))) ? (
         <div className="site-block-table">
           <RenderTable
             className="description-table"
             celled={false}
             headless={false}
             headers={[
-              ...(entity === 'site'
+              ...(entity === 'site' ||
+              (entity?.length === 1 && entity?.[0] === 'site')
                 ? [
                     {
                       key: 'nth',

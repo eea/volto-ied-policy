@@ -1,18 +1,27 @@
-const schema = {
-  title: 'Env. Site Details',
-  fieldsets: [
-    {
-      id: 'default',
-      title: 'Default',
-      fields: ['provider_url'],
+const getSchema = (props) => {
+  return {
+    title: 'Site structure sidebar',
+
+    fieldsets: [
+      {
+        id: 'default',
+        title: 'Default',
+        fields: ['pathname', 'pages'],
+      },
+    ],
+
+    properties: {
+      pathname: {
+        title: 'Parent pathname',
+        widget: 'url',
+      },
+      pages: {
+        title: 'Pages',
+      },
     },
-  ],
-  properties: {
-    provider_url: {
-      title: 'Data provider',
-      widget: 'url',
-    },
-  },
-  required: [],
+
+    required: [],
+  };
 };
-export default schema;
+
+export default getSchema;
