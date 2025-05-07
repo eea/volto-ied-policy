@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Grid } from 'semantic-ui-react';
 
-const Popup = ({ lock = false, staticData = null }) => {
+const Popup = ({ lock = false, staticData = null, className = '' }) => {
   const [data, setData] = useState(staticData || {});
 
   useEffect(() => {
@@ -27,6 +27,7 @@ const Popup = ({ lock = false, staticData = null }) => {
   return (
     <div
       id="popup"
+      className={className}
       style={
         !Object.keys(data).length
           ? { display: 'none', pointerEvents: 'auto' }
