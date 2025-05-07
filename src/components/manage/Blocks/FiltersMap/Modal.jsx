@@ -50,11 +50,15 @@ const getLatestRegions = (query) => {
   };
 };
 
-const setParamsQuery = (data) => {
+const setParamsQuery = (data, location) => {
+  const oldParams = new URLSearchParams(location.search);
+  const activeTab = oldParams.get('activeTab');
   const query = { ...data, nuts_latest: getLatestRegions(data).nuts_latest };
 
   const urlParams = new URLSearchParams();
-
+  if (activeTab) {
+    urlParams.set('activeTab', activeTab);
+  }
   const filteredReportingYears =
     query?.filter_reporting_years?.filter((year) => year != null) ?? [];
 
@@ -333,7 +337,7 @@ const ModalView = ({
       filter_search_value: '',
     };
     setQuery(newQuery);
-    const urlParams = setParamsQuery(inputs);
+    const urlParams = setParamsQuery(inputs, location);
     trackSiteSearch({
       category: `Map/Table advanced-filter`,
       keyword: JSON.stringify({
