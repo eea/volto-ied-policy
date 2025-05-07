@@ -50,33 +50,29 @@ const getLatestRegions = (query) => {
   };
 };
 
-const setParamsQuery = (data) => {
+const setParamsQuery = (data, location) => {
   const query = { ...data, nuts_latest: getLatestRegions(data).nuts_latest };
-  const search = query.filter_search;
 
-  const urlParams = new URLSearchParams();
+  const urlParams = new URLSearchParams(location.search);
 
   const filteredReportingYears =
     query?.filter_reporting_years?.filter((year) => year != null) ?? [];
 
   if (filteredReportingYears.length > 0) {
-    urlParams.append(
-      'Site_reporting_year[in]',
-      filteredReportingYears.join(','),
-    );
+    urlParams.set('Site_reporting_year[in]', filteredReportingYears.join(','));
   }
 
   const filteredIndustries =
     query.filter_industries.filter((industry) => industry != null) ?? [];
   if (filteredIndustries.length > 0) {
-    urlParams.append('eprtr_sectors[in]', filteredIndustries.join(','));
+    urlParams.set('eprtr_sectors[in]', filteredIndustries.join(','));
   }
 
   const filteredEprtrAnnexIActivity =
     query.filter_eprtr_AnnexIActivity.filter((activity) => activity != null) ??
     [];
   if (filteredEprtrAnnexIActivity.length > 0) {
-    urlParams.append(
+    urlParams.set(
       'eprtr_AnnexIActivity[in]',
       filteredEprtrAnnexIActivity.join(','),
     );
@@ -86,7 +82,7 @@ const setParamsQuery = (data) => {
     query.filter_bat_conclusions.filter((conclusion) => conclusion != null) ??
     [];
   if (filteredBatConclusions.length > 0) {
-    urlParams.append(
+    urlParams.set(
       'bat_conclusions[like]',
       filteredBatConclusions.map((conclusion) => `%${conclusion}%`).join(','),
     );
@@ -95,7 +91,7 @@ const setParamsQuery = (data) => {
   const filteredPermitTypes =
     query.filter_permit_types.filter((type) => type != null) ?? [];
   if (filteredPermitTypes.length > 0) {
-    urlParams.append(
+    urlParams.set(
       'permit_types[like]',
       filteredPermitTypes.map((type) => `%${type}%`).join(','),
     );
@@ -104,7 +100,7 @@ const setParamsQuery = (data) => {
   const filteredPermitYears =
     query.filter_permit_years.filter((year) => year != null) ?? [];
   if (filteredPermitYears.length > 0) {
-    urlParams.append(
+    urlParams.set(
       'permit_years[like]',
       filteredPermitYears.map((year) => `%${year}%`).join(','),
     );
@@ -113,7 +109,7 @@ const setParamsQuery = (data) => {
   const filteredPollutants =
     query.filter_pollutants.filter((pollutant) => pollutant != null) ?? [];
   if (filteredPollutants.length > 0) {
-    urlParams.append(
+    urlParams.set(
       'pollutants[like]',
       filteredPollutants.map((pollutant) => `%${pollutant}%`).join(','),
     );
@@ -122,11 +118,11 @@ const setParamsQuery = (data) => {
   const filteredPollutantsGroups =
     query.filter_pollutant_groups.filter((group) => group != null) ?? [];
   if (filteredPollutantsGroups.length > 0) {
-    urlParams.append(
+    urlParams.set(
       'air_groups[like]',
       filteredPollutantsGroups.map((group) => `%${group}%`).join(','),
     );
-    urlParams.append(
+    urlParams.set(
       'water_groups[like]',
       filteredPollutantsGroups.map((group) => `%${group}%`).join(','),
     );
@@ -135,12 +131,12 @@ const setParamsQuery = (data) => {
   const filteredCountryCodes =
     query.filter_countries.filter((code) => code != null) ?? [];
   if (filteredCountryCodes.length > 0) {
-    urlParams.append('countryCode[in]', filteredCountryCodes.join(','));
+    urlParams.set('countryCode[in]', filteredCountryCodes.join(','));
   }
 
   const filteredNuts = query.nuts_latest.filter((nuts) => nuts != null) ?? [];
   if (filteredNuts.length > 0) {
-    urlParams.append(
+    urlParams.set(
       'nuts_regions[like]',
       filteredNuts.map((nuts) => `%${nuts}%`).join(','),
     );
@@ -150,16 +146,16 @@ const setParamsQuery = (data) => {
     query.filter_thematic_information.filter((info) => info != null) ?? [];
   if (filteredThematicInformation.length > 0) {
     if (filteredThematicInformation.indexOf('has_release') !== -1) {
-      urlParams.append('has_release_data[gt]', 0);
+      urlParams.set('has_release_data[gt]', 0);
     }
     if (filteredThematicInformation.indexOf('has_transfer') !== -1) {
-      urlParams.append('has_transfer_data[gt]', 0);
+      urlParams.set('has_transfer_data[gt]', 0);
     }
     if (filteredThematicInformation.indexOf('has_waste') !== -1) {
-      urlParams.append('has_waste_data[gt]', 0);
+      urlParams.set('has_waste_data[gt]', 0);
     }
     if (filteredThematicInformation.indexOf('has_seveso') !== -1) {
-      urlParams.append('has_seveso[gt]', 0);
+      urlParams.set('has_seveso[gt]', 0);
     }
   }
 
@@ -167,17 +163,17 @@ const setParamsQuery = (data) => {
     query.filter_installation_types.filter((type) => type != null) ?? [];
   if (filteredInstallationTypes.length > 0) {
     if (filteredInstallationTypes.indexOf('IED') !== -1) {
-      urlParams.append('count_instype_IED[gte]', 1);
+      urlParams.set('count_instype_IED[gte]', 1);
     }
     if (filteredInstallationTypes.indexOf('NONIED') !== -1) {
-      urlParams.append('count_instype_NONIED[gte]', 1);
+      urlParams.set('count_instype_NONIED[gte]', 1);
     }
   }
 
   const filteredFacilityTypes =
     query.filter_facility_types.filter((type) => type != null) ?? [];
   if (filteredFacilityTypes.length > 0) {
-    urlParams.append(
+    urlParams.set(
       'facility_types',
       filteredFacilityTypes.map((type) => `%${type}%`).join(','),
     );
@@ -187,7 +183,7 @@ const setParamsQuery = (data) => {
     query.filter_river_basin_districts.filter((district) => district != null) ??
     [];
   if (filteredRiverBasinDistricts.length > 0) {
-    urlParams.append(
+    urlParams.set(
       'river_basin',
       filteredRiverBasinDistricts.map((district) => `%${district}%`).join(','),
     );
@@ -196,17 +192,10 @@ const setParamsQuery = (data) => {
   const filteredPlantTypes =
     query.filter_plant_types.filter((type) => type != null) ?? [];
   if (filteredPlantTypes.length > 0) {
-    urlParams.append(
+    urlParams.set(
       'plant_types',
       filteredPlantTypes.map((type) => `%${type}%`).join(','),
     );
-  }
-  if (search?.type === 'site' && search?.text) {
-    urlParams.append('siteName', search.text.trim());
-  }
-
-  if (search?.type === 'facility' && search?.text) {
-    urlParams.append('facilityNames', search.text.trim());
   }
 
   return urlParams.toString();
@@ -344,7 +333,7 @@ const ModalView = ({
       filter_search_value: '',
     };
     setQuery(newQuery);
-    const urlParams = setParamsQuery(inputs);
+    const urlParams = setParamsQuery(inputs, location);
     trackSiteSearch({
       category: `Map/Table advanced-filter`,
       keyword: JSON.stringify({
