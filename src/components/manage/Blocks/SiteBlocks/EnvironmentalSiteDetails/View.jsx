@@ -26,6 +26,7 @@ const View = (props) => {
     [props.providers_data],
   );
 
+  console.log({ props });
   const query = { ...props.query };
   const siteReportingYear = parseInt(query.year || '');
 
@@ -150,7 +151,7 @@ export default compose(
       providers: [
         {
           '@id': 'site_details_information',
-          url: props?.content?.site_2,
+          url: props.data.provider_url,
           name: 'siteDetails',
         },
       ],

@@ -274,7 +274,7 @@ export default compose(
       providers: [
         {
           '@id': 'site_regulatory_details',
-          url: props?.content?.site_structure,
+          url: props.data.provider_url,
           name: 'siteDetails',
         },
       ],

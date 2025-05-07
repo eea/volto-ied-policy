@@ -34,6 +34,8 @@ import SiteHeader from './components/manage/Blocks/SiteBlocks/Header/View.jsx';
 import TableauEdit from './components/manage/Blocks/SiteTableau/Edit';
 import TableauView from './components/manage/Blocks/SiteTableau/View';
 
+import installSiteBlocks from './components/manage/Blocks/SiteBlocks';
+
 const restrictedBlocks = ['imagecards', 'embed_eea_tableau_block'];
 
 const customBlocks = [
@@ -80,6 +82,7 @@ const applyConfig = (config) => {
     navDepth: 3,
   };
 
+  config = installSiteBlocks(config);
   config.blocks.blocksConfig.site_tableau_block = {
     id: 'site_tableau_block',
     title: 'Site tableau',
@@ -119,61 +122,45 @@ const applyConfig = (config) => {
       view: [],
     },
   };
-  config.blocks.blocksConfig.siteHeader = {
-    view: SiteHeader,
-    edit: SiteHeader,
-    title: 'Site header',
-    getSchema: siteHeaderSchema,
-    id: 'siteHeader',
-    icon: documentIcon,
-    group: 'eprtr_blocks',
-  };
-  config.blocks.blocksConfig.environmental_site_details = {
-    view: EnvironmentalSiteDetails,
-    edit: EnvironmentalSiteDetails,
-    schema: enviromentalSiteSchema,
-    id: 'environmental_site_details',
-    icon: documentIcon,
-    group: 'eprtr_blocks',
-    title: 'Environmenta Site Details',
-  };
-  config.blocks.blocksConfig.regularitory_site_details = {
-    view: RegulatorySiteDetails,
-    edit: RegulatorySiteDetails,
-    schema: RegulatorySiteDetailsSchema,
-    id: 'regularitory_site_details',
-    icon: documentIcon,
-    group: 'eprtr_blocks',
-    title: 'Regulatory Site Details',
-  };
+  // config.blocks.blocksConfig.siteHeader = {
+  //   view: SiteHeader,
+  //   edit: SiteHeader,
+  //   title: 'Site header',
+  //   getSchema: siteHeaderSchema,
+  //   id: 'siteHeader',
+  //   icon: documentIcon,
+  //   group: 'eprtr_blocks',
+  // };
 
-  config.blocks.blocksConfig.regularitory_site_permits = {
-    view: RegulatoryPermits,
-    edit: RegulatoryPermits,
-    schema: RegulatoryPermitsSchema,
-    id: 'regularitory_site_permits',
-    icon: documentIcon,
-    group: 'eprtr_blocks',
-    title: 'Regulatory Permits',
-  };
-  config.blocks.blocksConfig.regulatory_bat = {
-    view: RegulatoryBAT,
-    edit: RegulatoryBAT,
-    schema: RegulatoryBATSchema,
-    id: 'regulatory_bat',
-    icon: documentIcon,
-    group: 'eprtr_blocks',
-    title: 'Regulatory BAT',
-  };
-  config.blocks.blocksConfig.site_structure = {
-    view: SiteStrucutre,
-    edit: SiteStrucutre,
-    schema: SiteStrucutreSchema,
-    id: 'site_structure',
-    icon: documentIcon,
-    group: 'eprtr_blocks',
-    title: 'Site Structure Sidebar',
-  };
+  // config.blocks.blocksConfig.regularitory_site_details = {
+  //   view: RegulatorySiteDetails,
+  //   edit: RegulatorySiteDetails,
+  //   schema: RegulatorySiteDetailsSchema,
+  //   id: 'regularitory_site_details',
+  //   icon: documentIcon,
+  //   group: 'eprtr_blocks',
+  //   title: 'Regulatory Site Details',
+  // };
+
+  // config.blocks.blocksConfig.regularitory_site_permits = {
+  //   view: RegulatoryPermits,
+  //   edit: RegulatoryPermits,
+  //   schema: RegulatoryPermitsSchema,
+  //   id: 'regularitory_site_permits',
+  //   icon: documentIcon,
+  //   group: 'eprtr_blocks',
+  //   title: 'Regulatory Permits',
+  // };
+  // config.blocks.blocksConfig.regulatory_bat = {
+  //   view: RegulatoryBAT,
+  //   edit: RegulatoryBAT,
+  //   schema: RegulatoryBATSchema,
+  //   id: 'regulatory_bat',
+  //   icon: documentIcon,
+  //   group: 'eprtr_blocks',
+  //   title: 'Regulatory BAT',
+  // };
+
   config.addonReducers = {
     ...config.addonReducers,
     ...addonReducers,
