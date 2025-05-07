@@ -2,12 +2,10 @@ import React from 'react';
 import { Menu } from 'semantic-ui-react';
 import { UniversalLink } from '@plone/volto/components';
 import { removeTralingSlash } from '@eeacms/volto-ied-policy/helpers';
-import { compose } from 'redux';
-import { connect } from 'react-redux';
 import qs from 'querystring';
 import cx from 'classnames';
 import './styles.css';
-import { connectToMultipleProviders } from '@eeacms/volto-datablocks/hocs';
+
 /*
 SELECT facilities.siteName,
   facilities.siteInspireId,
@@ -35,10 +33,9 @@ const View = (props) => {
   const [siteStructure, setSiteStructure] = React.useState(null);
   const [siteDetails, setSiteDetails] = React.useState({});
   const provider_data = React.useMemo(
-    () => props.providers_data?.siteDetails || {},
-    [props.providers_data],
+    () => props.provider_data || {},
+    [props.provider_data],
   );
-
   const provider_data_string = JSON.stringify(provider_data);
   const dataReady = provider_data?.siteInspireId?.length > 0;
   const pathname = removeTralingSlash(props.location.pathname || '');
@@ -124,16 +121,14 @@ const View = (props) => {
                           className={cx({
                             item: true,
                             active:
-                              query?.activeTab ===
-                                '265771d8-d6e4-46d1-8ece-aeb402cd746b' ||
-                              !query.activeTab,
+                              query.activeTab === 'environmental-information' ||
+                              (!query.activeTab &&
+                                pathname === '/industrial-site'),
                           })}
-                          href={`/industrial-site/environmental-information${getQueryString(
-                            {
-                              ...newQuery,
-                              activeTab: '265771d8-d6e4-46d1-8ece-aeb402cd746b',
-                            },
-                          )}`}
+                          href={`/industrial-site/${getQueryString({
+                            ...newQuery,
+                            activeTab: 'enviromental-information',
+                          })}`}
                           ignoreScroll={true}
                         >
                           <span>Environmental overview</span>
@@ -144,15 +139,12 @@ const View = (props) => {
                           className={cx({
                             item: true,
                             active:
-                              query.activeTab ===
-                              '571297e7-195b-4528-80c8-5c95546a2eed',
+                              query.activeTab === 'regulatory-information',
                           })}
-                          href={`/industrial-site/environmental-information${getQueryString(
-                            {
-                              ...newQuery,
-                              activeTab: '571297e7-195b-4528-80c8-5c95546a2eed',
-                            },
-                          )}`}
+                          href={`/industrial-site/${getQueryString({
+                            ...newQuery,
+                            activeTab: 'regulatory-information',
+                          })}`}
                           ignoreScroll={true}
                         >
                           <span>Regulatory overview</span>
@@ -167,14 +159,15 @@ const View = (props) => {
                       className={cx({
                         item: true,
                         active:
-                          pathname ===
-                            '/industrial-site/environmental-information/facility-overview' &&
-                          query.facilityInspireId === facility,
+                          pathname === '/industrial-site/facility-overview' &&
+                          query.facilityInspireId === facility &&
+                          query.activeTab === 'enviromental-information',
                       })}
-                      href={`/industrial-site/environmental-information/facility-overview${getQueryString(
+                      href={`/industrial-site/facility-overview${getQueryString(
                         {
                           ...newQuery,
                           facilityInspireId: facility,
+                          activeTab: 'enviromental-information',
                         },
                       )}`}
                       ignoreScroll={true}
@@ -198,13 +191,16 @@ const View = (props) => {
                                       pathname ===
                                         `/industrial-site/installation-overview` &&
                                       query.installationInspireId ===
-                                        installation,
+                                        installation &&
+                                      query.activeTab ===
+                                        'regulatory-information',
                                   })}
                                   href={`/industrial-site/installation-overview${getQueryString(
                                     {
                                       ...newQuery,
                                       facilityInspireId: facility,
                                       installationInspireId: installation,
+                                      activeTab: 'regulatory-information',
                                     },
                                   )}`}
                                   ignoreScroll={true}
@@ -226,16 +222,20 @@ const View = (props) => {
                                               item: true,
                                               active:
                                                 pathname ===
-                                                  `/industrial-site/environmental-information/lcp-overview` &&
-                                                query.lcpInspireId === lcp,
+                                                  `/industrial-site/lcp-overview` &&
+                                                query.lcpInspireId === lcp &&
+                                                query.activeTab ===
+                                                  'enviromental-information',
                                             })}
-                                            href={`/industrial-site/environmental-information/lcp-overview${getQueryString(
+                                            href={`/industrial-site/lcp-overview${getQueryString(
                                               {
                                                 ...newQuery,
                                                 facilityInspireId: facility,
                                                 installationInspireId:
                                                   installation,
                                                 lcpInspireId: lcp,
+                                                activeTab:
+                                                  'enviromental-information',
                                               },
                                             )}`}
                                             ignoreScroll={true}
@@ -265,19 +265,4 @@ const View = (props) => {
   );
 };
 
-export default compose(
-  connect((state, props) => ({
-    query: qs.parse(state.router.location.search.replace('?', '')),
-  })),
-  connectToMultipleProviders((props) => {
-    return {
-      providers: [
-        {
-          '@id': 'site_regulatory_details',
-          url: props?.content?.site_structure,
-          name: 'siteDetails',
-        },
-      ],
-    };
-  }),
-)(View);
+export default View;

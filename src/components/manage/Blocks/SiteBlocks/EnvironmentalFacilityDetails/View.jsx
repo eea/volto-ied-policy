@@ -17,10 +17,9 @@ const getAllIndexes = (arr, val) => {
 
 const View = (props) => {
   const [facilities, setFacilities] = React.useState([]);
-  const provider_data = React.useMemo(
-    () => props.provider_data || {},
-    [props.provider_data],
-  );
+  const provider_data = React.useMemo(() => props.provider_data || {}, [
+    props.provider_data,
+  ]);
   const query = { ...props.query };
   const siteReportingYear = parseInt(query.siteReportingYear || '');
 

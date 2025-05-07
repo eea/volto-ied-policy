@@ -1,47 +1,36 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { compose } from 'redux';
-import { connect, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 import { Grid, Dropdown } from 'semantic-ui-react';
-
-import { connectToMultipleProviders } from '@eeacms/volto-datablocks/hocs';
-import qs from 'querystring';
-// import './style.css';
 import { setQuery } from '@eeacms/volto-ied-policy/actions';
-import { useDispatch } from 'react-redux';
+import qs from 'querystring';
+import './style.css';
 
 const getQueryString = (query) => {
   if (!Object.keys(query).length) return '';
-
   return '?' + qs.stringify(query);
 };
 
 const getSiteByYear = (provider_data, year) => {
   const index = provider_data?.euregReportingYear?.indexOf(year);
-
   const keys = Object.keys(provider_data || {});
-
   const site = {};
   if (keys?.length) {
     keys.forEach((key) => {
       site[key] = provider_data[key][index];
     });
   }
-
-  return { ...site, year: site.siteReportingYear };
+  return site;
 };
 
-function HeaderInformation(props) {
+const View = (props) => {
   const [siteHeader, setSiteHeader] = React.useState({});
-  const dispatch = useDispatch();
-
   const provider_data = React.useMemo(
-    () => props.providers_data?.siteHeader || {},
-    [props.providers_data],
+    () => props.provider_data || {},
+    [props.provider_data],
   );
-
-  const siteReportingYear = useSelector(
-    (state) => state.query.search.siteReportingYear,
-  );
+  const query = { ...props.query };
+  const siteReportingYear = parseInt(query.siteReportingYear || '');
 
   const reportingYears = React.useMemo(() => {
     return provider_data?.euregReportingYear?.length
@@ -57,23 +46,10 @@ function HeaderInformation(props) {
     /* eslint-disable-next-line */
   }, [provider_data]);
 
-  useEffect(() => {
-    const query = new URLSearchParams(props?.location?.search || '');
-
-    if (query.get('year') || query.get('siteName')) {
-      dispatch(
-        setQuery({
-          siteName: query.get('siteName'),
-          siteReportingYear: parseInt(query.get('year')),
-        }),
-      );
-    }
-  }, [props.location.search, dispatch]);
-
   React.useEffect(() => {
     setSiteHeader(getSiteByYear(provider_data, siteReportingYear));
     /* eslint-disable-next-line */
-  }, [provider_data, siteReportingYear]);
+  }, [provider_data]);
 
   return props.mode === 'edit' ? (
     <p>Site header</p>
@@ -81,15 +57,15 @@ function HeaderInformation(props) {
     <div className="site-header">
       <div>
         {/* <UniversalLink className="back-button" href={'/'}>
-            BACK
-          </UniversalLink> */}
+          BACK
+        </UniversalLink> */}
         <div style={{ flex: 1 }}>
           <h3 className="title">{siteHeader.siteName}</h3>
           <Grid columns={12}>
             <Grid.Row>
               <Grid.Column mobile={6} tablet={3} computer={3}>
                 <p className="label">Country</p>
-                <p className="info">{siteHeader.countryCode || 'test'}</p>
+                <p className="info">{siteHeader.countryCode}</p>
               </Grid.Column>
               <Grid.Column mobile={6} tablet={3} computer={3}>
                 <p className="label">Regulation</p>
@@ -166,12 +142,10 @@ function HeaderInformation(props) {
                     selection
                     onChange={(event, data) => {
                       const newSite = getSiteByYear(provider_data, data.value);
-
-                      const newQuery = { ...props.query, year: newSite.year };
+                      const newQuery = { ...props.query };
                       newQuery.siteInspireId = newSite.siteInspireId;
-
-                      dispatch(setQuery({ ...newSite }));
-
+                      newQuery.siteName = newSite.siteName;
+                      newQuery.siteReportingYear = newSite.siteReportingYear;
                       props.history.push({
                         pathname: props.location.pathname,
                         search: getQueryString(newQuery),
@@ -195,11 +169,7 @@ function HeaderInformation(props) {
   ) : (
     ''
   );
-}
-
-function EnvironmentalInformation(props) {
-  return <HeaderInformation {...props} />;
-}
+};
 
 export default compose(
   connect(
@@ -210,15 +180,4 @@ export default compose(
     }),
     { setQuery },
   ),
-  connectToMultipleProviders((props) => {
-    return {
-      providers: [
-        {
-          '@id': 'header_information',
-          url: props?.content?.header_information_provider,
-          name: 'siteHeader',
-        },
-      ],
-    };
-  }),
-)(EnvironmentalInformation);
+)(View);

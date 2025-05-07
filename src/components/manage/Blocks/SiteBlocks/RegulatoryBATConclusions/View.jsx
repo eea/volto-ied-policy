@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import BatConclusions from '../BatConclusions';
 import qs from 'querystring';
 import '../style.css';
-import { connectToMultipleProviders } from '@eeacms/volto-datablocks/hocs';
 
 const getAllIndexes = (arr, val) => {
   const indexes = [];
@@ -18,12 +17,11 @@ const getAllIndexes = (arr, val) => {
 const View = (props) => {
   const [batConclusions, setBatConclusions] = React.useState({});
   const [installationsNth, setInstallationsNth] = React.useState({});
-  const provider_data = React.useMemo(
-    () => props.providers_data?.siteDetails || {},
-    [props.providers_data],
-  );
+  const provider_data = React.useMemo(() => props.provider_data || {}, [
+    props.provider_data,
+  ]);
   const query = { ...props.query };
-  const siteReportingYear = parseInt(query.year || '');
+  const siteReportingYear = parseInt(query.siteReportingYear || '');
 
   React.useEffect(() => {
     const keys = Object.keys(provider_data || {});
@@ -95,15 +93,4 @@ export default compose(
   connect((state, props) => ({
     query: qs.parse(state.router.location.search.replace('?', '')),
   })),
-  connectToMultipleProviders((props) => {
-    return {
-      providers: [
-        {
-          '@id': 'site_regulatory_details',
-          url: props?.content?.regularitory_bat,
-          name: 'siteDetails',
-        },
-      ],
-    };
-  }),
 )(View);

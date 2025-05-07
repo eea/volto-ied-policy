@@ -55,7 +55,8 @@ const View = (props) => {
                 className="installation-conclusions-wrapper"
               >
                 <h3 className="installation-id">
-                  {entity === 'site'
+                  {entity === 'site' ||
+                  (entity?.length === 1 && entity?.[0] === 'site')
                     ? `${installationsNth[installation]} ${installation}`
                     : ''}
                 </h3>
