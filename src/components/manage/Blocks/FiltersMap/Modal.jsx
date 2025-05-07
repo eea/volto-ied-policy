@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
@@ -7,7 +8,6 @@ import { trackSiteSearch } from '@eeacms/volto-matomo/utils';
 import { setQuery } from '@eeacms/volto-ied-policy/actions';
 import { inputsKeys, permitTypes } from './dictionary';
 import SelectWrapper from './SelectWrapper';
-import { filters } from '../IndustryMap';
 import { withRouter } from 'react-router-dom';
 
 const getLatestRegions = (query) => {

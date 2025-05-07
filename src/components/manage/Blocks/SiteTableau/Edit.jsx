@@ -13,7 +13,6 @@ const Edit = (props) => {
     () => props.provider_data || {},
     [props.provider_data],
   );
-  console.log({ provider_data }, props);
   const { data = {} } = props;
   const provider_keys = Object.keys(provider_data || {});
   const [schema, setSchema] = React.useState(getSchema(config, provider_keys));

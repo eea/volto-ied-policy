@@ -48,16 +48,18 @@ const debounce = (func, index, timeout = 200, ...args) => {
   if (timer[index]) clearTimeout(timer[index]);
   timer[index] = setTimeout(func, timeout, ...args);
 };
-const getWhereStatementFromUrl = (params) => {
-  let query = '';
-  for (const [key, value] of params.entries()) {
-    if (key == 'siteName') {
-      query += `siteName LIKE '${value}%'`;
-    } else {
-      query += `(${key} = ${value})`;
-    }
-  }
-};
+
+// const getWhereStatementFromUrl = (params) => {
+//   let query = '';
+//   for (const [key, value] of params.entries()) {
+//     if (key === 'siteName') {
+//       query += `siteName LIKE '${value}%'`;
+//     } else {
+//       query += `(${key} = ${value})`;
+//     }
+//   }
+// };
+
 const getSitesSource = (query) => {
   // return {};
   const { source } = openlayers;
@@ -150,6 +152,10 @@ const View = (props) => {
 
   const onPointermove = (e) => {
     if (__SERVER__ || !overlayPopup.current || e.type !== 'pointermove') return;
+
+    // If the popup is currently locked, ignore pointermove events
+    if (props.query?.siteName) return;
+
     if (e.dragging) {
       // e.map.getTarget().style.cursor = 'grabbing';
       return;
@@ -309,8 +315,14 @@ const View = (props) => {
 
     const lat = props?.query?.lat;
     const lng = props?.query?.lng;
+
     if (lat && lng) {
       const formattedLatLng = mercatorToLatLon(lng, lat);
+      const coords = proj.fromLonLat([
+        formattedLatLng.lng,
+        formattedLatLng.lat,
+      ]);
+
       centerToQueryLocation(
         {
           coords: {
@@ -320,6 +332,21 @@ const View = (props) => {
         },
         12,
       );
+
+      // Show persistent popup at selected location
+      if (overlayPopup.current) {
+        let hdms = openlayers.coordinate.toStringHDMS(
+          proj.toLonLat([lng, lat]),
+        );
+        overlayPopup.current.setPosition(coords);
+        emitEvent(document.querySelector('#industry-map'), 'ol-pointermove', {
+          bubbles: false,
+          detail: {
+            siteName: props.query?.siteName || 'Selected site',
+            hdms,
+          },
+        });
+      }
     } else {
       centerToUserLocation();
     }
@@ -461,6 +488,15 @@ const View = (props) => {
 
   if (__SERVER__) return '';
 
+  const lat = props?.query?.lat;
+  const lng = props?.query?.lng;
+
+  let hdms = null;
+  if (lat && lng) {
+    const { lat: latWGS84, lng: lngWGS84 } = mercatorToLatLon(lng, lat);
+    hdms = openlayers.coordinate.toStringHDMS([lngWGS84, latWGS84]);
+  }
+
   return (
     <>
       <StyleWrapperView
@@ -583,7 +619,15 @@ const View = (props) => {
                   positioning="center-center"
                   stopEvent={true}
                 >
-                  <Popup overlay={overlayPopup} />
+                  <Popup
+                    overlay={overlayPopup}
+                    className={props.query?.siteName ? 'fixed-popup' : ''}
+                    lock={!!props.query?.siteName}
+                    staticData={{
+                      siteName: props.query?.siteName || 'No site name',
+                      hdms,
+                    }}
+                  />
                 </Overlays>
                 <Overlays
                   ref={(data) => {
