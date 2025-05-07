@@ -37,7 +37,7 @@ class PopupDetailed extends React.PureComponent {
   render() {
     const { data } = this.state;
     const open = !!Object.keys(data).length;
-    let href = `/industrial-site/environmental-information?siteInspireId=${data.InspireSiteId}&siteName=${data.siteName}&year=${data.Site_reporting_year}`;
+    let href = `/industrial-site/?siteInspireId=${data.InspireSiteId}&siteName=${data.siteName}&year=${data.Site_reporting_year}&activeTab=environmental-information`;
 
     if (data.flatCoordinates) {
       const [lng, lat] = data.flatCoordinates;
