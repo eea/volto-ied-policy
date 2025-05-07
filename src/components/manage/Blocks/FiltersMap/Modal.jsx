@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
@@ -7,7 +8,7 @@ import { trackSiteSearch } from '@eeacms/volto-matomo/utils';
 import { setQuery } from '@eeacms/volto-ied-policy/actions';
 import { inputsKeys, permitTypes } from './dictionary';
 import SelectWrapper from './SelectWrapper';
-import { filters } from '../IndustryMap';
+import { withRouter } from 'react-router-dom';
 
 const getLatestRegions = (query) => {
   const siteCountries = query.filter_countries;
@@ -49,66 +50,152 @@ const getLatestRegions = (query) => {
   };
 };
 
-const setParamsQuery = (data) => {
+const setParamsQuery = (data, location) => {
   const query = { ...data, nuts_latest: getLatestRegions(data).nuts_latest };
-  const facility_types = query.filter_facility_types || [];
-  const installation_types = query.filter_installation_types || [];
-  const thematic_information = query.filter_thematic_information || [];
-  const search = query.filter_search;
 
-  const urlParams = new URLSearchParams();
+  const urlParams = new URLSearchParams(location.search);
 
-  for (const { queryKey, featureKey } of filters) {
-    const values = query[queryKey];
-    if (Array.isArray(values)) {
-      values.forEach((value) => {
-        if (value) {
-          if (featureKey === 'pollutant_groups') {
-            urlParams.append('air_groups_like', value);
-            urlParams.append('water_groups_like', value);
-          } else {
-            urlParams.append(featureKey, value);
-          }
-        }
-      });
+  const filteredReportingYears =
+    query?.filter_reporting_years?.filter((year) => year != null) ?? [];
+
+  if (filteredReportingYears.length > 0) {
+    urlParams.set('Site_reporting_year[in]', filteredReportingYears.join(','));
+  }
+
+  const filteredIndustries =
+    query.filter_industries.filter((industry) => industry != null) ?? [];
+  if (filteredIndustries.length > 0) {
+    urlParams.set('eprtr_sectors[in]', filteredIndustries.join(','));
+  }
+
+  const filteredEprtrAnnexIActivity =
+    query.filter_eprtr_AnnexIActivity.filter((activity) => activity != null) ??
+    [];
+  if (filteredEprtrAnnexIActivity.length > 0) {
+    urlParams.set(
+      'eprtr_AnnexIActivity[in]',
+      filteredEprtrAnnexIActivity.join(','),
+    );
+  }
+
+  const filteredBatConclusions =
+    query.filter_bat_conclusions.filter((conclusion) => conclusion != null) ??
+    [];
+  if (filteredBatConclusions.length > 0) {
+    urlParams.set(
+      'bat_conclusions[like]',
+      filteredBatConclusions.map((conclusion) => `%${conclusion}%`).join(','),
+    );
+  }
+
+  const filteredPermitTypes =
+    query.filter_permit_types.filter((type) => type != null) ?? [];
+  if (filteredPermitTypes.length > 0) {
+    urlParams.set(
+      'permit_types[like]',
+      filteredPermitTypes.map((type) => `%${type}%`).join(','),
+    );
+  }
+
+  const filteredPermitYears =
+    query.filter_permit_years.filter((year) => year != null) ?? [];
+  if (filteredPermitYears.length > 0) {
+    urlParams.set(
+      'permit_years[like]',
+      filteredPermitYears.map((year) => `%${year}%`).join(','),
+    );
+  }
+
+  const filteredPollutants =
+    query.filter_pollutants.filter((pollutant) => pollutant != null) ?? [];
+  if (filteredPollutants.length > 0) {
+    urlParams.set(
+      'pollutants[like]',
+      filteredPollutants.map((pollutant) => `%${pollutant}%`).join(','),
+    );
+  }
+
+  const filteredPollutantsGroups =
+    query.filter_pollutant_groups.filter((group) => group != null) ?? [];
+  if (filteredPollutantsGroups.length > 0) {
+    urlParams.set(
+      'air_groups[like]',
+      filteredPollutantsGroups.map((group) => `%${group}%`).join(','),
+    );
+    urlParams.set(
+      'water_groups[like]',
+      filteredPollutantsGroups.map((group) => `%${group}%`).join(','),
+    );
+  }
+
+  const filteredCountryCodes =
+    query.filter_countries.filter((code) => code != null) ?? [];
+  if (filteredCountryCodes.length > 0) {
+    urlParams.set('countryCode[in]', filteredCountryCodes.join(','));
+  }
+
+  const filteredNuts = query.nuts_latest.filter((nuts) => nuts != null) ?? [];
+  if (filteredNuts.length > 0) {
+    urlParams.set(
+      'nuts_regions[like]',
+      filteredNuts.map((nuts) => `%${nuts}%`).join(','),
+    );
+  }
+
+  const filteredThematicInformation =
+    query.filter_thematic_information.filter((info) => info != null) ?? [];
+  if (filteredThematicInformation.length > 0) {
+    if (filteredThematicInformation.indexOf('has_release') !== -1) {
+      urlParams.set('has_release_data[gt]', 0);
+    }
+    if (filteredThematicInformation.indexOf('has_transfer') !== -1) {
+      urlParams.set('has_transfer_data[gt]', 0);
+    }
+    if (filteredThematicInformation.indexOf('has_waste') !== -1) {
+      urlParams.set('has_waste_data[gt]', 0);
+    }
+    if (filteredThematicInformation.indexOf('has_seveso') !== -1) {
+      urlParams.set('has_seveso[gt]', 0);
     }
   }
 
-  if (facility_types?.filter(Boolean)?.length === 1) {
-    const type = facility_types.includes('EPRTR') ? 'EPRTR' : 'NONEPRTR';
-    urlParams.append('facilityTypes_like', type);
+  const filteredInstallationTypes =
+    query.filter_installation_types.filter((type) => type != null) ?? [];
+  if (filteredInstallationTypes.length > 0) {
+    if (filteredInstallationTypes.indexOf('IED') !== -1) {
+      urlParams.set('count_instype_IED[gte]', 1);
+    }
+    if (filteredInstallationTypes.indexOf('NONIED') !== -1) {
+      urlParams.set('count_instype_NONIED[gte]', 1);
+    }
   }
 
-  if (installation_types.includes('IED')) {
-    urlParams.append('count_instype_IED_min', '1');
+  const filteredFacilityTypes =
+    query.filter_facility_types.filter((type) => type != null) ?? [];
+  if (filteredFacilityTypes.length > 0) {
+    urlParams.set(
+      'facility_types',
+      filteredFacilityTypes.map((type) => `%${type}%`).join(','),
+    );
   }
 
-  if (installation_types.includes('NONIED')) {
-    urlParams.append('count_instype_NONIED_min', '1');
+  const filteredRiverBasinDistricts =
+    query.filter_river_basin_districts.filter((district) => district != null) ??
+    [];
+  if (filteredRiverBasinDistricts.length > 0) {
+    urlParams.set(
+      'river_basin',
+      filteredRiverBasinDistricts.map((district) => `%${district}%`).join(','),
+    );
   }
 
-  if (thematic_information.includes('has_release')) {
-    urlParams.append('has_release_data_min', '1');
-  }
-
-  if (thematic_information.includes('has_transfer')) {
-    urlParams.append('has_transfer_data_min', '1');
-  }
-
-  if (thematic_information.includes('has_waste')) {
-    urlParams.append('has_waste_data_min', '1');
-  }
-
-  if (thematic_information.includes('has_seveso')) {
-    urlParams.append('has_seveso_min', '1');
-  }
-
-  if (search?.type === 'site' && search?.text) {
-    urlParams.append('siteName', search.text.trim());
-  }
-
-  if (search?.type === 'facility' && search?.text) {
-    urlParams.append('facilityNames', search.text.trim());
+  const filteredPlantTypes =
+    query.filter_plant_types.filter((type) => type != null) ?? [];
+  if (filteredPlantTypes.length > 0) {
+    urlParams.set(
+      'plant_types',
+      filteredPlantTypes.map((type) => `%${type}%`).join(','),
+    );
   }
 
   return urlParams.toString();
@@ -169,6 +256,8 @@ const ModalView = ({
   query,
   setOpen,
   setQuery,
+  history,
+  location,
 }) => {
   const [inputs, setInputs] = React.useState({});
 
@@ -211,6 +300,10 @@ const ModalView = ({
   );
 
   const clearFilters = React.useCallback(() => {
+    history.replace({
+      pathname: location.pathname,
+      search: '',
+    });
     const newInputs = {};
     inputsKeys.forEach((key) => {
       newInputs[key] = [];
@@ -225,8 +318,9 @@ const ModalView = ({
       filter_search_value: '',
     });
     setOpen(false);
+
     /* eslint-disable-next-line */
-  }, [query]);
+  }, [query, history, location]);
 
   const applyFilters = React.useCallback(() => {
     const newQuery = {
@@ -239,8 +333,7 @@ const ModalView = ({
       filter_search_value: '',
     };
     setQuery(newQuery);
-    const urlParams = setParamsQuery(inputs);
-    const newUrl = `${window.location.pathname}?${urlParams}`;
+    const urlParams = setParamsQuery(inputs, location);
     trackSiteSearch({
       category: `Map/Table advanced-filter`,
       keyword: JSON.stringify({
@@ -257,8 +350,10 @@ const ModalView = ({
       }),
     });
     setOpen(false);
-    window.history.pushState({}, '', newUrl);
-
+    history.push({
+      pathname: location.pathname,
+      search: `?${urlParams.toString()}`,
+    });
     /* eslint-disable-next-line */
   }, [inputs, query]);
 
@@ -560,6 +655,7 @@ const ModalView = ({
 };
 
 export default compose(
+  withRouter,
   connect(
     (state) => ({
       query: state.query.search,

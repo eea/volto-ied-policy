@@ -4,19 +4,17 @@ import { connect } from 'react-redux';
 import { Grid, Popup } from 'semantic-ui-react';
 import Icon from '@plone/volto/components/theme/Icon/Icon';
 import infoSVG from '@plone/volto/icons/info.svg';
-import { connectToMultipleProviders } from '@eeacms/volto-datablocks/hocs';
 import qs from 'querystring';
 import '../style.css';
 
 const View = (props) => {
   const [siteDetails, setSiteDetails] = React.useState({});
   const provider_data = React.useMemo(
-    () => props.providers_data?.siteDetails || {},
-    [props.providers_data],
+    () => props.provider_data || {},
+    [props.provider_data],
   );
-
   const query = { ...props.query };
-  const siteReportingYear = parseInt(query.year || '');
+  const siteReportingYear = parseInt(query.siteReportingYear || '');
   const index = provider_data?.euregReportingYear?.indexOf(siteReportingYear);
 
   React.useEffect(() => {
@@ -70,15 +68,4 @@ export default compose(
   connect((state, props) => ({
     query: qs.parse(state.router.location.search.replace('?', '')),
   })),
-  connectToMultipleProviders((props) => {
-    return {
-      providers: [
-        {
-          '@id': 'site_regulatory_details',
-          url: props?.content?.site_regulatory_details,
-          name: 'siteDetails',
-        },
-      ],
-    };
-  }),
 )(View);

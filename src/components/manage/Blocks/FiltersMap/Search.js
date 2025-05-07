@@ -10,6 +10,7 @@ import { trackSiteSearch } from '@eeacms/volto-matomo/utils';
 import { setQuery } from '@eeacms/volto-ied-policy/actions';
 import { getEncodedQueryString } from '@eeacms/volto-ied-policy/helpers';
 import { inputsKeys } from './dictionary';
+import { withRouter } from 'react-router-dom';
 
 const MAX_RESULTS = 6;
 let timer;
@@ -58,7 +59,15 @@ const getFacilities = (value) => {
   );
 };
 
-const Search = ({ data, providers_data, query, setQuery, ...props }) => {
+const Search = ({
+  data,
+  providers_data,
+  query,
+  setQuery,
+  location,
+  history,
+  ...props
+}) => {
   const searchContainer = React.useRef();
   const [loading, setLoading] = React.useState(false);
   const [showResults, setShowResults] = React.useState(false);
@@ -67,8 +76,19 @@ const Search = ({ data, providers_data, query, setQuery, ...props }) => {
   const [locations, setLocations] = React.useState([]);
 
   const value = React.useMemo(() => {
-    return query.filter_search_value;
-  }, [query.filter_search_value]);
+    if (query.filter_search_value) return query.filter_search_value;
+    const urlParams = new URLSearchParams(location.search);
+    if (urlParams.get('siteName')) {
+      return urlParams.get('siteName');
+    }
+    if (urlParams.get('facilityName')) {
+      return urlParams.get('facilityName');
+    }
+    if (urlParams.get('searchLocation')) {
+      return urlParams.get('searchLocation');
+    }
+    return null;
+  }, [query.filter_search_value, location.search]);
 
   const setValue = React.useCallback((value) => {
     setQuery({ filter_search_value: value });
@@ -219,9 +239,31 @@ const Search = ({ data, providers_data, query, setQuery, ...props }) => {
           category: `Map/Table search-${type}`,
           keyword: value,
         });
+        const urlParams = new URLSearchParams(location.search);
+
+        if (type === 'site' && value) {
+          urlParams.set('siteName', value.trim());
+          urlParams.delete('facilityNames');
+          urlParams.delete('searchLocation');
+        }
+
+        if (type === 'facility' && value) {
+          urlParams.set('facilityNames', value.trim());
+          urlParams.delete('searchLocation');
+          urlParams.delete('siteName');
+        }
+        if (type === 'location' && value) {
+          urlParams.set('searchLocation', value.trim());
+          urlParams.delete('facilityNames');
+          urlParams.delete('siteName');
+        }
+        history.push({
+          pathname: location.pathname,
+          search: `?${urlParams.toString()}`,
+        });
       }
     },
-    [query, onChange, setQuery],
+    [query, onChange, setQuery, history, location.pathname, location.search],
   );
 
   return (
@@ -296,6 +338,7 @@ const Search = ({ data, providers_data, query, setQuery, ...props }) => {
 };
 
 export default compose(
+  withRouter,
   connect(
     (state) => ({
       query: state.query.search,

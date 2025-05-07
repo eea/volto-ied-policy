@@ -2,6 +2,8 @@ import { getBlocks } from '@plone/volto/helpers';
 import installLink from '@plone/volto-slate/editor/plugins/AdvancedLink';
 import { addStylingFieldsetSchemaEnhancer } from '@eeacms/volto-ied-policy/components/manage/Blocks/schema';
 import documentIcon from '@plone/volto/icons/doument-details.svg';
+import sliderSVG from '@plone/volto/icons/slider.svg';
+
 import installBlocks from './components/manage/Blocks';
 import installStyles from './styles-config';
 import installDataTable from './customizations/@eeacms/volto-datablocks/components/manage/Blocks/SimpleDataTable';
@@ -16,18 +18,11 @@ import PollutantIndexView from './components/manage/Blocks/PolluantsTable/View';
 import PollutantIndexEdit from './components/manage/Blocks/PolluantsTable/Edit';
 import addonReducers from './reducers';
 import IndustryDataTable from './components/IndustryDataTableVariation.jsx';
-import EnvironmentalSiteDetails from './components/manage/Blocks/SiteBlocks/EnvironmentalSiteDetails/View.jsx';
-import enviromentalSiteSchema from './components/manage/Blocks/SiteBlocks/EnvironmentalSiteDetails/schema.js';
-import RegulatorySiteDetails from './components/manage/Blocks/SiteBlocks/RegulatorySiteDetails/View.jsx';
-import siteHeaderSchema from './components/manage/Blocks/SiteBlocks/Header/schema.js';
-import RegulatorySiteDetailsSchema from './components/manage/Blocks/SiteBlocks/RegulatorySiteDetails/schema.js';
-import RegulatoryBAT from './components/manage/Blocks/SiteBlocks/RegulatoryBATConclusions/View.jsx';
-import RegulatoryBATSchema from './components/manage/Blocks/SiteBlocks/RegulatoryBATConclusions/schema.js';
-import RegulatoryPermits from './components/manage/Blocks/SiteBlocks/RegulatoryPermits/View.jsx';
-import RegulatoryPermitsSchema from './components/manage/Blocks/SiteBlocks/RegulatoryPermits/schema.js';
-import SiteStrucutre from './components/manage/Blocks/SiteBlocks/SiteStructureSidebar/View.jsx';
-import SiteStrucutreSchema from './components/manage/Blocks/SiteBlocks/SiteStructureSidebar/schema.js';
-import SiteHeader from './components/manage/Blocks/SiteBlocks/Header/View.jsx';
+import TableauEdit from './components/manage/Blocks/SiteTableau/Edit';
+import TableauView from './components/manage/Blocks/SiteTableau/View';
+
+import installSiteBlocks from './components/manage/Blocks/SiteBlocks/index.js';
+
 const restrictedBlocks = ['imagecards', 'embed_eea_tableau_block'];
 
 const customBlocks = [
@@ -74,6 +69,31 @@ const applyConfig = (config) => {
     navDepth: 3,
   };
 
+  config = installSiteBlocks(config);
+  config = installSiteBlocks(config);
+  config.blocks.blocksConfig.site_tableau_block = {
+    id: 'site_tableau_block',
+    title: 'Site tableau',
+    icon: sliderSVG,
+    group: 'data_blocks',
+    edit: TableauEdit,
+    view: TableauView,
+    restricted: false,
+    mostUsed: false,
+    sidebarTab: 1,
+    blocks: {},
+    security: {
+      addPermission: [],
+      view: [],
+    },
+    breakpoints: {
+      desktop: [Infinity, 982],
+      tablet: [981, 768],
+      mobile: [767, 0],
+    },
+    defaultProviderUrl: '/data-connectors/site-flags',
+  };
+
   config.blocks.blocksConfig.polluantTable = {
     id: 'polluantTable',
     title: 'Pollutant index',
@@ -90,67 +110,51 @@ const applyConfig = (config) => {
       view: [],
     },
   };
-  config.blocks.blocksConfig.siteHeader = {
-    view: SiteHeader,
-    edit: SiteHeader,
-    title: 'Site header',
-    getSchema: siteHeaderSchema,
-    id: 'siteHeader',
-    icon: documentIcon,
-    group: 'eprtr_blocks',
-  };
-  config.blocks.blocksConfig.environmental_site_details = {
-    view: EnvironmentalSiteDetails,
-    edit: EnvironmentalSiteDetails,
-    schema: enviromentalSiteSchema,
-    id: 'environmental_site_details',
-    icon: documentIcon,
-    group: 'eprtr_blocks',
-    title: 'Environmenta Site Details',
-  };
-  config.blocks.blocksConfig.regularitory_site_details = {
-    view: RegulatorySiteDetails,
-    edit: RegulatorySiteDetails,
-    schema: RegulatorySiteDetailsSchema,
-    id: 'regularitory_site_details',
-    icon: documentIcon,
-    group: 'eprtr_blocks',
-    title: 'Regulatory Site Details',
-  };
+  // config.blocks.blocksConfig.siteHeader = {
+  //   view: SiteHeader,
+  //   edit: SiteHeader,
+  //   title: 'Site header',
+  //   getSchema: siteHeaderSchema,
+  //   id: 'siteHeader',
+  //   icon: documentIcon,
+  //   group: 'eprtr_blocks',
+  // };
 
-  config.blocks.blocksConfig.regularitory_site_permits = {
-    view: RegulatoryPermits,
-    edit: RegulatoryPermits,
-    schema: RegulatoryPermitsSchema,
-    id: 'regularitory_site_permits',
-    icon: documentIcon,
-    group: 'eprtr_blocks',
-    title: 'Regulatory Permits',
-  };
-  config.blocks.blocksConfig.regulatory_bat = {
-    view: RegulatoryBAT,
-    edit: RegulatoryBAT,
-    schema: RegulatoryBATSchema,
-    id: 'regulatory_bat',
-    icon: documentIcon,
-    group: 'eprtr_blocks',
-    title: 'Regulatory BAT',
-  };
-  config.blocks.blocksConfig.site_structure = {
-    view: SiteStrucutre,
-    edit: SiteStrucutre,
-    schema: SiteStrucutreSchema,
-    id: 'site_structure',
-    icon: documentIcon,
-    group: 'eprtr_blocks',
-    title: 'Site Structure Sidebar',
-  };
+  // config.blocks.blocksConfig.regularitory_site_details = {
+  //   view: RegulatorySiteDetails,
+  //   edit: RegulatorySiteDetails,
+  //   schema: RegulatorySiteDetailsSchema,
+  //   id: 'regularitory_site_details',
+  //   icon: documentIcon,
+  //   group: 'eprtr_blocks',
+  //   title: 'Regulatory Site Details',
+  // };
+
+  // config.blocks.blocksConfig.regularitory_site_permits = {
+  //   view: RegulatoryPermits,
+  //   edit: RegulatoryPermits,
+  //   schema: RegulatoryPermitsSchema,
+  //   id: 'regularitory_site_permits',
+  //   icon: documentIcon,
+  //   group: 'eprtr_blocks',
+  //   title: 'Regulatory Permits',
+  // };
+  // config.blocks.blocksConfig.regulatory_bat = {
+  //   view: RegulatoryBAT,
+  //   edit: RegulatoryBAT,
+  //   schema: RegulatoryBATSchema,
+  //   id: 'regulatory_bat',
+  //   icon: documentIcon,
+  //   group: 'eprtr_blocks',
+  //   title: 'Regulatory BAT',
+  // };
+
   config.addonReducers = {
     ...config.addonReducers,
     ...addonReducers,
   };
-  config.blocks.blocksConfig.custom_connected_block = {
-    id: 'custom_connected_block',
+  config.blocks.blocksConfig.custom_connected_tags = {
+    id: 'custom_connected_tags',
     title: 'Connected Tags',
     group: 'common',
     view: ListView,

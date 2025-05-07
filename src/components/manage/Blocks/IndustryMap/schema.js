@@ -24,7 +24,14 @@ const Navigation = {
     {
       id: 'default',
       title: 'Default',
-      fields: ['ignoreScroll', 'isExact', 'isResponsive', 'parent', 'pages'],
+      fields: [
+        'smallHeight',
+        'ignoreScroll',
+        'isExact',
+        'isResponsive',
+        'parent',
+        'pages',
+      ],
     },
   ],
   properties: {
@@ -39,6 +46,10 @@ const Navigation = {
     },
     isExact: {
       title: 'Is exact',
+      type: 'boolean',
+    },
+    smallHeight: {
+      title: 'Small height',
       type: 'boolean',
     },
     ignoreScroll: {
