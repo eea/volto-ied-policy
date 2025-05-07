@@ -50,10 +50,10 @@ const getLatestRegions = (query) => {
   };
 };
 
-const setParamsQuery = (data, location) => {
+const setParamsQuery = (data) => {
   const query = { ...data, nuts_latest: getLatestRegions(data).nuts_latest };
 
-  const urlParams = new URLSearchParams(location.search);
+  const urlParams = new URLSearchParams();
 
   const filteredReportingYears =
     query?.filter_reporting_years?.filter((year) => year != null) ?? [];
@@ -333,7 +333,7 @@ const ModalView = ({
       filter_search_value: '',
     };
     setQuery(newQuery);
-    const urlParams = setParamsQuery(inputs, location);
+    const urlParams = setParamsQuery(inputs);
     trackSiteSearch({
       category: `Map/Table advanced-filter`,
       keyword: JSON.stringify({
