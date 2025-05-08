@@ -22,6 +22,7 @@ import TableauEdit from './components/manage/Blocks/SiteTableau/Edit';
 import TableauView from './components/manage/Blocks/SiteTableau/View';
 
 import installSiteBlocks from './components/manage/Blocks/SiteBlocks/index.js';
+import RedirectView from './components/manage/Views/RedirectView.jsx';
 
 const restrictedBlocks = ['imagecards', 'embed_eea_tableau_block'];
 
@@ -93,6 +94,7 @@ const applyConfig = (config) => {
     },
     defaultProviderUrl: '/data-connectors/site-flags',
   };
+  config.views.contentTypesViews.redirect = RedirectView;
 
   config.blocks.blocksConfig.polluantTable = {
     id: 'polluantTable',
