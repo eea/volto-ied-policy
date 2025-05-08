@@ -127,7 +127,7 @@ const View = (props) => {
                           })}
                           href={`/industrial-site/${getQueryString({
                             ...newQuery,
-                            activeTab: 'enviromental-information',
+                            activeTab: 'environmental-information',
                           })}`}
                           ignoreScroll={true}
                         >
@@ -161,13 +161,13 @@ const View = (props) => {
                         active:
                           pathname === '/industrial-site/facility-overview' &&
                           query.facilityInspireId === facility &&
-                          query.activeTab === 'enviromental-information',
+                          query.activeTab === 'environmental-information',
                       })}
                       href={`/industrial-site/facility-overview${getQueryString(
                         {
                           ...newQuery,
                           facilityInspireId: facility,
-                          activeTab: 'enviromental-information',
+                          activeTab: 'environmental-information',
                         },
                       )}`}
                       ignoreScroll={true}
@@ -225,7 +225,7 @@ const View = (props) => {
                                                   `/industrial-site/lcp-overview` &&
                                                 query.lcpInspireId === lcp &&
                                                 query.activeTab ===
-                                                  'enviromental-information',
+                                                  'environmental-information',
                                             })}
                                             href={`/industrial-site/lcp-overview${getQueryString(
                                               {
@@ -235,7 +235,7 @@ const View = (props) => {
                                                   installation,
                                                 lcpInspireId: lcp,
                                                 activeTab:
-                                                  'enviromental-information',
+                                                  'environmental-information',
                                               },
                                             )}`}
                                             ignoreScroll={true}

@@ -108,7 +108,7 @@ const View = (props) => {
 
   const centerToQueryLocation = (position, zoom) => {
     const { proj } = openlayers;
-    return map.current.getView().animate({
+    return map?.current?.getView().animate({
       center: proj.fromLonLat([
         position.coords.longitude,
         position.coords.latitude,
@@ -120,10 +120,10 @@ const View = (props) => {
 
   const centerToPosition = (position, zoom) => {
     const { proj } = openlayers;
-    return map.current.getView().animate({
+    return map?.current?.getView().animate({
       center: proj.fromLonLat([
-        position.coords.longitude,
-        position.coords.latitude,
+        position.coords?.longitude,
+        position.coords?.latitude,
       ]),
       duration: 1000,
       zoom,
@@ -143,10 +143,12 @@ const View = (props) => {
         () => {},
       );
     } else {
-      map.current.getView().fit([extent[0], extent[1], extent[2], extent[3]], {
-        maxZoom: 16,
-        duration: 1000,
-      });
+      map?.current
+        ?.getView()
+        .fit([extent[0], extent[1], extent[2], extent[3]], {
+          maxZoom: 16,
+          duration: 1000,
+        });
     }
   };
 
@@ -384,7 +386,7 @@ const View = (props) => {
     if (filter_change.type === 'search-location') {
       getLocationExtent(filter_search).then(({ data }) => {
         if (data.candidates?.length > 0) {
-          map.current
+          map?.current
             .getView()
             .fit(
               [
@@ -417,7 +419,7 @@ const View = (props) => {
             />,
           );
         } else {
-          map.current
+          map?.current
             .getView()
             .fit([extent.MIN_X, extent.MIN_Y, extent.MAX_X, extent.MAX_Y], {
               maxZoom: 16,
@@ -442,7 +444,7 @@ const View = (props) => {
             />,
           );
         } else {
-          map.current
+          map?.current
             .getView()
             .fit([extent.MIN_X, extent.MIN_Y, extent.MAX_X, extent.MAX_Y], {
               maxZoom: 16,
@@ -483,7 +485,7 @@ const View = (props) => {
           }
         });
         if (!extent.isEmpty(_extent)) {
-          map.current.getView().fit(_extent, {
+          map?.current?.getView().fit(_extent, {
             maxZoom: 16,
             duration: 1000,
           });
