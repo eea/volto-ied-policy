@@ -20,6 +20,7 @@ const RedirectView = (props) => {
 
         history.push(relativePath);
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error('Invalid URL in content.link:', content.link);
       }
     }
