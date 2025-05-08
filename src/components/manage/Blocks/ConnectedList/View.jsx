@@ -52,7 +52,7 @@ const ConnectedList = (props) => {
               return (
                 <UniversalLink
                   key={`connected-list-${column}`}
-                  href={'/polluants'}
+                  href={'/pollutants'}
                   className={cx(data.className)}
                   style={{
                     display: 'inline-block',
