@@ -207,6 +207,17 @@ const View = ({
     updateOptions();
   }, [updateOptions]);
 
+  //Remove query params from URL on other pages
+  useEffect(() => {
+    return () => {
+      const isOnExplorePage = location.pathname.includes('/explore');
+      if (!isOnExplorePage) {
+        dispatch(setQuery({}));
+        history.replace({ pathname: location.pathname });
+      }
+    };
+  }, []);
+
   return (
     <div className="filters-block outline-button">
       <Search data={data} providers_data={providers_data} />
