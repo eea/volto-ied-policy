@@ -10,7 +10,7 @@ import { connectToMultipleProvidersUnfiltered } from '@eeacms/volto-datablocks/h
 import { compose } from 'redux';
 import './styles.less';
 import { withRouter } from 'react-router-dom';
-
+import { resetQuery } from '@eeacms/volto-ied-policy/actions';
 const View = ({
   data,
   providers_data,
@@ -212,7 +212,8 @@ const View = ({
     return () => {
       const isOnExplorePage = location.pathname.includes('/explore');
       if (!isOnExplorePage) {
-        dispatch(setQuery({}));
+        dispatch(resetQuery());
+        setFiltersInitialized(false);
         history.replace({ pathname: location.pathname });
       }
     };

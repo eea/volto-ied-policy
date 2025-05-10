@@ -312,7 +312,7 @@ const View = (props) => {
   //fix bug where map was rendering only after scrolling
   useEffect(() => {
     //temporary fix
-    window.scrollBy(0, 200);
+    if (__CLIENT__ && window) window.scrollBy(0, 200);
   }, []);
 
   useEffect(() => {
