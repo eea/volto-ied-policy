@@ -10,7 +10,7 @@ import { connectToMultipleProvidersUnfiltered } from '@eeacms/volto-datablocks/h
 import { compose } from 'redux';
 import './styles.less';
 import { withRouter } from 'react-router-dom';
-
+import { resetQuery } from '@eeacms/volto-ied-policy/actions';
 const View = ({
   data,
   providers_data,
@@ -206,6 +206,18 @@ const View = ({
   useEffect(() => {
     updateOptions();
   }, [updateOptions]);
+
+  //Remove query params from URL on other pages
+  useEffect(() => {
+    return () => {
+      const isOnExplorePage = location.pathname.includes('/explore');
+      if (!isOnExplorePage) {
+        dispatch(resetQuery());
+        setFiltersInitialized(false);
+        history.replace({ pathname: location.pathname });
+      }
+    };
+  }, []);
 
   return (
     <div className="filters-block outline-button">

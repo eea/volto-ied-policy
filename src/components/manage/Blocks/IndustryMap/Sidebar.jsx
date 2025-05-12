@@ -202,6 +202,7 @@ class Sidebar extends React.Component {
     const { query } = this.props;
     const { options } = this.state;
     if (__SERVER__) return '';
+
     return (
       <div id="map-sidebar" className="outline-button">
         <form autoComplete="off" name="Map simple filters">
