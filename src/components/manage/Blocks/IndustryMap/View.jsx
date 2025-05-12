@@ -168,7 +168,7 @@ const View = (props) => {
         e.originalEvent,
       )
     ) {
-      overlayPopup.current?.setPosition(undefined);
+      overlayPopup?.current?.setPosition(undefined);
       e.map.getTarget().style.cursor = '';
       return;
     }
@@ -182,7 +182,7 @@ const View = (props) => {
       e.coordinate[0] + (zoom >= 8 ? 8 : 6) * resolution,
       e.coordinate[1] + (zoom >= 8 ? 8 : 6) * resolution,
     ];
-    if (!overlayPopup?.current) return;
+    if (!overlayPopup.current) return;
 
     debounce(
       () => {
@@ -238,7 +238,7 @@ const View = (props) => {
       0,
       250,
     );
-    overlayPopup.current.setPosition(undefined);
+    overlayPopup?.current.setPosition(undefined);
     e.map.getTarget().style.cursor = '';
   };
 
@@ -286,8 +286,8 @@ const View = (props) => {
           );
           const featuresProperties = feature.getProperties();
           e.map.getTarget().style.cursor = '';
-          overlayPopup.current.setPosition(undefined);
-          overlayPopupDetailed.current.setPosition(e.coordinate);
+          overlayPopup?.current.setPosition(undefined);
+          overlayPopupDetailed?.current.setPosition(e.coordinate);
           emitEvent(mapElement, 'ol-click', {
             bubbles: false,
             detail: {
@@ -345,11 +345,11 @@ const View = (props) => {
       );
 
       // Show persistent popup at selected location
-      if (overlayPopup.current) {
+      if (overlayPopup?.current) {
         let hdms = openlayers.coordinate.toStringHDMS(
           proj.toLonLat([lng, lat]),
         );
-        overlayPopup.current.setPosition(coords);
+        overlayPopup?.current.setPosition(coords);
         emitEvent(document.querySelector('#industry-map'), 'ol-pointermove', {
           bubbles: false,
           detail: {
