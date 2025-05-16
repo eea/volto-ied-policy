@@ -8,8 +8,7 @@ import { Dropdown, Image, Sticky } from 'semantic-ui-react';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import Cookies from 'universal-cookie';
 
-import { matchPath } from 'react-router';
-import { withRouter, useParams } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { UniversalLink } from '@plone/volto/components';
 import {
   getBaseUrl,
@@ -53,7 +52,6 @@ const EEAHeader = ({ token, history, subsite, content, screen, ...props }) => {
   const dispatch = useDispatch();
   const [language, setLanguage] = useState(getLanguage());
   const previousToken = usePrevious(token);
-  const params = useParams();
   const { items } = props;
   const { eea } = config.settings;
   const { headerOpts, headerSearchBox } = eea || {};
@@ -71,27 +69,6 @@ const EEAHeader = ({ token, history, subsite, content, screen, ...props }) => {
   );
 
   const isSubsite = subsite?.['@type'] === 'Subsite';
-
-  const isN2KSite = useMemo(() => {
-    return !!matchPath(pathname, {
-      path: ['/natura2000/sites/site', '/natura2000/sites/site_cdda'],
-      exact: false,
-    });
-  }, [pathname]);
-
-  const isN2KSpecies = useMemo(() => {
-    return !!matchPath(pathname, {
-      path: '/natura2000/species/species',
-      exact: false,
-    });
-  }, [pathname]);
-
-  const isN2KHabitat = useMemo(() => {
-    return !!matchPath(pathname, {
-      path: '/natura2000/habitats/habitat',
-      exact: false,
-    });
-  }, [pathname]);
 
   const isHomePageInverse = content_pathname === '' && _pathname === '';
 
@@ -140,13 +117,6 @@ const EEAHeader = ({ token, history, subsite, content, screen, ...props }) => {
   }, [token, dispatch, pathname, previousToken]);
 
   React.useEffect(() => {
-    if (isN2KSpecies && [0, '0'].includes(params.id_eunis)) {
-      history.push('/species-name-or-error-code');
-    }
-    /* eslint-disable-next-line */
-  }, [isN2KSpecies, params]);
-
-  React.useEffect(() => {
     let width = 0;
     const menuEl = document.querySelector('.eea.header .main.bar');
     const items =
@@ -163,10 +133,6 @@ const EEAHeader = ({ token, history, subsite, content, screen, ...props }) => {
   return (
     <Header menuItems={items}>
       {isHomePageInverse && <BodyClass className="homepage homepage-inverse" />}
-      {isSubsite && !subsite.isRoot && !isN2KSpecies && !isN2KHabitat && (
-        <BodyClass className="with-n2k-navigation" />
-      )}
-      {isSubsite && isN2KSite && <BodyClass className="is-n2k-site" />}
 
       <Header.TopHeader>
         <Header.TopItem className="official-union">
@@ -210,16 +176,6 @@ const EEAHeader = ({ token, history, subsite, content, screen, ...props }) => {
               viewportWidth={width}
             >
               <div className="wrapper">
-                <Dropdown.Item>
-                  <UniversalLink
-                    href={`/natura2000/${language}`}
-                    className="site"
-                    target="_self"
-                    rel="noreferrer"
-                  >
-                    Natura 2000
-                  </UniversalLink>
-                </Dropdown.Item>
                 {headerOpts.partnerLinks.links.map((item, index) => (
                   <Dropdown.Item key={index}>
                     <a
@@ -238,7 +194,7 @@ const EEAHeader = ({ token, history, subsite, content, screen, ...props }) => {
           </Header.TopItem>
         )}
 
-        {isMultilingual && !isN2KSite && !isN2KSpecies && !isN2KHabitat && (
+        {isMultilingual && (
           <Header.TopItem>
             <Header.TopDropdownMenu
               id="language-switcher"
@@ -318,51 +274,22 @@ const EEAHeader = ({ token, history, subsite, content, screen, ...props }) => {
               url={eea.logoTargetUrl}
             />
           }
-          menuItems={
-            isN2KSite
-              ? [
-                  {
-                    title: 'AT A GLANCE',
-                    url: '#',
-                    items: [],
-                    className: 'at-glance',
-                    onClick: (e) => {
-                      e.preventDefault();
-                      window.scrollTo({
-                        top: document.body.scrollHeight,
-                        behavior: 'smooth',
-                      });
-                    },
-                  },
-                  {
-                    title: 'GO TO EXPERT VIEW',
-                    url: params.site_code
-                      ? `https://natura2000.eea.europa.eu/Natura2000/SDF.aspx?site=${params.site_code}`
-                      : '#',
-                    items: [],
-                    className: 'deep-dive',
-                    target: params.site_code ? '_blank' : null,
-                  },
-                ]
-              : isSubsite && !subsite.isRoot && !isN2KSpecies && !isN2KHabitat
-              ? getSubsiteItems()
-              : items.filter((item) => item.url !== '/natura2000')
-          }
+          menuItems={isSubsite ? getSubsiteItems() : items}
           renderGlobalMenuItem={(item, { onClick }) => (
             <a
               href={item.url || '/'}
               title={item.title}
               target={item.target || '_self'}
               className={item.className}
-              onClick={(e) => {
-                if (!isN2KSite) {
-                  e.preventDefault();
-                  onClick(e, item);
-                }
-                if (item.onClick) {
-                  item.onClick(e, item);
-                }
-              }}
+              // onClick={(e) => {
+              //   if (!isN2KSite) {
+              //     e.preventDefault();
+              //     onClick(e, item);
+              //   }
+              //   if (item.onClick) {
+              //     item.onClick(e, item);
+              //   }
+              // }}
             >
               {item.title}
             </a>
