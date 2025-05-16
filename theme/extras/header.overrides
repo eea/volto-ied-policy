@@ -35,6 +35,7 @@
 }
 
 .eea.header .eea-logo {
+  max-width: 150px;
   margin-top: 0;
 }
 
