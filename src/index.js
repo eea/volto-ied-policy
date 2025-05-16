@@ -211,19 +211,6 @@ const applyConfig = (config) => {
     },
   };
   // BISE config
-  config.settings.bise = {
-    subsites: [
-      {
-        '@id': '/natura2000',
-        '@type': 'Subsite',
-        title: 'Natura 2000',
-        subsite_css_class: {
-          token: 'natura2000',
-        },
-      },
-    ],
-    multilingualSubsites: ['/natura2000'],
-  };
 
   config.blocks.requiredBlocks = [];
 

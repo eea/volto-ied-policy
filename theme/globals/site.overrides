@@ -9,7 +9,7 @@
 @import '../extras/stylemenu';
 @import '../extras/tocnav';
 @import './helpers';
-@import './natura2000';
+
 
 // :root {
 //   .define-color(primary, #005248);
@@ -133,157 +133,11 @@ p.has--clear--both:empty {
   }
 }
 
-.subsite.subsite-natura2000.subsite-root {
-  footer {
-    display: none;
-  }
 
-  .ui.content-area {
-    padding-bottom: 0;
-  }
-}
 
-.subsite.subsite-natura2000 {
-  &.grey-bg {
-    .content-area {
-      margin-bottom: 0 !important;
-      padding-bottom: 0;
-    }
 
-    #view {
-      padding-bottom: 4rem !important;
-      background-color: #f8f8f8 !important;
-    }
-  }
 
-  .eea.banner,
-  .breadcrumbs,
-  .block-editor-title {
-    display: none;
-  }
 
-  &:not(.section-edit) {
-    .ui.basic.segment.content-area {
-      padding-top: 0;
-      margin-top: 0;
-    }
-  }
-
-  .styled-with-bg {
-    padding: 0 !important;
-  }
-
-  .eea.header a:hover {
-    color: @secondaryColor;
-  }
-
-  .content-area {
-    /* TEXT */
-    // h1,
-    // h2,
-    // h3,
-    // h4,
-    // h5,
-    // h6,
-    // p,
-    // a,
-    // span,
-    // button {
-    //   font-family: OpenSans, 'Raleway', sans-serif;
-    // }
-
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-      color: @primaryColor !important;
-    }
-
-    h2 {
-      font-weight: 600;
-    }
-
-    a {
-      color: @secondaryColor;
-      font-weight: 600;
-
-      h1,
-      h2,
-      h3,
-      h4,
-      h5,
-      h6 {
-        color: @secondaryColor !important;
-      }
-
-      &:hover {
-        color: @secondaryColor;
-        text-decoration: underline;
-
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6 {
-          color: @secondaryColor !important;
-        }
-      }
-    }
-
-    .light-links {
-      h1,
-      h2,
-      h3,
-      h4,
-      h5,
-      h6 {
-        color: @secondaryColor !important;
-      }
-
-      a {
-        color: @secondaryColor;
-
-        &:hover {
-          color: @secondaryColor;
-          text-decoration: underline;
-
-          h1,
-          h2,
-          h3,
-          h4,
-          h5,
-          h6 {
-            color: @secondaryColor !important;
-          }
-        }
-      }
-    }
-
-    .dark-links {
-      a {
-        color: @primaryColor;
-
-        &:hover {
-          color: @primaryColor;
-          text-decoration: underline;
-        }
-      }
-    }
-  }
-
-  // .ui.overlay.sidebar {
-  //   z-index: 800;
-  // }
-}
-
-.subsite.subsite-natura2000:not(.subsite-root) {
-  .ui.content-area {
-    margin-bottom: 2rem;
-  }
-}
 
 // #toolbar {
 //   z-index: 6;
