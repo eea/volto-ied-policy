@@ -8,7 +8,6 @@ import { Dropdown, Image, Sticky } from 'semantic-ui-react';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import Cookies from 'universal-cookie';
 
-import { matchPath } from 'react-router';
 import { withRouter, useParams } from 'react-router-dom';
 import { UniversalLink } from '@plone/volto/components';
 import {
@@ -53,7 +52,6 @@ const EEAHeader = ({ token, history, subsite, content, screen, ...props }) => {
   const dispatch = useDispatch();
   const [language, setLanguage] = useState(getLanguage());
   const previousToken = usePrevious(token);
-  const params = useParams();
   const { items } = props;
   const { eea } = config.settings;
   const { headerOpts, headerSearchBox } = eea || {};
@@ -283,15 +281,15 @@ const EEAHeader = ({ token, history, subsite, content, screen, ...props }) => {
               title={item.title}
               target={item.target || '_self'}
               className={item.className}
-              onClick={(e) => {
-                if (!isN2KSite) {
-                  e.preventDefault();
-                  onClick(e, item);
-                }
-                if (item.onClick) {
-                  item.onClick(e, item);
-                }
-              }}
+              // onClick={(e) => {
+              //   if (!isN2KSite) {
+              //     e.preventDefault();
+              //     onClick(e, item);
+              //   }
+              //   if (item.onClick) {
+              //     item.onClick(e, item);
+              //   }
+              // }}
             >
               {item.title}
             </a>
