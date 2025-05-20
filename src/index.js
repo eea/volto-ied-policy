@@ -6,10 +6,8 @@ import sliderSVG from '@plone/volto/icons/slider.svg';
 
 import installBlocks from './components/manage/Blocks';
 import installStyles from './styles-config';
-import installDataTable from './customizations/@eeacms/volto-datablocks/components/manage/Blocks/SimpleDataTable';
 import iconSVG from '@plone/volto/icons/tag.svg';
-import biseLogo from '@eeacms/volto-ied-policy/../theme/assets/images/Header/ied-logo.svg';
-import biseWhiteLogo from '@eeacms/volto-ied-policy/../theme/assets/images/Header/ied-logo.svg';
+import iedLogo from '@eeacms/volto-ied-policy/../theme/assets/images/Header/ied-logo.svg';
 import ecLogo from '@eeacms/volto-ied-policy/../theme/assets/logos/logo-ec.svg';
 import ListView from './components/manage/Blocks/ConnectedList/View.jsx';
 import EditView from './components/manage/Blocks/ConnectedList/Edit.jsx';
@@ -179,8 +177,8 @@ const applyConfig = (config) => {
     languages: n2kLanguages,
     headerOpts: {
       ...(config.settings.eea?.headerOpts || {}),
-      logo: biseLogo,
-      logoWhite: biseWhiteLogo,
+      logo: iedLogo,
+      logoWhite: iedLogo,
     },
     headerSearchBox: [
       {
@@ -273,7 +271,7 @@ const applyConfig = (config) => {
       addStylingFieldsetSchemaEnhancer;
   }
 
-  config = [installBlocks, installStyles, installDataTable].reduce(
+  config = [installBlocks, installStyles].reduce(
     (acc, apply) => apply(acc),
     config,
   );
