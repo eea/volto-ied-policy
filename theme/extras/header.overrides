@@ -33,10 +33,15 @@
     flex: 1;
   }
 }
+.eea.header .main.bar > .ui.container .ui.grid .column > *{
+  flex:unset !important
+}
 
 .eea.header .eea-logo {
   max-width: 150px;
   margin-top: 0;
+  padding-right: 5px;
+
 }
 
 @media only screen and (min-width: @computerBreakpoint) {
