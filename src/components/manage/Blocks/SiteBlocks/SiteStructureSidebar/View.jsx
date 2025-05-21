@@ -123,7 +123,8 @@ const View = (props) => {
                             active:
                               query.activeTab === 'environmental-information' ||
                               (!query.activeTab &&
-                                pathname === '/industrial-site'),
+                                pathname ===
+                                  '/industrial-emissions/industrial-site'),
                           })}
                           href={`/industrial-site/${getQueryString({
                             ...newQuery,
@@ -159,7 +160,8 @@ const View = (props) => {
                       className={cx({
                         item: true,
                         active:
-                          pathname === '/industrial-site/facility-overview' &&
+                          pathname ===
+                            '/industrial-emissions/industrial-site/facility-overview' &&
                           query.facilityInspireId === facility &&
                           query.activeTab === 'environmental-information',
                       })}
@@ -189,7 +191,7 @@ const View = (props) => {
                                     item: true,
                                     active:
                                       pathname ===
-                                        `/industrial-site/installation-overview` &&
+                                        `/industrial-emissions/industrial-site/installation-overview` &&
                                       query.installationInspireId ===
                                         installation &&
                                       query.activeTab ===
@@ -222,7 +224,7 @@ const View = (props) => {
                                               item: true,
                                               active:
                                                 pathname ===
-                                                  `/industrial-site/lcp-overview` &&
+                                                  `/industrial-emissions/industrial-site/lcp-overview` &&
                                                 query.lcpInspireId === lcp &&
                                                 query.activeTab ===
                                                   'environmental-information',

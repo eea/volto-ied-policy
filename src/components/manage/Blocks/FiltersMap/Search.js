@@ -309,7 +309,7 @@ const Search = ({
           }}
         />
       </form>
-      {items.length && showResults && value.length >= 3 ? (
+      {items?.length && showResults && value?.length >= 3 ? (
         <List>
           {items.map((item, index) => (
             <List.Item

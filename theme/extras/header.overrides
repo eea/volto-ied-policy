@@ -33,6 +33,10 @@
     flex: 1;
   }
 }
+.eea.header .subsite-logo:before {
+  margin-left: 5px
+}
+
 .eea.header .main.bar > .ui.container .ui.grid .column > *{
   flex:unset !important
 }

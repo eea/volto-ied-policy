@@ -34,6 +34,7 @@ const IndustryDataTable = (props) => {
     }
   });
   const loading = tableData?.rowType != null;
+
   return (
     <div ref={table} className="industry-table">
       {tableData && !loading && (
@@ -231,13 +232,7 @@ const IndustryDataTable = (props) => {
                                 <div className="flex align-center flex-grow">
                                   <UniversalLink
                                     className="solid red"
-                                    href={`${data.link || '/'}?siteInspireId=${
-                                      tableData?.['Site Inspire ID']?.[i]
-                                    }&siteName=${
-                                      tableData?.['siteName']?.[i]
-                                    }&siteReportingYear=${
-                                      tableData?.['Site_reporting_year']?.[i]
-                                    }`}
+                                    href={`/industrial-site?siteInspireId=${tableData?.['Site Inspire ID']?.[i]}&siteName=${tableData?.['siteName']?.[i]}&siteReportingYear=${tableData?.['Site_reporting_year']?.[i]}&lng=${tableData?.['x']?.[i]}&lat=${tableData?.['y']?.[i]}`}
                                   >
                                     Site details
                                   </UniversalLink>
