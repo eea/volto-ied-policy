@@ -500,7 +500,12 @@ const View = (props) => {
     }
   }, [props.query?.filter_change?.counter]);
 
-  if (__SERVER__) return '';
+  if (__SERVER__)
+    return (
+      <div className={`industry-map-wrapper small-height`}>
+        <div id="industry-map" className="industry-map"></div>
+      </div>
+    );
 
   const lat = props?.query?.lat;
   const lng = props?.query?.lng;
@@ -512,70 +517,69 @@ const View = (props) => {
   }
 
   return (
-    <>
-      <StyleWrapperView
-        {...props}
-        styleData={props.data.styles || {}}
-        styled={true}
+    <StyleWrapperView
+      {...props}
+      styleData={props.data.styles || {}}
+      styled={true}
+    >
+      <div
+        className={`industry-map-wrapper${
+          props.data?.navigation?.smallHeight ? ' small-height' : ''
+        }`}
       >
-        <div
-          className={`industry-map-wrapper${
-            props.data?.navigation?.smallHeight ? ' small-height' : ''
-          }`}
-        >
-          <div id="industry-map" className="industry-map">
-            <PrivacyProtection data={{ dataprotection }}>
-              <Map
-                ref={(data) => {
-                  map.current = data?.map;
-                  if (data?.mapRendered && !mapRendered) {
-                    setMapRendered(true);
+        <div id="industry-map" className="industry-map">
+          <PrivacyProtection data={{ dataprotection }}>
+            <Map
+              ref={(data) => {
+                map.current = data?.map;
+                if (data?.mapRendered && !mapRendered) {
+                  setMapRendered(true);
+                }
+              }}
+              view={{
+                center: proj.fromLonLat([20, 50]),
+                showFullExtent: true,
+                // maxZoom: 1,
+                minZoom: 1,
+                zoom: 1,
+              }}
+              renderer="webgl"
+              onPointermove={onPointermove}
+              onClick={onClick}
+              onMoveend={onMoveend}
+            >
+              <Controls attribution={false} zoom={true}>
+                <Control className="ol-custom">
+                  <button
+                    className="navigation-button"
+                    title="Center to user location"
+                    onClick={() => {
+                      centerToUserLocation(true);
+                    }}
+                  >
+                    <Icon name={navigationSVG} size="1em" fill="white" />
+                  </button>
+                </Control>
+              </Controls>
+              <Interactions
+                doubleClickZoom={true}
+                keyboardZoom={true}
+                mouseWheelZoom={true}
+                pointer={true}
+                select={false}
+                pinchRotate={false}
+                altShiftDragRotate={false}
+              />
+              <Layers>
+                <Layer.Tile
+                  source={
+                    new source.XYZ({
+                      url: getLayerBaseURL(),
+                    })
                   }
-                }}
-                view={{
-                  center: proj.fromLonLat([20, 50]),
-                  showFullExtent: true,
-                  // maxZoom: 1,
-                  minZoom: 1,
-                  zoom: 1,
-                }}
-                renderer="webgl"
-                onPointermove={onPointermove}
-                onClick={onClick}
-                onMoveend={onMoveend}
-              >
-                <Controls attribution={false} zoom={true}>
-                  <Control className="ol-custom">
-                    <button
-                      className="navigation-button"
-                      title="Center to user location"
-                      onClick={() => {
-                        centerToUserLocation(true);
-                      }}
-                    >
-                      <Icon name={navigationSVG} size="1em" fill="white" />
-                    </button>
-                  </Control>
-                </Controls>
-                <Interactions
-                  doubleClickZoom={true}
-                  keyboardZoom={true}
-                  mouseWheelZoom={true}
-                  pointer={true}
-                  select={false}
-                  pinchRotate={false}
-                  altShiftDragRotate={false}
+                  zIndex={0}
                 />
-                <Layers>
-                  <Layer.Tile
-                    source={
-                      new source.XYZ({
-                        url: getLayerBaseURL(),
-                      })
-                    }
-                    zIndex={0}
-                  />
-                  {/* <Layer.VectorImage
+                {/* <Layer.VectorImage
                   className="ol-layer-regions"
                   ref={(data) => {
                     this.layerRegions.current = data?.layer;
@@ -615,64 +619,63 @@ const View = (props) => {
                   title="1.Regions"
                   zIndex={1}
                 /> */}
-                  <Layer.Tile
-                    ref={(data) => {
-                      layerSites.current = data?.layer;
-                    }}
-                    className="ol-layer-sites"
-                    source={getSitesSource(props.query)}
-                    title="2.Sites"
-                    zIndex={1}
-                  />
-                </Layers>
-                <Overlays
+                <Layer.Tile
                   ref={(data) => {
-                    overlayPopup.current = data?.overlay;
+                    layerSites.current = data?.layer;
                   }}
-                  className="ol-popup"
+                  className="ol-layer-sites"
+                  source={getSitesSource(props.query)}
+                  title="2.Sites"
+                  zIndex={1}
+                />
+              </Layers>
+              <Overlays
+                ref={(data) => {
+                  overlayPopup.current = data?.overlay;
+                }}
+                className="ol-popup"
+                positioning="center-center"
+                stopEvent={true}
+              >
+                <Popup
+                  overlay={overlayPopup}
+                  className={props.query?.siteName ? 'fixed-popup' : ''}
+                  lock={!!props.query?.siteName}
+                  staticData={{
+                    siteName: props.query?.siteName || 'No site name',
+                    hdms,
+                  }}
+                />
+              </Overlays>
+              <Overlays
+                ref={(data) => {
+                  overlayPopupDetailed.current = data?.overlay;
+                }}
+                className="ol-popup-detailed"
+                positioning="center-center"
+                stopEvent={true}
+              >
+                <PopupDetailed overlay={overlayPopupDetailed} />
+              </Overlays>
+              {!props.data?.hideFilters && (
+                <Overlays
+                  className="ol-dynamic-filter"
                   positioning="center-center"
                   stopEvent={true}
                 >
-                  <Popup
-                    overlay={overlayPopup}
-                    className={props.query?.siteName ? 'fixed-popup' : ''}
-                    lock={!!props.query?.siteName}
-                    staticData={{
-                      siteName: props.query?.siteName || 'No site name',
-                      hdms,
-                    }}
+                  <Sidebar
+                    data={props.data}
+                    providers_data={props.providers_data}
                   />
                 </Overlays>
-                <Overlays
-                  ref={(data) => {
-                    overlayPopupDetailed.current = data?.overlay;
-                  }}
-                  className="ol-popup-detailed"
-                  positioning="center-center"
-                  stopEvent={true}
-                >
-                  <PopupDetailed overlay={overlayPopupDetailed} />
-                </Overlays>
-                {!props.data?.hideFilters && (
-                  <Overlays
-                    className="ol-dynamic-filter"
-                    positioning="center-center"
-                    stopEvent={true}
-                  >
-                    <Sidebar
-                      data={props.data}
-                      providers_data={props.providers_data}
-                    />
-                  </Overlays>
-                )}
+              )}
 
-                {loading ? <div className="loader">Loading...</div> : ''}
-              </Map>
-            </PrivacyProtection>
-          </div>
+              {loading ? <div className="loader">Loading...</div> : ''}
+            </Map>
+          </PrivacyProtection>
         </div>
-      </StyleWrapperView>
-    </>
+      </div>
+    </StyleWrapperView>
   );
 };
 
