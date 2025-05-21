@@ -126,10 +126,12 @@ const View = (props) => {
                                 pathname ===
                                   '/industrial-emissions/industrial-site'),
                           })}
-                          href={`/industrial-site/${getQueryString({
-                            ...newQuery,
-                            activeTab: 'environmental-information',
-                          })}`}
+                          href={`/industrial-emissions/industrial-site/${getQueryString(
+                            {
+                              ...newQuery,
+                              activeTab: 'environmental-information',
+                            },
+                          )}`}
                           ignoreScroll={true}
                         >
                           <span>Environmental overview</span>
@@ -142,10 +144,12 @@ const View = (props) => {
                             active:
                               query.activeTab === 'regulatory-information',
                           })}
-                          href={`/industrial-site/${getQueryString({
-                            ...newQuery,
-                            activeTab: 'regulatory-information',
-                          })}`}
+                          href={`/industrial-emissions/industrial-site/${getQueryString(
+                            {
+                              ...newQuery,
+                              activeTab: 'regulatory-information',
+                            },
+                          )}`}
                           ignoreScroll={true}
                         >
                           <span>Regulatory overview</span>
@@ -165,7 +169,7 @@ const View = (props) => {
                           query.facilityInspireId === facility &&
                           query.activeTab === 'environmental-information',
                       })}
-                      href={`/industrial-site/facility-overview${getQueryString(
+                      href={`/industrial-emissions/industrial-site/facility-overview${getQueryString(
                         {
                           ...newQuery,
                           facilityInspireId: facility,
@@ -197,7 +201,7 @@ const View = (props) => {
                                       query.activeTab ===
                                         'regulatory-information',
                                   })}
-                                  href={`/industrial-site/installation-overview${getQueryString(
+                                  href={`/industrial-emissions/industrial-site/installation-overview${getQueryString(
                                     {
                                       ...newQuery,
                                       facilityInspireId: facility,
@@ -229,7 +233,7 @@ const View = (props) => {
                                                 query.activeTab ===
                                                   'environmental-information',
                                             })}
-                                            href={`/industrial-site/lcp-overview${getQueryString(
+                                            href={`/industrial-emissions/industrial-site/lcp-overview${getQueryString(
                                               {
                                                 ...newQuery,
                                                 facilityInspireId: facility,
