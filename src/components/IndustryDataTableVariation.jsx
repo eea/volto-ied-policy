@@ -232,7 +232,7 @@ const IndustryDataTable = (props) => {
                                 <div className="flex align-center flex-grow">
                                   <UniversalLink
                                     className="solid red"
-                                    href={`/industrial-site?siteInspireId=${tableData?.['Site Inspire ID']?.[i]}&siteName=${tableData?.['siteName']?.[i]}&siteReportingYear=${tableData?.['Site_reporting_year']?.[i]}&lng=${tableData?.['x']?.[i]}&lat=${tableData?.['y']?.[i]}`}
+                                    href={`/industrial-emissions/industrial-site?siteInspireId=${tableData?.['Site Inspire ID']?.[i]}&siteName=${tableData?.['siteName']?.[i]}&siteReportingYear=${tableData?.['Site_reporting_year']?.[i]}&lng=${tableData?.['x']?.[i]}&lat=${tableData?.['y']?.[i]}`}
                                   >
                                     Site details
                                   </UniversalLink>
