@@ -34,7 +34,7 @@ const IndustryDataTable = (props) => {
     }
   });
   const loading = tableData?.rowType != null;
-  console.log({ tableData });
+
   return (
     <div ref={table} className="industry-table">
       {tableData && !loading && (
