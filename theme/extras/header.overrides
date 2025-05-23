@@ -25,6 +25,7 @@
   text-decoration: none;
 }
 
+
 .eea.header .main.bar > .ui.container .ui.grid .column {
   display: flex;
   align-items: center;
@@ -87,4 +88,13 @@
   .content {
     background: transparent;
   }
+}
+
+#page-add .block-editor-layoutSettings .delete-button, #page-edit .block-editor-layoutSettings .delete-button {
+    display: block !important;
+}
+
+.siteroot .ui.basic.segment.content-area {
+    margin: 0;
+    padding: 0;
 }
