@@ -5,7 +5,6 @@ import cx from 'classnames';
 
 const LayoutSettingsView = (props) => {
   let classNames = getVoltoStyles(props.data);
-  console.log(classNames);
   if (classNames?.['homepage-inverse']) classNames.homepage = 'homepage';
   return <BodyClass className={cx(classNames)} />;
 };
