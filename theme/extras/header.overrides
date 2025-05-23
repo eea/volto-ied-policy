@@ -24,6 +24,10 @@
 .main-menu .item a:hover {
   text-decoration: none;
 }
+.siteroot .ui.basic.segment.content-area{
+    margin: 0px !important;
+    padding: 0px !important;
+}
 
 .eea.header .main.bar > .ui.container .ui.grid .column {
   display: flex;
