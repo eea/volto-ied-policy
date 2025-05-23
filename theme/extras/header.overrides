@@ -24,10 +24,7 @@
 .main-menu .item a:hover {
   text-decoration: none;
 }
-.siteroot .ui.basic.segment.content-area{
-    margin: 0px !important;
-    padding: 0px !important;
-}
+
 
 .eea.header .main.bar > .ui.container .ui.grid .column {
   display: flex;
@@ -91,4 +88,13 @@
   .content {
     background: transparent;
   }
+}
+
+#page-add .block-editor-layoutSettings .delete-button, #page-edit .block-editor-layoutSettings .delete-button {
+    display: block !important;
+}
+
+.siteroot .ui.basic.segment.content-area {
+    margin: 0;
+    padding: 0;
 }
