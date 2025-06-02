@@ -223,11 +223,6 @@ const applyConfig = (config) => {
   toolbarButtons.splice(advancedLinkIndex, 1);
 
   // Customizations
-  // Group
-  if (config.blocks.blocksConfig.group) {
-    config.blocks.blocksConfig.group.schemaEnhancer =
-      addStylingFieldsetSchemaEnhancer;
-  }
   config.settings.providerUrl = 'https://discodata.eea.europa.eu/sql';
 
   // Columns
