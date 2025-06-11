@@ -13,7 +13,7 @@ import { Interactions } from '@eeacms/volto-openlayers-map/Interactions';
 import { Overlays } from '@eeacms/volto-openlayers-map/Overlays';
 import { Controls, Control } from '@eeacms/volto-openlayers-map/Controls';
 import { Layers, Layer } from '@eeacms/volto-openlayers-map/Layers';
-import { openlayers } from '@eeacms/volto-openlayers-map';
+import { withOpenLayers } from '@eeacms/volto-openlayers-map';
 import { StyleWrapperView } from '@eeacms/volto-block-style/StyleWrapper';
 import PrivacyProtection from '@eeacms/volto-ied-policy/components/manage/Blocks/PrivacyProtection';
 import { setQuery } from '@eeacms/volto-ied-policy/actions';
@@ -60,7 +60,7 @@ const debounce = (func, index, timeout = 200, ...args) => {
 //   }
 // };
 
-const getSitesSource = (query) => {
+const getSitesSource = (query, openlayers) => {
   // return {};
   const { source } = openlayers;
   return new source.TileArcGISRest({
@@ -98,6 +98,7 @@ const getClosestFeatureToCoordinate = (coordinate, features) => {
 };
 
 const View = (props) => {
+  const { ol: openlayers } = props;
   const [mapRendered, setMapRendered] = useState(false);
   const [loading] = useState(false);
   const map = useRef(null);
@@ -624,7 +625,7 @@ const View = (props) => {
                     layerSites.current = data?.layer;
                   }}
                   className="ol-layer-sites"
-                  source={getSitesSource(props.query)}
+                  source={getSitesSource(props.query, openlayers)}
                   title="2.Sites"
                   zIndex={1}
                 />
@@ -697,4 +698,5 @@ export default compose(
   connectToMultipleProvidersUnfiltered((props) => ({
     providers: props.data.providers,
   })),
+  withOpenLayers,
 )(View);
