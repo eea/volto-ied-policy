@@ -503,7 +503,9 @@ const View = (props) => {
 
   if (__SERVER__)
     return (
-      <div className={`industry-map-wrapper small-height`}>
+      <div
+        className={`industry-map-wrapper small-height styled-industry_map full has--align--full align styled full-width`}
+      >
         <div id="industry-map" className="industry-map"></div>
       </div>
     );
