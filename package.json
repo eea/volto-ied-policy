@@ -1,6 +1,6 @@
 {
   "name": "@eeacms/volto-ied-policy",
-  "version": "1.2.41",
+  "version": "1.2.42",
   "description": "@eeacms/volto-ied-policy: Volto add-on",
   "main": "src/index.js",
   "author": "European Environment Agency: IDM2 A-Team",
@@ -33,7 +33,7 @@
     "@eeacms/volto-datablocks": "*",
     "@eeacms/volto-eea-design-system": "*",
     "@eeacms/volto-eea-website-theme": "*",
-    "@eeacms/volto-openlayers-map": "1.0.1",
+    "@eeacms/volto-openlayers-map": "0.3.2",
     "@eeacms/volto-resize-helper": "*",
     "@eeacms/volto-spotlight": "*",
     "@eeacms/volto-tableau": "*",
