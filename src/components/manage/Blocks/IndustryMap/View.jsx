@@ -502,11 +502,13 @@ const View = (props) => {
 
   if (__SERVER__)
     return (
-      <div className={`industry-map-wrapper${
-        props.location.pathname.includes('/explore') 
-          ? ' full-width' 
-          : ' small-height'
-      }`}>
+      <div
+        className={`industry-map-wrapper${
+          props.location.pathname.includes('/explore')
+            ? ' full-width'
+            : ' small-height'
+        }`}
+      >
         <div id="industry-map" className="industry-map"></div>
       </div>
     );
