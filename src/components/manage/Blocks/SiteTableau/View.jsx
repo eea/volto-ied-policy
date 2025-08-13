@@ -68,7 +68,7 @@ const View = (props) => {
     setShouldRenderTableau(false);
     setLoaded(false);
     setError(null);
-    
+
     // Force refresh extraFilters when URL changes
     const newExtraFilters = {};
     urlParameters.forEach((element) => {
@@ -77,12 +77,12 @@ const View = (props) => {
       }
     });
     setExtraFilters(newExtraFilters);
-    
+
     const timeout = setTimeout(() => {
       setTableauKey((prev) => prev + 1);
       setShouldRenderTableau(true);
     }, 100);
-    
+
     return () => clearTimeout(timeout);
   }, [url, JSON.stringify(query), JSON.stringify(urlParameters)]);
 
