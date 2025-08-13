@@ -46,7 +46,6 @@ const View = (props) => {
   )[0]?.url;
   const url = breakpointUrl || data.url;
   const disabled = disabledKey ? !provider_data?.[disabledKey]?.[0] : false;
-  console.log({ disabled });
   React.useEffect(() => {
     setMounted(true);
     /* eslint-disable-next-line */
