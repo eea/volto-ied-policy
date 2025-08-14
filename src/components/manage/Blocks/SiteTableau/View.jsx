@@ -85,6 +85,7 @@ const View = (props) => {
     }, 100);
     
     return () => clearTimeout(timeout);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [url, JSON.stringify(query), JSON.stringify(urlParameters)]);
 
   return mounted ? (
