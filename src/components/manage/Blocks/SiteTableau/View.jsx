@@ -27,6 +27,8 @@ const View = (props) => {
   const [loaded, setLoaded] = React.useState(null);
   const [mounted, setMounted] = React.useState(false);
   const [extraFilters, setExtraFilters] = React.useState({});
+  const [tableauKey, setTableauKey] = React.useState(0);
+  const [shouldRenderTableau, setShouldRenderTableau] = React.useState(true);
   const { data = {}, query = {}, screen = {}, provider_data = null } = props;
   const {
     disabledKey = null,
@@ -44,7 +46,6 @@ const View = (props) => {
   )[0]?.url;
   const url = breakpointUrl || data.url;
   const disabled = disabledKey ? !provider_data?.[disabledKey]?.[0] : false;
-
   React.useEffect(() => {
     setMounted(true);
     /* eslint-disable-next-line */
@@ -63,6 +64,29 @@ const View = (props) => {
     /* eslint-disable-next-line */
   }, [JSON.stringify(query), JSON.stringify(urlParameters)]);
 
+  React.useEffect(() => {
+    setShouldRenderTableau(false);
+    setLoaded(false);
+    setError(null);
+
+    // Force refresh extraFilters when URL changes
+    const newExtraFilters = {};
+    urlParameters.forEach((element) => {
+      if (element.field && typeof query[element.urlParam] !== 'undefined') {
+        newExtraFilters[element.field] = query[element.urlParam];
+      }
+    });
+    setExtraFilters(newExtraFilters);
+
+    const timeout = setTimeout(() => {
+      setTableauKey((prev) => prev + 1);
+      setShouldRenderTableau(true);
+    }, 100);
+
+    return () => clearTimeout(timeout);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [url, JSON.stringify(query), JSON.stringify(urlParameters)]);
+
   return mounted ? (
     <div className="tableau-block">
       {props.mode === 'edit' ? (
@@ -74,7 +98,7 @@ const View = (props) => {
       ) : (
         ''
       )}
-      {!disabled ? (
+      {!disabled && shouldRenderTableau ? (
         <>
           {loaded && title ? <h3 className="tableau-title">{title}</h3> : ''}
           {loaded && description ? (
@@ -84,6 +108,7 @@ const View = (props) => {
           )}
           <Tableau
             {...props}
+            key={tableauKey}
             canUpdateUrl={!breakpointUrl}
             extraFilters={extraFilters}
             extraOptions={{ device: autoScale ? 'desktop' : device }}
