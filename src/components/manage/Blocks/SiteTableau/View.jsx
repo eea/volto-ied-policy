@@ -46,7 +46,6 @@ const View = (props) => {
   )[0]?.url;
   const url = breakpointUrl || data.url;
   const disabled = disabledKey ? !provider_data?.[disabledKey]?.[0] : false;
-  console.log({ disabled });
   React.useEffect(() => {
     setMounted(true);
     /* eslint-disable-next-line */
@@ -69,7 +68,7 @@ const View = (props) => {
     setShouldRenderTableau(false);
     setLoaded(false);
     setError(null);
-    
+
     // Force refresh extraFilters when URL changes
     const newExtraFilters = {};
     urlParameters.forEach((element) => {
@@ -78,12 +77,12 @@ const View = (props) => {
       }
     });
     setExtraFilters(newExtraFilters);
-    
+
     const timeout = setTimeout(() => {
       setTableauKey((prev) => prev + 1);
       setShouldRenderTableau(true);
     }, 100);
-    
+
     return () => clearTimeout(timeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [url, JSON.stringify(query), JSON.stringify(urlParameters)]);
