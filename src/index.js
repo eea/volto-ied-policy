@@ -8,6 +8,7 @@ import installBlocks from './components/manage/Blocks';
 import installStyles from './styles-config';
 import iconSVG from '@plone/volto/icons/tag.svg';
 import iedLogo from '@eeacms/volto-ied-policy/../theme/assets/images/Header/ied-logo.svg';
+import iedLogoBlack from '@eeacms/volto-ied-policy/../theme/assets/images/Header/ied-logo-black.svg';
 import ecLogo from '@eeacms/volto-ied-policy/../theme/assets/logos/logo-ec.svg';
 import ListView from './components/manage/Blocks/ConnectedList/View.jsx';
 import EditView from './components/manage/Blocks/ConnectedList/Edit.jsx';
@@ -177,7 +178,7 @@ const applyConfig = (config) => {
     languages: n2kLanguages,
     headerOpts: {
       ...(config.settings.eea?.headerOpts || {}),
-      logo: iedLogo,
+      logo: iedLogoBlack,
       logoWhite: iedLogo,
     },
     headerSearchBox: [
