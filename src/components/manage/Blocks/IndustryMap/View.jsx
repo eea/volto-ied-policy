@@ -430,6 +430,7 @@ const View = (props) => {
             .fit([extent.MIN_X, extent.MIN_Y, extent.MAX_X, extent.MAX_Y], {
               maxZoom: 16,
               duration: 1000,
+              padding: [100, 100, 100, 100],
             });
         }
       });
@@ -455,6 +456,7 @@ const View = (props) => {
             .fit([extent.MIN_X, extent.MIN_Y, extent.MAX_X, extent.MAX_Y], {
               maxZoom: 16,
               duration: 1000,
+              padding: [100, 100, 100, 100],
             });
         }
       });
@@ -502,15 +504,19 @@ const View = (props) => {
 
   if (__SERVER__)
     return (
-      <div
-        className={`industry-map-wrapper${
-          props.location.pathname.includes('/explore')
-            ? ' full-width'
-            : ' small-height'
-        }`}
+      <StyleWrapperView
+        {...props}
+        styleData={props.data.styles || {}}
+        styled={true}
       >
-        <div id="industry-map" className="industry-map"></div>
-      </div>
+        <div
+          className={`industry-map-wrapper${
+            props.data?.navigation?.smallHeight ? ' small-height' : ''
+          }`}
+        >
+          <div id="industry-map" className="industry-map"></div>
+        </div>
+      </StyleWrapperView>
     );
 
   const lat = props?.query?.lat;
