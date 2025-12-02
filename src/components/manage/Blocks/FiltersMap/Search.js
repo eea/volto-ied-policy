@@ -77,7 +77,10 @@ const Search = ({
 
   const value = React.useMemo(() => {
     // If filter_search_value is explicitly set (even to empty string), use it
-    if (query.filter_search_value !== undefined && query.filter_search_value !== null) {
+    if (
+      query.filter_search_value !== undefined &&
+      query.filter_search_value !== null
+    ) {
       return query.filter_search_value;
     }
     // Fallback to URL params only if filter_search_value hasn't been set
