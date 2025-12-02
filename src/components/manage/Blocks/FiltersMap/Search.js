@@ -76,30 +76,99 @@ const Search = ({
   const [locations, setLocations] = React.useState([]);
 
   const value = React.useMemo(() => {
-    if (query.filter_search_value) return query.filter_search_value;
+    // If filter_search_value is explicitly set (even to empty string), use it
+    if (
+      query.filter_search_value !== undefined &&
+      query.filter_search_value !== null
+    ) {
+      return query.filter_search_value;
+    }
+    // Fallback to URL params only if filter_search_value hasn't been set
     const urlParams = new URLSearchParams(location.search);
     if (urlParams.get('siteName')) {
       return urlParams.get('siteName');
     }
-    if (urlParams.get('facilityName')) {
-      return urlParams.get('facilityName');
+    if (urlParams.get('facilityName') || urlParams.get('facilityNames')) {
+      return urlParams.get('facilityName') || urlParams.get('facilityNames');
     }
     if (urlParams.get('searchLocation')) {
       return urlParams.get('searchLocation');
     }
-    return null;
+    return '';
   }, [query.filter_search_value, location.search]);
 
-  const setValue = React.useCallback((value) => {
-    setQuery({ filter_search_value: value });
-    /* eslint-disable-next-line */
-  }, []);
+  const setValue = React.useCallback(
+    (newValue) => {
+      setQuery({ filter_search_value: newValue });
+
+      // When input is cleared via keyboard, also clear filter_search and URL params
+      if (newValue === '') {
+        setQuery({
+          filter_search: null,
+          filter_search_value: '',
+          filter_change: {
+            counter: (query['filter_change']?.counter || 0) + 1,
+            type: 'clear',
+          },
+        });
+
+        const urlParams = new URLSearchParams(location.search);
+        urlParams.delete('siteName');
+        urlParams.delete('facilityNames');
+        urlParams.delete('searchLocation');
+        history.push({
+          pathname: location.pathname,
+          search: urlParams.toString() ? `?${urlParams.toString()}` : '',
+        });
+      }
+    },
+    [setQuery, query, location.search, location.pathname, history],
+  );
 
   React.useEffect(() => {
     document.addEventListener('mousedown', handleClickOutside, false);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside, false);
     };
+    /* eslint-disable-next-line */
+  }, []);
+
+  // Initialize filter_search from URL params to trigger map zoom
+  React.useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const siteName = urlParams.get('siteName');
+    const facilityName =
+      urlParams.get('facilityName') || urlParams.get('facilityNames');
+    const searchLocation = urlParams.get('searchLocation');
+
+    if (siteName && !query.filter_search) {
+      setQuery({
+        filter_search: { text: siteName, type: 'site' },
+        filter_search_value: siteName,
+        filter_change: {
+          counter: (query['filter_change']?.counter || 0) + 1,
+          type: 'search-site',
+        },
+      });
+    } else if (facilityName && !query.filter_search) {
+      setQuery({
+        filter_search: { text: facilityName, type: 'facility' },
+        filter_search_value: facilityName,
+        filter_change: {
+          counter: (query['filter_change']?.counter || 0) + 1,
+          type: 'search-facility',
+        },
+      });
+    } else if (searchLocation && !query.filter_search) {
+      setQuery({
+        filter_search: { text: searchLocation, type: 'location' },
+        filter_search_value: searchLocation,
+        filter_change: {
+          counter: (query['filter_change']?.counter || 0) + 1,
+          type: 'search-location',
+        },
+      });
+    }
     /* eslint-disable-next-line */
   }, []);
 
@@ -234,12 +303,13 @@ const Search = ({
         },
       });
 
+      const urlParams = new URLSearchParams(location.search);
+
       if (value && type) {
         trackSiteSearch({
           category: `Map/Table search-${type}`,
           keyword: value,
         });
-        const urlParams = new URLSearchParams(location.search);
 
         if (type === 'site' && value) {
           urlParams.set('siteName', value.trim());
@@ -257,11 +327,17 @@ const Search = ({
           urlParams.delete('facilityNames');
           urlParams.delete('siteName');
         }
-        history.push({
-          pathname: location.pathname,
-          search: `?${urlParams.toString()}`,
-        });
+      } else {
+        // Clear search params when clearing the search
+        urlParams.delete('siteName');
+        urlParams.delete('facilityNames');
+        urlParams.delete('searchLocation');
       }
+
+      history.push({
+        pathname: location.pathname,
+        search: urlParams.toString() ? `?${urlParams.toString()}` : '',
+      });
     },
     [query, onChange, setQuery, history, location.pathname, location.search],
   );

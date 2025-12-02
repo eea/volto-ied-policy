@@ -173,15 +173,13 @@ export const getLayerBaseURL = () =>
   'https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}';
 
 export const getLocationExtent = (data) => {
-  return axios.get(
-    encodeURI(
-      'https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates?SingleLine=' +
-        data.text +
-        '&f=json&outSR={"wkid":102100,"latestWkid":3857}&outFields=Match_addr,Addr_type,StAddr,City&magicKey=' +
-        data.magicKey +
-        '&maxLocations=6',
-    ),
-  );
+  const baseUrl =
+    'https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates?SingleLine=' +
+    data.text +
+    '&f=json&outSR={"wkid":102100,"latestWkid":3857}&outFields=Match_addr,Addr_type,StAddr,City' +
+    (data.magicKey ? '&magicKey=' + data.magicKey : '') +
+    '&maxLocations=6';
+  return axios.get(encodeURI(baseUrl));
 };
 
 export const getSiteExtent = (data) => {
@@ -329,7 +327,7 @@ export const getWhereStatement = (data) => {
   }
 
   if (search?.type === 'site' && search?.text) {
-    where[filter++] = [`siteName LIKE '${search.text}%'`];
+    where[filter++] = [`siteName LIKE '%${search.text.trim()}%'`];
   }
 
   if (search?.type === 'facility' && search?.text) {
