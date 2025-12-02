@@ -45,6 +45,8 @@ const View = ({
     [dispatch, query],
   );
 
+  const initialSearchRef = useRef(location.search);
+
   const updateOptions = useCallback(() => {
     const newOptions = { ...options };
     if (data.providers) {
@@ -66,7 +68,8 @@ const View = ({
           .filter((opt) => opt.value)
           .sort((a, b) => b.value - a.value)[0].value;
         const inputs = {};
-        const searchParams = new URLSearchParams(location.search);
+        // Use the initial search params, not current location.search
+        const searchParams = new URLSearchParams(initialSearchRef.current);
         for (const [key, value] of searchParams.entries()) {
           if (!value) continue;
           if (key === 'Site_reporting_year[in]') {
@@ -174,7 +177,7 @@ const View = ({
             type: 'simple-filter',
           },
         });
-        const urlParams = new URLSearchParams(location.search);
+        const urlParams = new URLSearchParams(initialSearchRef.current);
         if (
           !urlParams.get('Site_reporting_year[in]') &&
           props.mode !== 'edit'
@@ -193,7 +196,9 @@ const View = ({
     filtersInitialized,
     permitTypes,
     setInitialFilters,
-    location.search,
+    history,
+    location.pathname,
+    props.mode,
   ]);
 
   useEffect(() => {
