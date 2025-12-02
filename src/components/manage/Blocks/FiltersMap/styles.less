@@ -201,3 +201,52 @@
     }
   }
 }
+
+// Active filters styles
+.filters-block {
+  flex-wrap: wrap;
+
+  .filter-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.5em;
+    height: 1.5em;
+    padding: 0 0.4em;
+    border-radius: 50%;
+    margin-left: 0.5em;
+    background-color: @orange;
+    color: #fff;
+    font-size: 0.75em;
+    font-weight: bold;
+  }
+
+  .active-filters {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+
+    .filter-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25em 0.75em;
+      border: 1px solid @primaryColor;
+      border-radius: 1em;
+      background-color: fade(@primaryColor, 10%);
+      color: @primaryColor;
+      font-size: 0.85em;
+      gap: 0.5em;
+
+      .icon {
+        cursor: pointer;
+        opacity: 0.7;
+
+        &:hover {
+          opacity: 1;
+        }
+      }
+    }
+  }
+}

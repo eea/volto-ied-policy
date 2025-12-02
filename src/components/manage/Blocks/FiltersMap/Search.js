@@ -94,10 +94,33 @@ const Search = ({
     return '';
   }, [query.filter_search_value, location.search]);
 
-  const setValue = React.useCallback((value) => {
-    setQuery({ filter_search_value: value });
-    /* eslint-disable-next-line */
-  }, []);
+  const setValue = React.useCallback(
+    (newValue) => {
+      setQuery({ filter_search_value: newValue });
+
+      // When input is cleared via keyboard, also clear filter_search and URL params
+      if (newValue === '') {
+        setQuery({
+          filter_search: null,
+          filter_search_value: '',
+          filter_change: {
+            counter: (query['filter_change']?.counter || 0) + 1,
+            type: 'clear',
+          },
+        });
+
+        const urlParams = new URLSearchParams(location.search);
+        urlParams.delete('siteName');
+        urlParams.delete('facilityNames');
+        urlParams.delete('searchLocation');
+        history.push({
+          pathname: location.pathname,
+          search: urlParams.toString() ? `?${urlParams.toString()}` : '',
+        });
+      }
+    },
+    [setQuery, query, location.search, location.pathname, history],
+  );
 
   React.useEffect(() => {
     document.addEventListener('mousedown', handleClickOutside, false);

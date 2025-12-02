@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import { setQuery } from '@eeacms/volto-ied-policy/actions';
+import { Icon } from 'semantic-ui-react';
 
 import Search from './Search';
 import Modal from './Modal';
@@ -169,7 +170,7 @@ const View = ({
               .map((group) => group.replaceAll('%', ''));
           }
         }
-        setInitialFilters({
+        const filtersWereSet = setInitialFilters({
           filter_reporting_years: [latestYear],
           ...inputs,
           filter_change: {
@@ -177,16 +178,19 @@ const View = ({
             type: 'simple-filter',
           },
         });
-        const urlParams = new URLSearchParams(initialSearchRef.current);
-        if (
-          !urlParams.get('Site_reporting_year[in]') &&
-          props.mode !== 'edit'
-        ) {
-          urlParams.set('Site_reporting_year[in]', latestYear);
-          history.push({
-            pathname: location.pathname,
-            search: `?${urlParams.toString()}`,
-          });
+        // Only update URL if filters were actually set (not already initialized)
+        if (filtersWereSet) {
+          const urlParams = new URLSearchParams(initialSearchRef.current);
+          if (
+            !urlParams.get('Site_reporting_year[in]') &&
+            props.mode !== 'edit'
+          ) {
+            urlParams.set('Site_reporting_year[in]', latestYear);
+            history.push({
+              pathname: location.pathname,
+              search: `?${urlParams.toString()}`,
+            });
+          }
         }
       }
     }
@@ -224,10 +228,111 @@ const View = ({
     };
   }, []);
 
+  // Calculate active filters for display
+  const activeFilters = useMemo(() => {
+    const filters = [];
+
+    if (query.filter_reporting_years?.length) {
+      filters.push({
+        key: 'filter_reporting_years',
+        label: `Year: ${query.filter_reporting_years.join(', ')}`,
+      });
+    }
+
+    if (query.filter_countries?.length) {
+      filters.push({
+        key: 'filter_countries',
+        label: `Countries: ${query.filter_countries.length}`,
+      });
+    }
+
+    if (query.filter_industries?.length) {
+      filters.push({
+        key: 'filter_industries',
+        label: `Industries: ${query.filter_industries.length}`,
+      });
+    }
+
+    if (query.filter_pollutants?.length) {
+      filters.push({
+        key: 'filter_pollutants',
+        label: `Pollutants: ${query.filter_pollutants.length}`,
+      });
+    }
+
+    if (query.filter_bat_conclusions?.length) {
+      filters.push({
+        key: 'filter_bat_conclusions',
+        label: `BAT: ${query.filter_bat_conclusions.length}`,
+      });
+    }
+
+    if (query.filter_permit_types?.length) {
+      filters.push({
+        key: 'filter_permit_types',
+        label: `Permit types: ${query.filter_permit_types.length}`,
+      });
+    }
+
+    return filters;
+  }, [query]);
+
+  const removeFilter = useCallback(
+    (filterKey) => {
+      dispatch(
+        setQuery({
+          [filterKey]: [],
+          filter_change: {
+            counter: (query['filter_change']?.counter || 0) + 1,
+            type: 'simple-filter',
+          },
+        }),
+      );
+
+      // Also update URL params
+      const urlParams = new URLSearchParams(location.search);
+      const urlKeyMap = {
+        filter_reporting_years: 'Site_reporting_year[in]',
+        filter_countries: 'countryCode[in]',
+        filter_industries: 'eprtr_sectors[in]',
+        filter_pollutants: 'pollutants[like]',
+        filter_bat_conclusions: 'bat_conclusions[like]',
+        filter_permit_types: 'permit_types[like]',
+      };
+      if (urlKeyMap[filterKey]) {
+        urlParams.delete(urlKeyMap[filterKey]);
+        history.push({
+          pathname: location.pathname,
+          search: urlParams.toString() ? `?${urlParams.toString()}` : '',
+        });
+      }
+    },
+    [dispatch, query, location.search, location.pathname, history],
+  );
+
   return (
     <div className="filters-block outline-button">
       <Search data={data} providers_data={providers_data} />
-      <button onClick={() => setOpen(true)}>Advanced Filter</button>
+      <button onClick={() => setOpen(true)}>
+        Advanced Filter
+        {activeFilters.length > 0 && (
+          <span className="filter-badge">{activeFilters.length}</span>
+        )}
+      </button>
+      {activeFilters.length > 0 && (
+        <div className="active-filters">
+          {activeFilters.map((filter) => (
+            <span key={filter.key} className="filter-tag">
+              {filter.label}
+              <Icon
+                name="close"
+                size="small"
+                onClick={() => removeFilter(filter.key)}
+              />
+            </span>
+          ))}
+        </div>
+      )}
       <Modal
         data={data}
         providers_data={providers_data}

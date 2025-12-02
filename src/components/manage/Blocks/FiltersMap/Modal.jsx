@@ -265,11 +265,6 @@ const ModalView = ({
 }) => {
   const [inputs, setInputs] = React.useState({});
 
-  React.useEffect(() => {
-    setInitialInputs();
-    /* eslint-disable-next-line */
-  }, [open]);
-
   /*---------- Actions ----------*/
   const setInitialInputs = React.useCallback(() => {
     const inputs = {};
@@ -278,6 +273,12 @@ const ModalView = ({
     });
     setInputs(inputs);
   }, [query]);
+
+  React.useEffect(() => {
+    if (open) {
+      setInitialInputs();
+    }
+  }, [open, setInitialInputs]);
 
   const isChecked = React.useCallback(
     (filter, label) => {
