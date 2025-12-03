@@ -104,6 +104,7 @@ const View = (props) => {
   const layerSites = useRef(null);
   const overlayPopup = useRef(null);
   const overlayPopupDetailed = useRef(null);
+  const isMounted = useRef(true);
   const { proj, source, extent } = openlayers;
 
   const centerToQueryLocation = (position, zoom) => {
@@ -317,6 +318,7 @@ const View = (props) => {
 
   useEffect(() => {
     return () => {
+      isMounted.current = false;
       setMapRendered(false);
     };
   }, []);
@@ -391,8 +393,9 @@ const View = (props) => {
     /* Fit view if necessary */
     if (filter_change.type === 'search-location') {
       getLocationExtent(filter_search).then(({ data }) => {
+        if (!isMounted.current || !map.current) return;
         if (data.candidates?.length > 0) {
-          map?.current
+          map.current
             .getView()
             .fit(
               [
@@ -410,6 +413,7 @@ const View = (props) => {
       });
     } else if (filter_change.type === 'search-site') {
       getSiteExtent(filter_search).then(({ data }) => {
+        if (!isMounted.current || !map.current) return;
         const extent = data?.results?.[0] || {};
         if (
           extent.MIN_X === null ||
@@ -425,7 +429,7 @@ const View = (props) => {
             />,
           );
         } else {
-          map?.current
+          map.current
             .getView()
             .fit([extent.MIN_X, extent.MIN_Y, extent.MAX_X, extent.MAX_Y], {
               maxZoom: 16,
@@ -436,6 +440,7 @@ const View = (props) => {
       });
     } else if (filter_change.type === 'search-facility') {
       getFacilityExtent(filter_search).then(({ data }) => {
+        if (!isMounted.current || !map.current) return;
         const extent = data?.results?.[0] || {};
         if (
           extent.MIN_X === null ||
@@ -451,7 +456,7 @@ const View = (props) => {
             />,
           );
         } else {
-          map?.current
+          map.current
             .getView()
             .fit([extent.MIN_X, extent.MIN_Y, extent.MAX_X, extent.MAX_Y], {
               maxZoom: 16,
@@ -473,6 +478,7 @@ const View = (props) => {
         }
       });
       getCountriesExtent(countries).then((responses) => {
+        if (!isMounted.current || !map.current) return;
         let _extent = extent.createEmpty();
         responses.forEach(({ data }) => {
           const reqExtent = data.candidates?.[0]?.extent || null;
@@ -493,7 +499,7 @@ const View = (props) => {
           }
         });
         if (!extent.isEmpty(_extent)) {
-          map?.current?.getView().fit(_extent, {
+          map.current.getView().fit(_extent, {
             maxZoom: 16,
             duration: 1000,
           });
