@@ -303,7 +303,8 @@ const Search = ({
         },
       });
 
-      const urlParams = new URLSearchParams(location.search);
+      // Clear all URL params and only set the search param
+      const urlParams = new URLSearchParams();
 
       if (value && type) {
         trackSiteSearch({
@@ -313,25 +314,14 @@ const Search = ({
 
         if (type === 'site' && value) {
           urlParams.set('siteName', value.trim());
-          urlParams.delete('facilityNames');
-          urlParams.delete('searchLocation');
         }
 
         if (type === 'facility' && value) {
           urlParams.set('facilityNames', value.trim());
-          urlParams.delete('searchLocation');
-          urlParams.delete('siteName');
         }
         if (type === 'location' && value) {
           urlParams.set('searchLocation', value.trim());
-          urlParams.delete('facilityNames');
-          urlParams.delete('siteName');
         }
-      } else {
-        // Clear search params when clearing the search
-        urlParams.delete('siteName');
-        urlParams.delete('facilityNames');
-        urlParams.delete('searchLocation');
       }
 
       history.push({
@@ -339,7 +329,7 @@ const Search = ({
         search: urlParams.toString() ? `?${urlParams.toString()}` : '',
       });
     },
-    [query, onChange, setQuery, history, location.pathname, location.search],
+    [query, onChange, setQuery, history, location.pathname],
   );
 
   return (
