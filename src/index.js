@@ -22,6 +22,7 @@ import TableauView from './components/manage/Blocks/SiteTableau/View';
 
 import installSiteBlocks from './components/manage/Blocks/SiteBlocks/index.js';
 import RedirectView from './components/manage/Views/RedirectView.jsx';
+import { Sitemap } from '@plone/volto/components';
 
 const restrictedBlocks = ['imagecards', 'embed_eea_tableau_block'];
 
@@ -68,6 +69,15 @@ const applyConfig = (config) => {
     ...config.settings,
     navDepth: 3,
   };
+
+  // Add route for subsite sitemap pages (e.g., /industrial-emissions/sitemap)
+  config.addonRoutes = [
+    ...(config.addonRoutes || []),
+    {
+      path: '/**/sitemap',
+      component: Sitemap,
+    },
+  ];
 
   config = installSiteBlocks(config);
   config = installSiteBlocks(config);
