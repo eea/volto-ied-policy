@@ -34,8 +34,13 @@
     flex: 1;
   }
 }
+.eea.header .subsite-logo {
+  color: #094c7e;
+}
+
 .eea.header .subsite-logo:before {
-  margin-left: 5px
+  margin-left: 5px;
+  background-color: #094c7e;
 }
 
 .eea.header .main.bar > .ui.container .ui.grid .column > *{
