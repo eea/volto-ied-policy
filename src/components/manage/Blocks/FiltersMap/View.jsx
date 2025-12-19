@@ -215,17 +215,13 @@ const View = ({
     updateOptions();
   }, [updateOptions]);
 
-  //Remove query params from URL on other pages
+  //Reset query state when component unmounts
   useEffect(() => {
     return () => {
-      const isOnExplorePage = location.pathname.includes('/explore');
-      if (!isOnExplorePage) {
-        dispatch(resetQuery());
-        setFiltersInitialized(false);
-        history.replace({ pathname: location.pathname });
-      }
+      dispatch(resetQuery());
+      setFiltersInitialized(false);
     };
-  }, []);
+  }, [dispatch]);
 
   return (
     <div className="filters-block outline-button">
