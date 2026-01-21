@@ -215,17 +215,21 @@ const View = ({
     updateOptions();
   }, [updateOptions]);
 
-  //Remove query params from URL on other pages
+  //Reset query state and clean URL when component unmounts
   useEffect(() => {
+    const explorePath = location.pathname;
     return () => {
-      const isOnExplorePage = location.pathname.includes('/explore');
-      if (!isOnExplorePage) {
-        dispatch(resetQuery());
-        setFiltersInitialized(false);
-        history.replace({ pathname: location.pathname });
-      }
+      dispatch(resetQuery());
+      setFiltersInitialized(false);
+      // Clean URL params when leaving the page
+      setTimeout(() => {
+        if (!window.location.pathname.includes(explorePath)) {
+          const cleanUrl = window.location.pathname;
+          window.history.replaceState({}, '', cleanUrl);
+        }
+      }, 0);
     };
-  }, []);
+  }, [dispatch, location.pathname]);
 
   return (
     <div className="filters-block outline-button">
