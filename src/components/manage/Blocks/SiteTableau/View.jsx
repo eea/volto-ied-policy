@@ -109,7 +109,15 @@ const View = (props) => {
           <Tableau
             {...props}
             key={tableauKey}
-            hideToolbar={true}
+            data={{
+              ...props.data,
+              with_notes: false,
+              with_sources: false,
+              with_more_info: false,
+              with_download: false,
+              with_share: false,
+              with_enlarge: false,
+            }}
             canUpdateUrl={!breakpointUrl}
             extraFilters={extraFilters}
             extraOptions={{ device: autoScale ? 'desktop' : device }}
