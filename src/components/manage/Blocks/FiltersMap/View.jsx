@@ -10,7 +10,6 @@ import { connectToMultipleProvidersUnfiltered } from '@eeacms/volto-datablocks/h
 import { compose } from 'redux';
 import './styles.less';
 import { withRouter } from 'react-router-dom';
-import { resetQuery } from '@eeacms/volto-ied-policy/actions';
 const View = ({
   data,
   providers_data,
