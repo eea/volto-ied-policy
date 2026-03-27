@@ -10,7 +10,6 @@ import { connectToMultipleProvidersUnfiltered } from '@eeacms/volto-datablocks/h
 import { compose } from 'redux';
 import './styles.less';
 import { withRouter } from 'react-router-dom';
-import { resetQuery } from '@eeacms/volto-ied-policy/actions';
 const View = ({
   data,
   providers_data,
@@ -214,22 +213,6 @@ const View = ({
   useEffect(() => {
     updateOptions();
   }, [updateOptions]);
-
-  //Reset query state and clean URL when component unmounts
-  useEffect(() => {
-    const explorePath = location.pathname;
-    return () => {
-      dispatch(resetQuery());
-      setFiltersInitialized(false);
-      // Clean URL params when leaving the page
-      setTimeout(() => {
-        if (!window.location.pathname.includes(explorePath)) {
-          const cleanUrl = window.location.pathname;
-          window.history.replaceState({}, '', cleanUrl);
-        }
-      }, 0);
-    };
-  }, [dispatch, location.pathname]);
 
   return (
     <div className="filters-block outline-button">

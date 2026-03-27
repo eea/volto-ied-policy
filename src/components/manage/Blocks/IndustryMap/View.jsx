@@ -209,7 +209,7 @@ const View = (props) => {
               );
               if (!feature) {
                 if (typeof overlayPopup?.current?.setPosition == 'function') {
-                  overlayPopup.current.setPosition(undefined);
+                  overlayPopup.current?.setPosition(undefined);
                   emitEvent(mapElement, 'ol-pointermove', {
                     bubbles: false,
                     detail: {},
@@ -230,7 +230,7 @@ const View = (props) => {
                   flatCoordinates: feature.getGeometry().flatCoordinates,
                 },
               });
-              overlayPopup.current.setPosition(e.coordinate);
+              overlayPopup.current?.setPosition(e.coordinate);
               e.map.getTarget().style.cursor = 'pointer';
             }
           },
@@ -239,7 +239,7 @@ const View = (props) => {
       0,
       250,
     );
-    overlayPopup?.current.setPosition(undefined);
+    overlayPopup.current?.setPosition(undefined);
     e.map.getTarget().style.cursor = '';
   };
 
