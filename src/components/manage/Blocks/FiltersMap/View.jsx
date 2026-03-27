@@ -215,22 +215,6 @@ const View = ({
     updateOptions();
   }, [updateOptions]);
 
-  //Reset query state and clean URL when component unmounts
-  useEffect(() => {
-    const explorePath = location.pathname;
-    return () => {
-      dispatch(resetQuery());
-      setFiltersInitialized(false);
-      // Clean URL params when leaving the page
-      setTimeout(() => {
-        if (!window.location.pathname.includes(explorePath)) {
-          const cleanUrl = window.location.pathname;
-          window.history.replaceState({}, '', cleanUrl);
-        }
-      }, 0);
-    };
-  }, [dispatch, location.pathname]);
-
   return (
     <div className="filters-block outline-button">
       <Search data={data} providers_data={providers_data} />
