@@ -145,11 +145,34 @@ consequence of cleaning the lat/lng centering — fully resolved by switching.
 ### 3. v2 / facility-page redesign (in progress)
 
 The site-details page is being replaced by a new **facility page**, assembled
-from the v2 blocks (`site_explorer`, `installation_parts_list`). Both blocks
-are URL-state-driven and live in `Blocks/v2/`. More v2 blocks to come;
-follow the same convention (URL params for navigation state, `history.push`,
-no addition to the redux slice unless the state is genuinely
-cross-component coordination).
+from the v2 blocks (`site_explorer`, `installation_parts_list`,
+`facilities_map`, `installation_map`). All v2 blocks are URL-state-driven and
+live in `Blocks/v2/`. New v2 blocks should follow the same convention (URL
+params for navigation state, `history.push`, no addition to the redux slice
+unless the state is genuinely cross-component coordination).
+
+New map blocks (added after the migration commit):
+
+- **`facilities_map`** (`Blocks/v2/FacilitiesMap/`) — explore IEPR facilities.
+  OSM base, single Vector layer styled as navy dots, hover popup. Inline
+  sidebar with name/city search (+ city-suggestions), reporting year and
+  country selects, Apply/Reset. Filters live in the URL (`name`,
+  `reportingYear`, `country`). Data fetched once
+  (`MapServer/1?where=1=1&f=geojson`) and filtered in-memory.
+- **`installation_map`** (`Blocks/v2/InstallationMap/`) — contextual block:
+  reads `facilityInspireID` from the URL (no dropdown — the dropdown lives
+  in a sibling block such as `site_explorer`). OSM base, vector layer styled
+  with orange dots; clicking a side-panel card highlights the corresponding
+  dot (halo + ring style), animates the view, opens the popup. Facility
+  index fetched once (`MapServer/1`), installations fetched per facility
+  (`MapServer/0?where=facilityInspireID='...'&f=geojson`).
+- Both follow the established discipline: `withOpenLayers` HOC, memoized
+  `baseSource` / `vectorSource` / `view`, stable style references (style
+  function for InstallationMap reads `selectedFeatureRef` + a
+  `layer.changed()` repaint on selection — keeps the style identity stable
+  so `Vector.componentDidUpdate` doesn't swap the layer style).
+- Reference prototypes that informed both blocks:
+  `maps-prototypes/map1-facilities/` and `maps-prototypes/map2-installations/`.
 
 ### 4. Cleanup (optional, follow-up)
 
