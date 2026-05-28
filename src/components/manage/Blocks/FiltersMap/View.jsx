@@ -68,7 +68,9 @@ const View = ({
           });
         }
         dispatch(
-          setIndustryMapFilters({ filter_change: { counter: 1, type: 'simple-filter' } }),
+          setIndustryMapFilters({
+            filter_change: { counter: 1, type: 'simple-filter' },
+          }),
         );
         setFiltersInitialized(true);
       }

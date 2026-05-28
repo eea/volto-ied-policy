@@ -5,7 +5,10 @@ import { Tab, Dropdown, Table } from 'semantic-ui-react';
 import cx from 'classnames';
 import qs from 'querystring';
 import { connectToMultipleProvidersUnfiltered } from '@eeacms/volto-datablocks/hocs';
-import { setIndustryMapFilters, deleteIndustryMapFilters } from '@eeacms/volto-ied-policy/actions';
+import {
+  setIndustryMapFilters,
+  deleteIndustryMapFilters,
+} from '@eeacms/volto-ied-policy/actions';
 import { searchParamsToFilters } from '@eeacms/volto-ied-policy/components/manage/Blocks/IndustryMap/urlFilters';
 import { getObjectByIndex } from '@eeacms/volto-ied-policy/helpers';
 import './styles.less';

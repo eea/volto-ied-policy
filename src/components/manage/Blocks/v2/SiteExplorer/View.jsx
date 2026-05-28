@@ -208,7 +208,9 @@ function View(props) {
             <Value
               provider={data.installations}
               column="installationInspireID"
-              textTemplate={`Installations (${getProviderLength(providers_data.installations)})`}
+              textTemplate={`Installations (${getProviderLength(
+                providers_data.installations,
+              )})`}
               skeletonWidth="100px"
               placeholder="Installations (0)"
             />
