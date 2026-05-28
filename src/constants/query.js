@@ -1,4 +1,0 @@
-export const SET_QUERY = 'SET_QUERY';
-export const DELETE_QUERY = 'DELETE_QUERY';
-export const RESET_QUERY = 'RESET_QUERY';
-export const TRIGGER_QUERY_RENDER = 'TRIGGER_QUERY_RENDER';

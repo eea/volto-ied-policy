@@ -1,0 +1,218 @@
+.site-explorer {
+  display: flex;
+  flex-direction: column;
+  max-height: 500px;
+  border: 1px solid #5496B2;
+
+  &:not(.site-explorer--expanded):hover {
+    .site-explorer__toolbar:hover {
+      background-color: #F6F6F6;
+    }
+  }
+}
+
+.site-explorer__toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+
+  .toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .toolbar-left__content {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+
+    * {
+      margin: 0;
+    }
+
+    .label {
+      font-size: 10px;
+      line-height: 15px;
+      letter-spacing: -0.5px;
+      font-weight: 700;
+      color: #4296B2;
+    }
+
+    .value {
+      font-weight: 700;
+      line-height: 1.2;
+    }
+  }
+
+  .expand-btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    padding: 0;
+    transition: background-color 0.2s ease-in-out;
+
+    &:hover {
+      background-color: #f0f0f0;
+    }
+  }
+}
+
+.site-explorer__content--wrapper {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.4s ease-out, opacity 0.4s ease-out, padding-bottom 0.4s ease-out;
+
+  &.visible {
+    max-height: 500px;
+    opacity: 1;
+  }
+}
+
+.site-explorer__content {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 22px 2fr;
+  grid-template-rows: auto 1fr;
+  row-gap: 4px;
+  padding: 0px 12px 20px 12px;
+
+  > .facilities-panel-label { grid-row: 1; grid-column: span 2; }
+  > .installations-panel-label { grid-row: 1; grid-column: 3; }
+  > .facilities-panel { grid-row: 2; grid-column: span 2; }
+  > .installations-panel { grid-row: 2; grid-column: 3; }
+
+  .panel-label {
+    font-weight: 700;
+    line-height: 22.4px;
+    letter-spacing: 0%;
+    margin: 0;
+  }
+
+  .panel {
+    overflow-y: auto;
+    scrollbar-width: none;          /* Firefox */
+    -ms-overflow-style: none;       /* IE/Edge */
+
+    &::-webkit-scrollbar {
+      display: none;                /* Chrome, Safari, Opera */
+    }
+  }
+
+  .facilities-panel {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .connector {
+    display: flex;
+    flex: 1;
+    flex-flow: column;
+    align-items: end;
+    padding: 0 4px;
+
+    .connector-line {
+      display: block;
+      width: 2px;
+      height: 100%;
+      background-color: #5496B2;
+    }
+  }
+
+  .entities-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    .list-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      background-color: #F6F6F6;
+      padding: 12px 20px 12px 40px;
+      border-radius: 2px;
+      font-size: 14px;
+      cursor: pointer;
+
+      p {
+        margin: 0;
+      }
+
+      .list-card-title {
+        position: relative;
+        font-weight: bold;
+        color: #666;
+      }
+
+      .list-card-index {
+        position: absolute;
+        left: -2px;
+        top: 0;
+        transform: translateX(-100%);
+      }
+
+      &.selected {
+        background-color: #4295B3;
+        color: #fff;
+
+        .list-card-title {
+          color: #fff;
+        }
+      }
+    }
+
+    &.facilities-list {
+      .list-card {
+        width: calc(100% - 30px);
+      }
+      .list-card.selected::before {
+        content: '';
+        display: block;
+        position: absolute;
+        width: 20px;
+        height: 2px;
+        background-color: #4295B3;
+        top: 50%;
+        right: -24px;
+        transform: translateY(-50%);
+      }
+      .list-card::after {
+        content: '';
+        display: block;
+        position: absolute;
+        width: 2px;
+        height: calc(100% + 4px);
+        background-color: #4295B3;
+        right: -26px;
+        top: -4px;
+      }
+      .list-card::before,
+      .list-card::after {
+        cursor: default;
+        pointer-events: none;
+      }
+    }
+
+    &.installations-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+}

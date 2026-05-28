@@ -6,6 +6,7 @@ import Tableau from '@eeacms/volto-tableau/Tableau/Tableau';
 import config from '@plone/volto/registry';
 import { connectToProviderData } from '@eeacms/volto-datablocks/hocs';
 import qs from 'querystring';
+import { searchParamsToFilters } from '@eeacms/volto-ied-policy/components/manage/Blocks/IndustryMap/urlFilters';
 import '@eeacms/volto-tableau/less/tableau.less';
 
 const getDevice = (config, width) => {
@@ -142,7 +143,8 @@ export default compose(
   connect((state) => ({
     query: {
       ...(qs.parse(state.router.location?.search?.replace('?', '')) || {}),
-      ...(state.query.search || {}),
+      ...searchParamsToFilters(state.router.location?.search || ''),
+      ...(state.industryMapFilters.search || {}),
     },
     tableau: state.tableau,
     screen: state.screen,

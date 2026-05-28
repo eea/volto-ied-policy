@@ -5,205 +5,14 @@ import { connect } from 'react-redux';
 import { cloneDeep } from 'lodash';
 import { Modal, Checkbox } from 'semantic-ui-react';
 import { trackSiteSearch } from '@eeacms/volto-matomo/utils';
-import { setQuery } from '@eeacms/volto-ied-policy/actions';
+import { setIndustryMapFilters } from '@eeacms/volto-ied-policy/actions';
 import { inputsKeys, permitTypes } from './dictionary';
 import SelectWrapper from './SelectWrapper';
 import { withRouter } from 'react-router-dom';
-
-const getLatestRegions = (query) => {
-  const siteCountries = query.filter_countries;
-  const regions = query.filter_nuts_1;
-  const provinces = query.filter_nuts_2;
-  let nuts = [];
-  let nuts_latest = [];
-
-  siteCountries &&
-    siteCountries.forEach((country) => {
-      const filteredRegions = regions
-        ? regions.filter((region) => {
-            return region && region.includes(country);
-          })
-        : [];
-      if (filteredRegions.length) {
-        filteredRegions.forEach((region) => {
-          const filteredProvinces = provinces
-            ? provinces.filter((province) => {
-                return province && province.includes(region);
-              })
-            : [];
-          if (filteredProvinces.length) {
-            filteredProvinces.forEach((province) => {
-              nuts.push(`${province},${region},${country}`);
-              nuts_latest.push(province);
-            });
-          } else {
-            nuts.push(`${region},${country}`);
-            nuts_latest.push(region);
-          }
-        });
-      }
-    });
-
-  return {
-    nuts,
-    nuts_latest,
-  };
-};
-
-const setParamsQuery = (data, location) => {
-  const oldParams = new URLSearchParams(location.search);
-  const activeTab = oldParams.get('activeTab');
-  const query = { ...data, nuts_latest: getLatestRegions(data).nuts_latest };
-
-  const urlParams = new URLSearchParams();
-  if (activeTab) {
-    urlParams.set('activeTab', activeTab);
-  }
-  const filteredReportingYears =
-    query?.filter_reporting_years?.filter((year) => year != null) ?? [];
-
-  if (filteredReportingYears.length > 0) {
-    urlParams.set('Site_reporting_year[in]', filteredReportingYears.join(','));
-  }
-
-  const filteredIndustries =
-    query.filter_industries.filter((industry) => industry != null) ?? [];
-  if (filteredIndustries.length > 0) {
-    urlParams.set('eprtr_sectors[in]', filteredIndustries.join(','));
-  }
-
-  const filteredEprtrAnnexIActivity =
-    query.filter_eprtr_AnnexIActivity.filter((activity) => activity != null) ??
-    [];
-  if (filteredEprtrAnnexIActivity.length > 0) {
-    urlParams.set(
-      'eprtr_AnnexIActivity[in]',
-      filteredEprtrAnnexIActivity.join(','),
-    );
-  }
-
-  const filteredBatConclusions =
-    query.filter_bat_conclusions.filter((conclusion) => conclusion != null) ??
-    [];
-  if (filteredBatConclusions.length > 0) {
-    urlParams.set(
-      'bat_conclusions[like]',
-      filteredBatConclusions.map((conclusion) => `%${conclusion}%`).join(','),
-    );
-  }
-
-  const filteredPermitTypes =
-    query.filter_permit_types.filter((type) => type != null) ?? [];
-  if (filteredPermitTypes.length > 0) {
-    urlParams.set(
-      'permit_types[like]',
-      filteredPermitTypes.map((type) => `%${type}%`).join(','),
-    );
-  }
-
-  const filteredPermitYears =
-    query.filter_permit_years.filter((year) => year != null) ?? [];
-  if (filteredPermitYears.length > 0) {
-    urlParams.set(
-      'permit_years[like]',
-      filteredPermitYears.map((year) => `%${year}%`).join(','),
-    );
-  }
-
-  const filteredPollutants =
-    query.filter_pollutants.filter((pollutant) => pollutant != null) ?? [];
-  if (filteredPollutants.length > 0) {
-    urlParams.set(
-      'pollutants[like]',
-      filteredPollutants.map((pollutant) => `%${pollutant}%`).join(','),
-    );
-  }
-
-  const filteredPollutantsGroups =
-    query.filter_pollutant_groups.filter((group) => group != null) ?? [];
-  if (filteredPollutantsGroups.length > 0) {
-    urlParams.set(
-      'air_groups[like]',
-      filteredPollutantsGroups.map((group) => `%${group}%`).join(','),
-    );
-    urlParams.set(
-      'water_groups[like]',
-      filteredPollutantsGroups.map((group) => `%${group}%`).join(','),
-    );
-  }
-
-  const filteredCountryCodes =
-    query.filter_countries.filter((code) => code != null) ?? [];
-  if (filteredCountryCodes.length > 0) {
-    urlParams.set('countryCode[in]', filteredCountryCodes.join(','));
-  }
-
-  const filteredNuts = query.nuts_latest.filter((nuts) => nuts != null) ?? [];
-  if (filteredNuts.length > 0) {
-    urlParams.set(
-      'nuts_regions[like]',
-      filteredNuts.map((nuts) => `%${nuts}%`).join(','),
-    );
-  }
-
-  const filteredThematicInformation =
-    query.filter_thematic_information.filter((info) => info != null) ?? [];
-  if (filteredThematicInformation.length > 0) {
-    if (filteredThematicInformation.indexOf('has_release') !== -1) {
-      urlParams.set('has_release_data[gt]', 0);
-    }
-    if (filteredThematicInformation.indexOf('has_transfer') !== -1) {
-      urlParams.set('has_transfer_data[gt]', 0);
-    }
-    if (filteredThematicInformation.indexOf('has_waste') !== -1) {
-      urlParams.set('has_waste_data[gt]', 0);
-    }
-    if (filteredThematicInformation.indexOf('has_seveso') !== -1) {
-      urlParams.set('has_seveso[gt]', 0);
-    }
-  }
-
-  const filteredInstallationTypes =
-    query.filter_installation_types.filter((type) => type != null) ?? [];
-  if (filteredInstallationTypes.length > 0) {
-    if (filteredInstallationTypes.indexOf('IED') !== -1) {
-      urlParams.set('count_instype_IED[gte]', 1);
-    }
-    if (filteredInstallationTypes.indexOf('NONIED') !== -1) {
-      urlParams.set('count_instype_NONIED[gte]', 1);
-    }
-  }
-
-  const filteredFacilityTypes =
-    query.filter_facility_types.filter((type) => type != null) ?? [];
-  if (filteredFacilityTypes.length > 0) {
-    urlParams.set(
-      'facility_types',
-      filteredFacilityTypes.map((type) => `%${type}%`).join(','),
-    );
-  }
-
-  const filteredRiverBasinDistricts =
-    query.filter_river_basin_districts.filter((district) => district != null) ??
-    [];
-  if (filteredRiverBasinDistricts.length > 0) {
-    urlParams.set(
-      'river_basin',
-      filteredRiverBasinDistricts.map((district) => `%${district}%`).join(','),
-    );
-  }
-
-  const filteredPlantTypes =
-    query.filter_plant_types.filter((type) => type != null) ?? [];
-  if (filteredPlantTypes.length > 0) {
-    urlParams.set(
-      'plant_types',
-      filteredPlantTypes.map((type) => `%${type}%`).join(','),
-    );
-  }
-
-  return urlParams.toString();
-};
+import {
+  filtersToSearchParams,
+  searchParamsToFilters,
+} from '@eeacms/volto-ied-policy/components/manage/Blocks/IndustryMap/urlFilters';
 
 const filterOptionsByParent = (options, input) => {
   if (!options || !input) return [];
@@ -259,7 +68,7 @@ const ModalView = ({
   options,
   query,
   setOpen,
-  setQuery,
+  setIndustryMapFilters,
   history,
   location,
 }) => {
@@ -267,12 +76,14 @@ const ModalView = ({
 
   /*---------- Actions ----------*/
   const setInitialInputs = React.useCallback(() => {
+    // Seed the advanced-filter form from the URL (source of truth).
+    const urlFilters = searchParamsToFilters(location.search);
     const inputs = {};
     inputsKeys.forEach((key) => {
-      inputs[key] = [...(query[key] || [])];
+      inputs[key] = [...(urlFilters[key] || [])];
     });
     setInputs(inputs);
-  }, [query]);
+  }, [location.search]);
 
   React.useEffect(() => {
     if (open) {
@@ -305,16 +116,13 @@ const ModalView = ({
   );
 
   const clearFilters = React.useCallback(() => {
-    history.replace({
+    // Drop all filter params from the URL (keep activeTab) and bump the counter.
+    const search = filtersToSearchParams({}, location).toString();
+    history.push({
       pathname: location.pathname,
-      search: '',
+      search: search ? `?${search}` : '',
     });
-    const newInputs = {};
-    inputsKeys.forEach((key) => {
-      newInputs[key] = [];
-    });
-    setQuery({
-      ...newInputs,
+    setIndustryMapFilters({
       filter_change: {
         counter: (query['filter_change']?.counter || 0) + 1,
         type: 'clear',
@@ -328,28 +136,27 @@ const ModalView = ({
   }, [query, history, location]);
 
   const applyFilters = React.useCallback(() => {
-    const newQuery = {
-      ...inputs,
+    // Filter values go to the URL; redux only gets the refetch trigger.
+    const search = filtersToSearchParams(inputs, location).toString();
+    setIndustryMapFilters({
       filter_change: {
         counter: (query['filter_change']?.counter || 0) + 1,
         type: 'advanced-filter',
       },
       filter_search: null,
       filter_search_value: '',
-    };
-    setQuery(newQuery);
-    const urlParams = setParamsQuery(inputs, location);
+    });
     trackSiteSearch({
       category: `Map/Table advanced-filter`,
       keyword: JSON.stringify({
-        ...Object.keys(newQuery)
+        ...Object.keys(inputs)
           .filter(
             (key) =>
               inputsKeys.includes(key) &&
-              newQuery[key]?.filter((value) => value)?.length,
+              inputs[key]?.filter((value) => value)?.length,
           )
           .reduce((obj, key) => {
-            obj[key] = newQuery[key]?.filter((value) => value);
+            obj[key] = inputs[key]?.filter((value) => value);
             return obj;
           }, {}),
       }),
@@ -357,10 +164,10 @@ const ModalView = ({
     setOpen(false);
     history.push({
       pathname: location.pathname,
-      search: `?${urlParams.toString()}`,
+      search: search ? `?${search}` : '',
     });
     /* eslint-disable-next-line */
-  }, [inputs, query]);
+  }, [inputs, query, location]);
 
   /*---------- On change behavior ----------*/
   const onIndustriesChange = React.useCallback(
@@ -663,10 +470,10 @@ export default compose(
   withRouter,
   connect(
     (state) => ({
-      query: state.query.search,
+      query: state.industryMapFilters.search,
     }),
     {
-      setQuery,
+      setIndustryMapFilters,
     },
   ),
 )(ModalView);

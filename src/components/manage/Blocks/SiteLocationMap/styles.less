@@ -1,0 +1,44 @@
+@import (multiple, reference, optional) '../../theme.config';
+
+@type: extra;
+@element: custom;
+
+@borderWidth: 1px;
+@border: @borderWidth solid @borderColor;
+@boxShadow: @subtleShadow;
+
+.site-location-map {
+  position: relative;
+  display: flex;
+  height: 400px;
+  justify-content: center;
+  box-shadow: @boxShadow;
+}
+
+.site-location-map.visible.transition {
+  display: flex !important;
+}
+
+.site-location-map .ol-map {
+  height: 400px;
+  min-height: 400px;
+
+  .ui.loader {
+    top: unset;
+    right: 0;
+    bottom: 0;
+    left: unset;
+  }
+}
+
+.site-location-map .privacy-protection {
+  width: 100%;
+}
+
+.site-location-map .privacy-protection .overlay {
+  position: relative;
+}
+
+.site-location-map .privacy-protection .overlay .wrapped {
+  opacity: 1;
+}

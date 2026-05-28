@@ -5,7 +5,8 @@ import { Tab, Dropdown, Table } from 'semantic-ui-react';
 import cx from 'classnames';
 import qs from 'querystring';
 import { connectToMultipleProvidersUnfiltered } from '@eeacms/volto-datablocks/hocs';
-import { setQuery, deleteQuery } from '@eeacms/volto-ied-policy/actions';
+import { setIndustryMapFilters, deleteIndustryMapFilters } from '@eeacms/volto-ied-policy/actions';
+import { searchParamsToFilters } from '@eeacms/volto-ied-policy/components/manage/Blocks/IndustryMap/urlFilters';
 import { getObjectByIndex } from '@eeacms/volto-ied-policy/helpers';
 import './styles.less';
 
@@ -206,14 +207,14 @@ const panes = [
   },
 ];
 
-const View = ({ providers_data, query, setQuery, ...props }) => {
+const View = ({ providers_data, query, setIndustryMapFilters, ...props }) => {
   const id = query?.index_pollutant_id || -1;
 
   React.useEffect(() => {
     if (!query?.index_pollutant_id) {
-      setQuery({ index_pollutant_id: 70 });
+      setIndustryMapFilters({ index_pollutant_id: 70 });
     }
-  }, [setQuery, query?.index_pollutant_id]);
+  }, [setIndustryMapFilters, query?.index_pollutant_id]);
 
   const index_data = React.useMemo(() => {
     if (id < 0) return {};
@@ -303,7 +304,7 @@ const View = ({ providers_data, query, setQuery, ...props }) => {
         search
         selection
         onChange={(event, data) => {
-          setQuery({ index_pollutant_id: data.value });
+          setIndustryMapFilters({ index_pollutant_id: data.value });
         }}
         placeholder={'Select pollutant'}
         options={pollutantsOptions}
@@ -324,12 +325,13 @@ export default compose(
     (state) => ({
       query: {
         ...(qs.parse(state.router.location?.search?.replace('?', '')) || {}),
-        ...(state?.query?.search || {}),
+        ...searchParamsToFilters(state.router.location?.search || ''),
+        ...(state?.industryMapFilters?.search || {}),
       },
     }),
     {
-      setQuery,
-      deleteQuery,
+      setIndustryMapFilters,
+      deleteIndustryMapFilters,
     },
   ),
   connectToMultipleProvidersUnfiltered((props) => ({

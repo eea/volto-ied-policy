@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { setQuery } from '@eeacms/volto-ied-policy/actions';
+import { setIndustryMapFilters } from '@eeacms/volto-ied-policy/actions';
 
 import Search from './Search';
 import Modal from './Modal';
@@ -10,10 +10,13 @@ import { connectToMultipleProvidersUnfiltered } from '@eeacms/volto-datablocks/h
 import { compose } from 'redux';
 import './styles.less';
 import { withRouter } from 'react-router-dom';
+import {
+  filtersToSearchParams,
+  searchParamsToFilters,
+} from '@eeacms/volto-ied-policy/components/manage/Blocks/IndustryMap/urlFilters';
 const View = ({
   data,
   providers_data,
-  query,
   dispatch,
   location,
   history,
@@ -27,22 +30,6 @@ const View = ({
     setOpenState(open);
     if (callback) callback();
   }, []);
-
-  const setInitialFilters = useCallback(
-    (filters = {}) => {
-      const keys = Object.keys(filters);
-      const queryKeys = Object.keys(query);
-      for (const key of keys) {
-        if (queryKeys.includes(key)) {
-          return false;
-        }
-      }
-      dispatch(setQuery(filters));
-      setFiltersInitialized(true);
-      return true;
-    },
-    [dispatch, query],
-  );
 
   const initialSearchRef = useRef(location.search);
 
@@ -66,130 +53,24 @@ const View = ({
         const latestYear = newOptions.reporting_years
           .filter((opt) => opt.value)
           .sort((a, b) => b.value - a.value)[0].value;
-        const inputs = {};
-        // Use the initial search params, not current location.search
-        const searchParams = new URLSearchParams(initialSearchRef.current);
-        for (const [key, value] of searchParams.entries()) {
-          if (!value) continue;
-          if (key === 'Site_reporting_year[in]') {
-            inputs['filter_reporting_years'] = value
-              .split(',')
-              .filter((year) => !isNaN(year))
-              .map((year) => parseInt(year));
-          } else if (key === 'eprtr_sectors[in]') {
-            inputs['filter_industries'] = value.split(',');
-          } else if (key === 'eprtr_AnnexIActivity[in]') {
-            inputs['filter_eprtr_AnnexIActivity'] = value.split(',');
-          } else if (key === 'bat_conclusions[like]') {
-            inputs['filter_bat_conclusions'] = value
-              .split(',')
-              .map((group) => group.replaceAll('%', ''));
-          } else if (key === 'permit_types[like]') {
-            inputs['filter_permit_types'] = value
-              .split(',')
-              .map((group) => group.replaceAll('%', ''));
-          } else if (key === 'permit_years[like]') {
-            inputs['filter_permit_years'] = value
-              .split(',')
-              .map((group) => group.replaceAll('%', ''))
-              .filter((year) => !isNaN(year))
-              .map((year) => parseInt(year));
-          } else if (key === 'pollutants[like]') {
-            inputs['filter_pollutants'] = value
-              .split('%,')
-              .map((group) => group.replaceAll('%', ''));
-          } else if (
-            key === 'air_groups[like]' ||
-            key === 'water_groups[like]'
-          ) {
-            inputs['filter_pollutant_groups'] = value.split(',');
-          } else if (key === 'countryCode[in]') {
-            inputs['filter_countries'] = value.split(',');
-          } else if (key === 'has_release_data[gt]') {
-            inputs['filter_thematic_information'] = [
-              ...(inputs?.['filter_thematic_information']
-                ? inputs['filter_thematic_information']
-                : []),
-              'has_release',
-            ];
-          } else if (key === 'has_transfer_data[gt]') {
-            inputs['filter_thematic_information'] = [
-              ...(inputs?.['filter_thematic_information']
-                ? inputs['filter_thematic_information']
-                : []),
-              'has_transfer',
-            ];
-          } else if (key === 'has_waste_data[gt]') {
-            inputs['filter_thematic_information'] = [
-              ...(inputs?.['filter_thematic_information']
-                ? inputs['filter_thematic_information']
-                : []),
-              'has_waste',
-            ];
-          } else if (key === 'has_seveso[gt]') {
-            inputs['filter_thematic_information'] = [
-              ...(inputs?.['filter_thematic_information']
-                ? inputs['filter_thematic_information']
-                : []),
-              'has_seveso',
-            ];
-          } else if (key === 'count_instype_IED[gte]') {
-            inputs['filter_installation_types'] = [
-              ...(inputs?.['filter_installation_types']
-                ? inputs['filter_installation_types']
-                : []),
-              'IED',
-            ];
-          } else if (key === 'count_instype_NONIED[gte]') {
-            inputs['filter_installation_types'] = [
-              ...(inputs?.['filter_installation_types']
-                ? inputs['filter_installation_types']
-                : []),
-              'NONIED',
-            ];
-          } else if (key === 'nuts_regions[like]') {
-            inputs['filter_nuts_2'] = [value.replaceAll('%', '')];
-            inputs['filter_nuts_1'] = [
-              value
-                .replaceAll('%', '')
-                .substring(0, value.replaceAll('%', '').length - 1),
-            ];
-          } else if (key === 'facility_types') {
-            inputs['filter_facility_types'] = value
-              .split('%,')
-              .map((group) => group.replaceAll('%', ''));
-          } else if (key === 'river_basin') {
-            inputs['filter_river_basin_districts'] = value
-              .split('%,')
-              .map((group) => group.replaceAll('%', ''));
-          } else if (key === 'plant_types') {
-            inputs['filter_plant_types'] = value
-              .split('%,')
-              .map((group) => group.replaceAll('%', ''));
-          }
+        // Filters live in the URL (source of truth). Seed a default reporting
+        // year into the URL when none is present, then trigger the initial fetch.
+        const urlFilters = searchParamsToFilters(initialSearchRef.current);
+        const hasReportingYear = urlFilters.filter_reporting_years?.length > 0;
+        if (!hasReportingYear && props.mode !== 'edit') {
+          const search = filtersToSearchParams(
+            { ...urlFilters, filter_reporting_years: [latestYear] },
+            location,
+          ).toString();
+          history.push({
+            pathname: location.pathname,
+            search: search ? `?${search}` : '',
+          });
         }
-        const filtersWereSet = setInitialFilters({
-          filter_reporting_years: [latestYear],
-          ...inputs,
-          filter_change: {
-            counter: 1,
-            type: 'simple-filter',
-          },
-        });
-        // Only update URL if filters were actually set (not already initialized)
-        if (filtersWereSet) {
-          const urlParams = new URLSearchParams(initialSearchRef.current);
-          if (
-            !urlParams.get('Site_reporting_year[in]') &&
-            props.mode !== 'edit'
-          ) {
-            urlParams.set('Site_reporting_year[in]', latestYear);
-            history.push({
-              pathname: location.pathname,
-              search: `?${urlParams.toString()}`,
-            });
-          }
-        }
+        dispatch(
+          setIndustryMapFilters({ filter_change: { counter: 1, type: 'simple-filter' } }),
+        );
+        setFiltersInitialized(true);
       }
     }
   }, [
@@ -197,9 +78,9 @@ const View = ({
     providers_data,
     filtersInitialized,
     permitTypes,
-    setInitialFilters,
+    dispatch,
     history,
-    location.pathname,
+    location,
     props.mode,
   ]);
 
@@ -231,9 +112,7 @@ const View = ({
 
 export default compose(
   withRouter,
-  connect((state) => ({
-    query: state.query.search,
-  })),
+  connect(null),
   connectToMultipleProvidersUnfiltered((props) => ({
     providers: props.data.providers,
   })),

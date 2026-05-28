@@ -1,0 +1,59 @@
+.installation-parts-panel {
+  max-height: 350px;
+  overflow-y: auto;
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE/Edge */
+
+  &::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari, Opera */
+  }
+
+  .entities-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    .list-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      background-color: #F6F6F6;
+      padding: 12px 20px 12px 40px;
+      border-radius: 2px;
+      font-size: 14px;
+      cursor: pointer;
+
+      p {
+        margin: 0;
+      }
+
+      .list-card-title {
+        position: relative;
+        font-weight: bold;
+        color: #666;
+      }
+
+      .list-card-index {
+        position: absolute;
+        left: -2px;
+        top: 0;
+        transform: translateX(-100%);
+      }
+
+      &.selected {
+        background-color: #4295B3;
+        color: #fff;
+
+        .list-card-title {
+          color: #fff;
+        }
+      }
+    }
+  }
+}

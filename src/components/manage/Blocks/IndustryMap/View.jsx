@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import jsonp from 'jsonp';
@@ -8,16 +8,17 @@ import { toast } from 'react-toastify';
 import { doesNodeContainClick } from 'semantic-ui-react/dist/commonjs/lib';
 import { Icon, Toast } from '@plone/volto/components';
 import { connectToMultipleProvidersUnfiltered } from '@eeacms/volto-datablocks/hocs';
+import { withOpenLayers } from '@eeacms/volto-openlayers-map';
 import { Map } from '@eeacms/volto-openlayers-map/Map';
 import { Interactions } from '@eeacms/volto-openlayers-map/Interactions';
 import { Overlays } from '@eeacms/volto-openlayers-map/Overlays';
 import { Controls, Control } from '@eeacms/volto-openlayers-map/Controls';
 import { Layers, Layer } from '@eeacms/volto-openlayers-map/Layers';
-import { openlayers } from '@eeacms/volto-openlayers-map';
 import { StyleWrapperView } from '@eeacms/volto-block-style/StyleWrapper';
 import PrivacyProtection from '@eeacms/volto-ied-policy/components/manage/Blocks/PrivacyProtection';
-import { setQuery } from '@eeacms/volto-ied-policy/actions';
+import { setIndustryMapFilters } from '@eeacms/volto-ied-policy/actions';
 import { emitEvent } from '@eeacms/volto-ied-policy/helpers.js';
+import { searchParamsToFilters } from './urlFilters';
 
 import {
   dataprotection,
@@ -29,7 +30,6 @@ import {
   getFacilityExtent,
   getCountriesExtent,
   getWhereStatement,
-  mercatorToLatLon,
 } from './index';
 
 import Sidebar from './Sidebar';
@@ -60,7 +60,7 @@ const debounce = (func, index, timeout = 200, ...args) => {
 //   }
 // };
 
-const getSitesSource = (query) => {
+const getSitesSource = (query, openlayers) => {
   // return {};
   const { source } = openlayers;
   return new source.TileArcGISRest({
@@ -105,19 +105,47 @@ const View = (props) => {
   const overlayPopup = useRef(null);
   const overlayPopupDetailed = useRef(null);
   const isMounted = useRef(true);
+  const { openlayers } = props;
+
+  const olLoaded = !!(
+    openlayers.proj &&
+    openlayers.source &&
+    openlayers.extent &&
+    openlayers.coordinate &&
+    openlayers.format
+  );
   const { proj, source, extent } = openlayers;
 
-  const centerToQueryLocation = (position, zoom) => {
-    const { proj } = openlayers;
-    return map?.current?.getView().animate({
-      center: proj.fromLonLat([
-        position.coords.longitude,
-        position.coords.latitude,
-      ]),
-      duration: 1000,
-      zoom,
-    });
-  };
+  // Build the OL sources ONCE per loaded-lib reference. Recreating them on every
+  // render makes Tile.componentDidUpdate swap the layer source -> tiles refetch
+  // (base map + data reload on every zoom/pan/filter). The sites source is kept
+  // stable and its filters are updated in place via updateParams (see effect).
+  const baseSource = useMemo(
+    () => (source ? new source.XYZ({ url: getLayerBaseURL() }) : null),
+    [source],
+  );
+  const sitesSource = useMemo(
+    () => (source ? getSitesSource(props.query, openlayers) : null),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [source],
+  );
+  // Stable view options so Map.componentDidUpdate never resets the view.
+  const view = useMemo(
+    () =>
+      proj
+        ? {
+            center: proj.fromLonLat([20, 50]),
+            showFullExtent: true,
+            minZoom: 1,
+            zoom: 1,
+          }
+        : undefined,
+    [proj],
+  );
+  // Stable callback ref: avoids null/re-attach churn on every render.
+  const setSitesLayerRef = React.useCallback((data) => {
+    layerSites.current = data?.layer;
+  }, []);
 
   const centerToPosition = (position, zoom) => {
     const { proj } = openlayers;
@@ -155,9 +183,6 @@ const View = (props) => {
 
   const onPointermove = (e) => {
     if (__SERVER__ || !overlayPopup.current || e.type !== 'pointermove') return;
-
-    // If the popup is currently locked, ignore pointermove events
-    if (props.query?.siteName) return;
 
     if (e.dragging) {
       // e.map.getTarget().style.cursor = 'grabbing';
@@ -305,7 +330,7 @@ const View = (props) => {
   const onMoveend = (e) => {
     if (!e.map) return;
     const extent = e.map.getView().calculateExtent(e.map.getSize());
-    props.setQuery({
+    props.setIndustryMapFilters({
       map_extent: extent,
     });
   };
@@ -325,45 +350,8 @@ const View = (props) => {
 
   useEffect(() => {
     if (!mapRendered || !map.current) return;
-
-    const lat = props?.query?.lat;
-    const lng = props?.query?.lng;
-
-    if (lat && lng) {
-      const formattedLatLng = mercatorToLatLon(lng, lat);
-      const coords = proj.fromLonLat([
-        formattedLatLng.lng,
-        formattedLatLng.lat,
-      ]);
-
-      centerToQueryLocation(
-        {
-          coords: {
-            latitude: formattedLatLng.lat,
-            longitude: formattedLatLng.lng,
-          },
-        },
-        12,
-      );
-
-      // Show persistent popup at selected location
-      if (overlayPopup?.current) {
-        let hdms = openlayers.coordinate.toStringHDMS(
-          proj.toLonLat([lng, lat]),
-        );
-        overlayPopup?.current.setPosition(coords);
-        emitEvent(document.querySelector('#industry-map'), 'ol-pointermove', {
-          bubbles: false,
-          detail: {
-            siteName: props.query?.siteName || 'Selected site',
-            hdms,
-          },
-        });
-      }
-    } else {
-      centerToUserLocation();
-    }
-  }, [mapRendered, props?.query?.lat, props?.query?.lng]);
+    centerToUserLocation();
+  }, [mapRendered]);
 
   useEffect(() => {
     const { filter_change, filter_search } = props.query;
@@ -508,7 +496,7 @@ const View = (props) => {
     }
   }, [props.query?.filter_change?.counter]);
 
-  if (__SERVER__)
+  if (__SERVER__ || !olLoaded)
     return (
       <StyleWrapperView
         {...props}
@@ -524,15 +512,6 @@ const View = (props) => {
         </div>
       </StyleWrapperView>
     );
-
-  const lat = props?.query?.lat;
-  const lng = props?.query?.lng;
-
-  let hdms = null;
-  if (lat && lng) {
-    const { lat: latWGS84, lng: lngWGS84 } = mercatorToLatLon(lng, lat);
-    hdms = openlayers.coordinate.toStringHDMS([lngWGS84, latWGS84]);
-  }
 
   return (
     <StyleWrapperView
@@ -554,13 +533,7 @@ const View = (props) => {
                   setMapRendered(true);
                 }
               }}
-              view={{
-                center: proj.fromLonLat([20, 50]),
-                showFullExtent: true,
-                // maxZoom: 1,
-                minZoom: 1,
-                zoom: 1,
-              }}
+              view={view}
               renderer="webgl"
               onPointermove={onPointermove}
               onClick={onClick}
@@ -589,14 +562,7 @@ const View = (props) => {
                 altShiftDragRotate={false}
               />
               <Layers>
-                <Layer.Tile
-                  source={
-                    new source.XYZ({
-                      url: getLayerBaseURL(),
-                    })
-                  }
-                  zIndex={0}
-                />
+                <Layer.Tile source={baseSource} zIndex={0} />
                 {/* <Layer.VectorImage
                   className="ol-layer-regions"
                   ref={(data) => {
@@ -638,11 +604,9 @@ const View = (props) => {
                   zIndex={1}
                 /> */}
                 <Layer.Tile
-                  ref={(data) => {
-                    layerSites.current = data?.layer;
-                  }}
+                  ref={setSitesLayerRef}
                   className="ol-layer-sites"
-                  source={getSitesSource(props.query)}
+                  source={sitesSource}
                   title="2.Sites"
                   zIndex={1}
                 />
@@ -655,15 +619,7 @@ const View = (props) => {
                 positioning="center-center"
                 stopEvent={true}
               >
-                <Popup
-                  overlay={overlayPopup}
-                  className={props.query?.siteName ? 'fixed-popup' : ''}
-                  lock={!!props.query?.siteName}
-                  staticData={{
-                    siteName: props.query?.siteName || 'No site name',
-                    hdms,
-                  }}
-                />
+                <Popup overlay={overlayPopup} />
               </Overlays>
               <Overlays
                 ref={(data) => {
@@ -698,18 +654,24 @@ const View = (props) => {
 };
 
 export default compose(
+  withOpenLayers,
   connect(
-    (state) => ({
+    (state, props) => ({
       query: {
+        // raw URL params (lat / lng / siteName ...) read directly
         ...qs.parse(state.router.location.search.replace('?', '')),
-        ...state.query.search,
+        // user-facing filters decoded from the URL (source of truth)
+        ...searchParamsToFilters(state.router.location.search),
+        // cross-component coordination state (filter_change, map_extent, ...)
+        ...state.industryMapFilters.search,
       },
       location: state.router.location,
       navigation: state.navigation.items,
       screen: state.screen,
+      openlayers: props.ol,
     }),
     {
-      setQuery,
+      setIndustryMapFilters,
     },
   ),
   connectToMultipleProvidersUnfiltered((props) => ({

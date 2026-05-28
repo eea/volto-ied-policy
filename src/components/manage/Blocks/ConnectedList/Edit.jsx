@@ -62,7 +62,7 @@ const ConnectedList = (props) => {
                     margin: '5px',
                   }}
                   onClick={() => {
-                    props.setQuery({
+                    props.setIndustryMapFilters({
                       ...queries,
                     });
                   }}

@@ -1,22 +1,34 @@
 import installBodyClass from './BodyClass';
-import installRedirect from './Redirect';
+import installConnectedList from './ConnectedList';
 import installFactsheetsListing from './FactsheetsListing';
+import installFiltersMap from './FiltersMap';
+import installIndustryMap from './IndustryMap';
 import installKeyFacts from './KeyFacts';
 import installMaesViewer from './MaesViewer';
 import installNavigation from './Navigation';
-import installIndustryMap from './IndustryMap';
-import FiltersMap from './FiltersMap';
-const config = (config) => {
-  return [
+import installPolluantsTable from './PolluantsTable';
+import installRedirect from './Redirect';
+import installSiteBlocks from './SiteBlocks';
+import installSiteLocationMap from './SiteLocationMap';
+import installSiteTableau from './SiteTableau';
+import installV2Blocks from './v2';
+
+const config = (config) =>
+  [
     installBodyClass,
-    installRedirect,
+    installConnectedList,
     installFactsheetsListing,
+    installFiltersMap,
+    installIndustryMap,
     installKeyFacts,
     installMaesViewer,
     installNavigation,
-    installIndustryMap,
-    FiltersMap,
+    installPolluantsTable,
+    installRedirect,
+    installSiteBlocks,
+    installSiteLocationMap,
+    installSiteTableau,
+    installV2Blocks,
   ].reduce((acc, apply) => apply(acc), config);
-};
 
 export default config;

@@ -2,7 +2,7 @@ import React from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Grid, Dropdown } from 'semantic-ui-react';
-import { setQuery } from '@eeacms/volto-ied-policy/actions';
+import { setIndustryMapFilters } from '@eeacms/volto-ied-policy/actions';
 import qs from 'querystring';
 import './style.css';
 
@@ -178,6 +178,6 @@ export default compose(
         ...qs.parse(state.router.location.search.replace('?', '')),
       },
     }),
-    { setQuery },
+    { setIndustryMapFilters },
   ),
 )(View);

@@ -67,4 +67,4 @@ export function setFlags(packageKey, id, flags) {
 }
 
 export * from './search';
-export * from './query';
+export * from './industryMapFilters';
