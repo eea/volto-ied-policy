@@ -42,10 +42,10 @@ function Value({
     <DataConnectedValue
       column={column}
       data={{
-        allowedParams: provider.allowedParams,
+        allowedParams: provider?.allowedParams,
       }}
       placeholder={placeholder}
-      url={provider.provider_url}
+      url={provider?.provider_url}
       skeletonWidth="150px"
       skeleton={skeleton}
       {...rest}
