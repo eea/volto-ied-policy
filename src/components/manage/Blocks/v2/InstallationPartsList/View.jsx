@@ -1,8 +1,10 @@
 import cx from 'classnames';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { compose } from 'redux';
 import { Message, MessageHeader } from 'semantic-ui-react';
+
+import { flattenToAppURL } from '@plone/volto/helpers/Url/Url';
 
 import { connectToProviderData } from '@eeacms/volto-datablocks/hocs';
 import { DataConnectedValue } from '@eeacms/volto-datablocks/Utils';
@@ -32,39 +34,50 @@ function Value({
 }
 
 function View(props) {
-  const { provider_data, data, location, mode } = props;
+  const { provider_data, data, location, mode, properties } = props;
+  const contentPath = flattenToAppURL(properties?.['@id']);
   const history = useHistory();
   const params = new URLSearchParams(location.search);
 
-  const [selectedPart, setSelectedPart] = useState(
-    params.get('partInspireID') || null,
-  );
+  const selectedPartId =
+    params.get('partInspireID') || provider_data?.partInspireID?.[0] || null;
 
-  const updateQueryParam = (key, value) => {
-    params.set(key, value);
-    history.push({
+  const updateQueryParam = (key, value, method = 'push') => {
+    const nextParams = new URLSearchParams(
+      history.location?.search || location.search,
+    );
+    nextParams.set(key, value);
+    history[method]({
       pathname: location.pathname,
-      search: params.toString(),
+      search: nextParams.toString(),
+      state: history.location.state,
     });
   };
 
   const goToPart = (row) => {
     const id = provider_data?.partInspireID?.[row];
-    if (!id || selectedPart === id) {
+    if (!id || selectedPartId === id) {
       return;
     }
-    setSelectedPart(id);
     updateQueryParam('partInspireID', id);
   };
 
   useEffect(() => {
-    const ids = provider_data?.partInspireID || [];
-    if (!selectedPart && ids.length) {
-      const id = ids[0];
-      setSelectedPart(id);
-      updateQueryParam('partInspireID', id);
+    const id = provider_data?.partInspireID?.[0];
+    const currentPath = history.location?.pathname;
+    const latestParams = new URLSearchParams(
+      history.location?.search || location.search,
+    );
+
+    if (
+      !id ||
+      latestParams.get('partInspireID') ||
+      currentPath !== contentPath
+    ) {
+      return;
     }
-  }, [selectedPart, provider_data?.partInspireID]);
+    updateQueryParam('partInspireID', id, 'replace');
+  }, [provider_data?.partInspireID, history.location, location, contentPath]);
 
   if (
     !provider_data?.partInspireID ||
@@ -85,7 +98,7 @@ function View(props) {
           <li
             key={id}
             className={cx('list-card', {
-              selected: selectedPart === id,
+              selected: selectedPartId === id,
             })}
             role="link"
             tabIndex={0}
@@ -118,7 +131,11 @@ function View(props) {
 }
 
 export default compose(
-  connectToProviderData((props) => ({
-    provider_url: props.data.provider_url,
-  })),
+  connectToProviderData(({ location, data }) => {
+    const params = new URLSearchParams(location.search);
+    const hasAllParams = data.allowedParams?.every((p) => params.has(p));
+    return {
+      provider_url: hasAllParams ? data.provider_url : null,
+    };
+  }),
 )(View);

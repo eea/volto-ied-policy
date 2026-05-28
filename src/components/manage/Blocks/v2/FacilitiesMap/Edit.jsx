@@ -1,5 +1,3 @@
-import { withRouter } from 'react-router';
-
 import { SidebarPortal } from '@plone/volto/components';
 import BlockDataForm from '@plone/volto/components/manage/Form/BlockDataForm';
 import View from './View';
@@ -28,4 +26,4 @@ function Edit(props) {
   );
 }
 
-export default withRouter(Edit);
+export default Edit;

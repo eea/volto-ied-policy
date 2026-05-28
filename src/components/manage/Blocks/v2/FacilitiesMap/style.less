@@ -1,0 +1,500 @@
+@import (multiple, reference, optional) '../../../theme.config';
+@import (reference) '../filterTheme.less';
+@import (reference) '../filterControls.less';
+
+@eea-blue: #004b7f;
+@eea-blue-mid: #006bad;
+@eea-blue-light: #e6f0f8;
+@eea-green: #1d9c41;
+// Match the v2 FacilitiesFilters design language.
+@fm-navy: @v2-filter-navy;
+@fm-navy-mid: @v2-filter-navy-mid;
+@fm-orange: @v2-filter-orange;
+@fm-orange-mid: @v2-filter-orange-mid;
+@fm-text-primary: @v2-filter-control-text;
+@fm-text-secondary: @v2-filter-muted;
+@fm-border: @v2-filter-border;
+@fm-border-soft: @v2-filter-border-soft;
+@fm-surface: @v2-filter-control-bg;
+@fm-sidebar-w: 320px;
+@fm-radius: @v2-filter-radius;
+@fm-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+
+.facilities-map-wrapper {
+  .v2-filter-controls();
+
+  position: relative;
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  margin: 28px auto 0;
+  height: 652px;
+  min-height: 520px;
+  overflow: hidden;
+  background: @fm-surface;
+  color: @fm-text-primary;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  border: 1px solid @fm-border;
+  border-radius: 4px;
+  box-shadow: none;
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  // ── Sidebar ──
+  .facilities-map-sidebar-aligner {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    margin: 0 auto;
+    pointer-events: none;
+  }
+
+  .facilities-map-sidebar {
+    width: @fm-sidebar-w;
+    height: 100%;
+    flex-shrink: 0;
+    background: @fm-surface;
+    border-right: 1px solid @fm-border;
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
+    z-index: 10;
+    pointer-events: auto;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.06);
+  }
+
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 18px 16px;
+    background: #0d4568;
+    color: #fff;
+
+    h1 {
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.25;
+      margin: 0;
+      color: #fff;
+    }
+
+    .subtitle {
+      font-size: 11px;
+      opacity: 0.75;
+      margin: 2px 0 0;
+    }
+  }
+
+  .eea-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.18);
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+  }
+
+  // ── Filter block ──
+  .filter-block {
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: 18px;
+    border-bottom: none;
+    overflow-y: auto;
+    overflow-x: visible;
+    scrollbar-width: thin;
+    scrollbar-color: #b9c1c9 transparent;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #b9c1c9;
+      border-radius: 999px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background: #9fa8b2;
+    }
+
+    &:has(.ui.dropdown.visible) {
+      overflow: visible;
+    }
+  }
+
+  .section-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: @fm-text-secondary;
+    margin: 0 0 14px;
+  }
+
+  .field-group {
+    margin-bottom: 14px;
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.25;
+      color: @v2-filter-text;
+      margin-bottom: 7px;
+    }
+  }
+
+  // Search
+  .search-wrapper {
+    position: relative;
+
+    input[type='text']::placeholder {
+      color: @v2-filter-placeholder;
+      opacity: 1;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 14px;
+      pointer-events: none;
+      color: @fm-text-secondary;
+    }
+
+    input[type='text'] {
+      width: 100%;
+      min-height: 38px;
+      padding: 8px 12px 8px 34px;
+      border: 1px solid @fm-border;
+      border-radius: @fm-radius;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.15s;
+      background: @fm-surface;
+      color: @v2-filter-control-text;
+
+      &:focus {
+        border-color: @fm-navy-mid;
+        box-shadow: @v2-filter-focus-shadow;
+      }
+    }
+  }
+
+  .suggestions-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: @fm-surface;
+    border: 1px solid @fm-border;
+    border-radius: @fm-radius;
+    box-shadow: @fm-shadow;
+    z-index: 100;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+
+    li {
+      padding: 9px 12px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: background 0.1s;
+
+      &:hover,
+      &.active {
+        background: @eea-blue-light;
+        color: @eea-blue;
+      }
+    }
+  }
+
+  // Shared Semantic dropdown/input styling comes from filterControls.less.
+
+  // Buttons — primary navy / clear-all orange link, like FacilitiesFilters.
+  .filter-actions {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 18px;
+    padding: 14px 18px;
+    border-top: 1px solid @fm-border-soft;
+    background: @fm-surface;
+  }
+
+  .btn-primary {
+    background: @fm-navy;
+    color: #fff;
+    border: none;
+    border-radius: 2px;
+    padding: 10px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+      background 0.15s,
+      transform 0.1s;
+
+    &:hover {
+      background: @fm-navy-mid;
+    }
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: @fm-orange;
+    border: none;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 8px 4px;
+    transition: color 0.15s;
+
+    &:hover {
+      color: @fm-orange-mid;
+    }
+  }
+
+  // Result count
+  .result-bar {
+    padding: 10px 18px;
+    background: #edf5fb;
+    border-bottom: 1px solid @fm-border;
+    font-size: 12px;
+    color: @fm-navy;
+    font-weight: 600;
+  }
+
+  // Legend
+  .legend-block {
+    padding: 18px;
+    margin-top: auto;
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: @fm-text-secondary;
+    }
+  }
+
+  // ── Map area ──
+  .facilities-map-main {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 0;
+  }
+
+  .facilities-map-shell {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 480px;
+
+    .ol-map-wrapper,
+    .ol-map {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  // Loading overlay
+  .loading-overlay {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(3px);
+    z-index: 50;
+    font-size: 14px;
+    font-weight: 600;
+    color: @eea-blue;
+  }
+
+  .spinner {
+    width: 28px;
+    height: 28px;
+    border: 3px solid @eea-blue-light;
+    border-top-color: @eea-blue;
+    border-radius: 50%;
+    animation: facilities-map-spin 0.7s linear infinite;
+  }
+}
+
+@keyframes facilities-map-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// ── Popup card ── lives in the OL overlay (outside the wrapper) so styled at root.
+#facilities-map-popup.map-popup {
+  position: relative;
+  background: #ffffff;
+  border: 1px solid rgba(13, 69, 104, 0.12);
+  border-radius: 6px;
+  box-shadow: 0 10px 28px rgba(16, 24, 40, 0.2);
+  min-width: 260px;
+  max-width: 320px;
+  pointer-events: none;
+  overflow: visible;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+
+  &.is-pinned {
+    pointer-events: auto;
+    user-select: text;
+  }
+
+  .popup-tip {
+    position: absolute;
+    bottom: -7px;
+    left: 50%;
+    width: 14px;
+    height: 14px;
+    background: #ffffff;
+    border-right: 1px solid rgba(13, 69, 104, 0.12);
+    border-bottom: 1px solid rgba(13, 69, 104, 0.12);
+    transform: translateX(-50%) rotate(45deg);
+  }
+
+  .popup-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: #0d4568;
+    color: #fff;
+    padding: 11px 14px;
+    border-radius: 6px 6px 0 0;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .popup-close {
+    user-select: none;
+    width: 22px;
+    height: 22px;
+    flex: 0 0 22px;
+    padding: 0;
+    background: rgba(255, 255, 255, 0.16);
+    border: 0;
+    border-radius: 50%;
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 20px;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.28);
+    }
+  }
+
+  .popup-body {
+    padding: 10px 14px 12px;
+  }
+
+  .popup-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 4px 0;
+    font-size: 12px;
+    border-bottom: 1px solid #dce3ea;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  .popup-label {
+    color: #5a6472;
+    font-weight: 500;
+    flex-shrink: 0;
+    margin-right: 8px;
+  }
+
+  .popup-value {
+    color: #1a1a2e;
+    font-weight: 600;
+    text-align: right;
+    word-break: break-all;
+  }
+
+  .popup-actions {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #dce3ea;
+  }
+
+  .popup-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 8px 10px;
+    background: #0d4568;
+    border-radius: 3px;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    user-select: none;
+
+    &:hover,
+    &:focus {
+      background: #123b5f;
+      color: #ffffff;
+      text-decoration: none;
+    }
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: capitalize;
+  }
+
+  .badge-functional {
+    background: #d4f5de;
+    color: #1d9c41;
+  }
+  .badge-decommissioned {
+    background: #fde8e8;
+    color: #c0392b;
+  }
+  .badge-unknown,
+  .badge- {
+    background: #eee;
+    color: #666;
+  }
+}

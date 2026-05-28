@@ -1,8 +1,10 @@
 import cx from 'classnames';
 import isPlainObject from 'lodash/isPlainObject';
 import pick from 'lodash/pick';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { compose } from 'redux';
+
+import { flattenToAppURL } from '@plone/volto/helpers/Url/Url';
 
 import { DataConnectedValue } from '@eeacms/volto-datablocks/Utils';
 import { connectToMultipleProviders } from '@eeacms/volto-datablocks/hocs';
@@ -52,28 +54,33 @@ function Value({
 }
 
 function View(props) {
-  const { providers_data, location, history, match, data } = props;
+  const { providers_data, location, history, match, data, properties } = props;
+  const contentPath = flattenToAppURL(properties?.['@id']);
   const { siteExplorer } = history.location.state || {};
   const params = new URLSearchParams(location.search);
   const parentPath = match?.url?.replace(/\/[^/]+$/, '') || '';
 
   const [expanded, setExpanded] = useState(true);
-  const [selectedInstallation, setSelectedInstallation] = useState(
-    params.get('installationInspireID') || null,
-  );
+  const selectedInstallationId =
+    params.get('installationInspireID') ||
+    providers_data.installations?.installationInspireID?.[0] ||
+    null;
 
   const facility = serializeRow(providers_data?.facility);
   const facilitiesLen = getProviderLength(providers_data.facilities);
 
   const facilitiesListRef = useRef(null);
   const selectedFacilityRef = useRef(null);
-  const scrollRestoredRef = useRef(false);
 
-  const updateQueryParam = (key, value) => {
-    params.set(key, value);
-    history.push({
+  const updateQueryParam = (key, value, method = 'push') => {
+    const nextParams = new URLSearchParams(
+      history.location?.search || location.search,
+    );
+    nextParams.set(key, value);
+    history[method]({
       pathname: location.pathname,
-      search: params.toString(),
+      search: nextParams.toString(),
+      state: history.location.state,
     });
   };
 
@@ -82,7 +89,6 @@ function View(props) {
     if (!id || facility?.facilityLocalId === id) {
       return;
     }
-    const historyState = history.location.state || {};
     const scrollTop = facilitiesListRef.current?.scrollTop ?? 0;
     const url = `${parentPath}/${id}`;
 
@@ -109,48 +115,61 @@ function View(props) {
 
   const goToInstallation = (row) => {
     const id = providers_data.installations?.installationInspireID?.[row];
-    if (!id || selectedInstallation === id) {
+    if (!id || selectedInstallationId === id) {
       return;
     }
-    setSelectedInstallation(id);
     updateQueryParam('installationInspireID', id);
   };
 
   useEffect(() => {
-    console.log('=== Mounted ===');
-  }, []);
+    const id = providers_data.installations?.installationInspireID?.[0];
+    const currentPath = history.location?.pathname;
+    const latestParams = new URLSearchParams(
+      history.location?.search || location.search,
+    );
 
-  useLayoutEffect(() => {
-    if (scrollRestoredRef.current || !selectedFacilityRef.current) return;
-    const { top: pTop } = facilitiesListRef.current.getBoundingClientRect();
-    const { top: cTop } = selectedFacilityRef.current.getBoundingClientRect();
-    const scrollTop = cTop - pTop;
-    facilitiesListRef.current.scrollTo({ top: scrollTop });
-    scrollRestoredRef.current = true;
-    console.log('=== SCROLLED ===');
-    // console.log('USE LAYOUT EFFECT', selectedFacilityRef.current);
-    // if (!facilitiesLen) return;
-    // const list = facilitiesListRef.current;
-    // if (!list) return;
-    // const savedScroll = history.location.state?.siteExplorer?.scrollTop;
-    // if (typeof savedScroll === 'number') {
-    //   list.scrollTop = savedScroll;
-    // } else if (selectedFacilityRef.current) {
-    //   const li = selectedFacilityRef.current;
-    //   list.scrollTop =
-    //     li.offsetTop - list.clientHeight / 2 + li.clientHeight / 2;
-    // }
-    // scrollRestoredRef.current = true;
-  }, [facilitiesLen]);
-
-  useEffect(() => {
-    const ids = providers_data.installations?.installationInspireID || [];
-    if (!selectedInstallation && ids.length) {
-      const id = ids[0];
-      setSelectedInstallation(id);
-      updateQueryParam('installationInspireID', id);
+    if (
+      !id ||
+      latestParams.get('installationInspireID') ||
+      currentPath !== contentPath
+    ) {
+      return;
     }
-  }, [selectedInstallation, providers_data.installations]);
+
+    updateQueryParam('installationInspireID', id, 'replace');
+  }, [
+    providers_data.installations?.installationInspireID,
+    contentPath,
+    history.location,
+    location,
+  ]);
+
+  // useEffect(() => {
+  //   console.log('=== Mounted ===');
+  // }, []);
+
+  // useLayoutEffect(() => {
+  //   if (scrollRestoredRef.current || !selectedFacilityRef.current) return;
+  //   const { top: pTop } = facilitiesListRef.current.getBoundingClientRect();
+  //   const { top: cTop } = selectedFacilityRef.current.getBoundingClientRect();
+  //   const scrollTop = cTop - pTop;
+  //   facilitiesListRef.current.scrollTo({ top: scrollTop });
+  //   scrollRestoredRef.current = true;
+  //   // console.log('=== SCROLLED ===');
+  //   // console.log('USE LAYOUT EFFECT', selectedFacilityRef.current);
+  //   // if (!facilitiesLen) return;
+  //   // const list = facilitiesListRef.current;
+  //   // if (!list) return;
+  //   // const savedScroll = history.location.state?.siteExplorer?.scrollTop;
+  //   // if (typeof savedScroll === 'number') {
+  //   //   list.scrollTop = savedScroll;
+  //   // } else if (selectedFacilityRef.current) {
+  //   //   const li = selectedFacilityRef.current;
+  //   //   list.scrollTop =
+  //   //     li.offsetTop - list.clientHeight / 2 + li.clientHeight / 2;
+  //   // }
+  //   // scrollRestoredRef.current = true;
+  // }, [facilitiesLen]);
 
   return (
     <div
@@ -268,7 +287,7 @@ function View(props) {
                 <li
                   key={id}
                   className={cx('list-card', {
-                    selected: selectedInstallation === id,
+                    selected: selectedInstallationId === id,
                   })}
                   role="link"
                   tabIndex={0}

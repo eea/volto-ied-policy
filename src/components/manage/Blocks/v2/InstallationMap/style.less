@@ -1,0 +1,466 @@
+@import (multiple, reference, optional) '../../../theme.config';
+
+@eea-blue: #004b7f;
+@eea-blue-mid: #006bad;
+@eea-blue-light: #e6f0f8;
+@eea-orange: #e8760a;
+@im-text-primary: #1a1a2e;
+@im-text-secondary: #5a6472;
+@im-border: #dce3ea;
+@im-surface: #ffffff;
+@im-panel-w: 300px;
+@im-radius: 8px;
+@im-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+
+.installation-map-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin: 28px auto 0;
+  height: 620px;
+  min-height: 560px;
+  overflow: hidden;
+  background: @im-surface;
+  color: @im-text-primary;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  border: 1px solid @im-border;
+  border-radius: 4px;
+  box-shadow: none;
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  // ── Header ──
+  .installation-map-header {
+    flex-shrink: 0;
+    background: #0d4568;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 12px 18px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+    z-index: 20;
+  }
+
+  .header-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  .eea-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.18);
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+  }
+
+  .header-titles {
+    h1 {
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.2;
+      margin: 0;
+      color: #fff;
+    }
+
+    .subtitle {
+      font-size: 11px;
+      opacity: 0.7;
+      margin: 2px 0 0;
+    }
+  }
+
+  .installation-map-legend {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px 16px;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+
+  .legend-dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex: 0 0 12px;
+    background: #004b7f;
+    border: 2px solid #ffffff;
+  }
+
+  .legend-dot--facility {
+    background: #004b7f;
+  }
+
+  .legend-dot--current-facility {
+    width: 16px;
+    height: 16px;
+    flex-basis: 16px;
+    background: #0d4568;
+    border: 3px solid #ffffff;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.18);
+  }
+
+  .legend-dot--installation {
+    background: #e8760a;
+  }
+
+  .legend-dot--selected-installation {
+    width: 16px;
+    height: 16px;
+    flex-basis: 16px;
+    background: #e8760a;
+    border: 3px solid #ffffff;
+    box-shadow: 0 0 0 3px rgba(232, 118, 10, 0.24);
+  }
+
+  .inst-count {
+    margin-left: auto;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    min-width: 100px;
+    text-align: center;
+  }
+
+  // ── Body row ──
+  .installation-map-body {
+    flex: 1;
+    display: flex;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .installation-map-main {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .installation-map-shell {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 480px;
+
+    .ol-map-wrapper,
+    .ol-map {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  // Loading overlay
+  .loading-overlay {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(3px);
+    z-index: 50;
+    font-size: 14px;
+    font-weight: 600;
+    color: @eea-blue;
+  }
+
+  .spinner {
+    width: 28px;
+    height: 28px;
+    border: 3px solid @eea-blue-light;
+    border-top-color: @eea-blue;
+    border-radius: 50%;
+    animation: installation-map-spin 0.7s linear infinite;
+  }
+
+  // Hint overlay
+  .hint-overlay {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.28);
+    z-index: 30;
+    pointer-events: none;
+  }
+
+  .hint-card {
+    background: @im-surface;
+    border-radius: 12px;
+    padding: 28px 36px;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.22);
+    max-width: 320px;
+
+    .hint-icon {
+      font-size: 40px;
+      margin-bottom: 12px;
+    }
+
+    p {
+      font-size: 14px;
+      color: @im-text-secondary;
+      line-height: 1.5;
+      margin: 0;
+    }
+  }
+
+  // ── Side panel ──
+  .installation-side-panel {
+    width: @im-panel-w;
+    flex-shrink: 0;
+    background: @im-surface;
+    border-left: 1px solid @im-border;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+  }
+
+  .panel-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: @im-text-secondary;
+    text-transform: uppercase;
+    margin: 0 0 14px;
+  }
+
+  .panel-empty {
+    font-size: 13px;
+    color: @im-text-secondary;
+    padding: 20px 0;
+    text-align: center;
+  }
+
+  .facility-info {
+    background: @eea-blue-light;
+    border: 1px solid #c5dcf0;
+    border-radius: @im-radius;
+    padding: 12px;
+    margin-bottom: 16px;
+    font-size: 12px;
+
+    .info-row {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 5px;
+      line-height: 1.3;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    .info-label {
+      font-weight: 600;
+      color: @eea-blue;
+      min-width: 70px;
+      flex-shrink: 0;
+    }
+
+    .info-value {
+      color: @im-text-primary;
+      word-break: break-all;
+    }
+  }
+
+  .inst-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .inst-card {
+    border: 1px solid @im-border;
+    border-radius: @im-radius;
+    padding: 10px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    transition:
+      border-color 0.15s,
+      box-shadow 0.15s;
+    outline: none;
+
+    &:hover,
+    &:focus-visible {
+      border-color: @eea-orange;
+      box-shadow: 0 0 0 2px rgba(232, 118, 10, 0.12);
+    }
+
+    &.inst-card--selected {
+      border-color: @eea-orange;
+      background: #fff4e6;
+      box-shadow: 0 0 0 2px rgba(232, 118, 10, 0.3);
+
+      .inst-id {
+        color: #bf5900;
+      }
+    }
+
+    .inst-id {
+      font-weight: 700;
+      color: @eea-orange;
+      margin-bottom: 4px;
+      word-break: break-all;
+    }
+
+    .inst-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 5px;
+    }
+
+    .inst-activity {
+      font-size: 11px;
+      color: @im-text-secondary;
+      margin-top: 4px;
+    }
+  }
+
+  .inst-tag {
+    background: @eea-blue-light;
+    color: @eea-blue;
+    padding: 2px 7px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 600;
+  }
+}
+
+@keyframes installation-map-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// ── Popup card (lives in an OL overlay at the page root) ──
+.installation-map-popup {
+  position: relative;
+  background: #ffffff;
+  border: 1px solid rgba(232, 118, 10, 0.16);
+  border-radius: 6px;
+  box-shadow: 0 10px 28px rgba(16, 24, 40, 0.2);
+  min-width: 240px;
+  max-width: 300px;
+  pointer-events: none;
+  overflow: visible;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+
+  .popup-tip {
+    position: absolute;
+    bottom: -7px;
+    left: 50%;
+    width: 14px;
+    height: 14px;
+    background: #ffffff;
+    border-right: 1px solid rgba(232, 118, 10, 0.16);
+    border-bottom: 1px solid rgba(232, 118, 10, 0.16);
+    transform: translateX(-50%) rotate(45deg);
+  }
+
+  .popup-header {
+    background: #e8760a;
+    color: #fff;
+    padding: 9px 12px;
+    border-radius: 6px 6px 0 0;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  &.facility-popup {
+    border-color: rgba(13, 69, 104, 0.16);
+
+    .popup-header {
+      background: #0d4568;
+    }
+
+    .popup-tip {
+      border-right-color: rgba(13, 69, 104, 0.16);
+      border-bottom-color: rgba(13, 69, 104, 0.16);
+    }
+  }
+
+  .popup-body {
+    padding: 8px 12px 10px;
+  }
+
+  .popup-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 3px 0;
+    font-size: 11px;
+    border-bottom: 1px solid #dce3ea;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  .popup-label {
+    color: #5a6472;
+    font-weight: 500;
+    margin-right: 6px;
+    flex-shrink: 0;
+  }
+
+  .popup-value {
+    color: #1a1a2e;
+    font-weight: 600;
+    text-align: right;
+    word-break: break-all;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: capitalize;
+  }
+
+  .badge-functional {
+    background: #d4f5de;
+    color: #1d9c41;
+  }
+  .badge-decommissioned {
+    background: #fde8e8;
+    color: #c0392b;
+  }
+  .badge-unknown,
+  .badge- {
+    background: #eee;
+    color: #666;
+  }
+}
