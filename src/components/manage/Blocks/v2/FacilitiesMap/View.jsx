@@ -621,7 +621,9 @@ const View = (props) => {
           <div className="result-bar">
             {featureCount === null
               ? 'Loading…'
-              : `${featureCount.toLocaleString()} ${featureCount === 1 ? 'facility' : 'facilities'} shown`}
+              : `${featureCount.toLocaleString()} ${
+                  featureCount === 1 ? 'facility' : 'facilities'
+                } shown`}
           </div>
           <div className="legend-block">
             <h2 className="section-title">Legend</h2>

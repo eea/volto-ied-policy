@@ -95,7 +95,9 @@ function InstallationPopup({ mapElementId }) {
   return (
     <div
       id={`${mapElementId}-popup`}
-      className={`map-popup installation-map-popup ${isFacility ? 'facility-popup' : 'installation-popup'}`}
+      className={`map-popup installation-map-popup ${
+        isFacility ? 'facility-popup' : 'installation-popup'
+      }`}
     >
       <div className="popup-tip" />
       <div className="popup-header">
@@ -467,7 +469,9 @@ const View = (props) => {
 
   const hasSite = !!siteInspireID;
   const instCountText = hasSite
-    ? `${facilities.length} facilit${facilities.length === 1 ? 'y' : 'ies'} · ${installations.length} installation${installations.length !== 1 ? 's' : ''}`
+    ? `${facilities.length} facilit${facilities.length === 1 ? 'y' : 'ies'} · ${
+        installations.length
+      } installation${installations.length !== 1 ? 's' : ''}`
     : '';
 
   return (
