@@ -10,7 +10,7 @@ export const getSiteLocationURL = (siteInspireId, siteReportingYear) => {
   return `https://air.discomap.eea.europa.eu/arcgis/rest/services/Air/IED_SiteMap/MapServer/0/query?f=json&where=${condition}&returnGeometry=true&spatialRel=esriSpatialRelIntersects&outFields=InspireSiteId&outSR=102100`;
 };
 
-export default (config) => {
+const applyConfig = (config) => {
   config.blocks.blocksConfig.site_location = {
     id: 'site_location',
     title: 'Site location',
@@ -28,3 +28,5 @@ export default (config) => {
   };
   return config;
 };
+
+export default applyConfig;
