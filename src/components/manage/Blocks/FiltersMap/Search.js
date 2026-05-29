@@ -299,13 +299,6 @@ const Search = ({
         },
       });
 
-      console.log('WTFFF', {
-        filter_change: {
-          counter: (query['filter_change']?.counter || 0) + 1,
-          type: value && type ? `search-${type}` : 'clear',
-        },
-      });
-
       // Clear all URL params and only set the search param
       const urlParams = new URLSearchParams();
 

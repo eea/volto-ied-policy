@@ -144,33 +144,6 @@ function View(props) {
     location,
   ]);
 
-  // useEffect(() => {
-  //   console.log('=== Mounted ===');
-  // }, []);
-
-  // useLayoutEffect(() => {
-  //   if (scrollRestoredRef.current || !selectedFacilityRef.current) return;
-  //   const { top: pTop } = facilitiesListRef.current.getBoundingClientRect();
-  //   const { top: cTop } = selectedFacilityRef.current.getBoundingClientRect();
-  //   const scrollTop = cTop - pTop;
-  //   facilitiesListRef.current.scrollTo({ top: scrollTop });
-  //   scrollRestoredRef.current = true;
-  //   // console.log('=== SCROLLED ===');
-  //   // console.log('USE LAYOUT EFFECT', selectedFacilityRef.current);
-  //   // if (!facilitiesLen) return;
-  //   // const list = facilitiesListRef.current;
-  //   // if (!list) return;
-  //   // const savedScroll = history.location.state?.siteExplorer?.scrollTop;
-  //   // if (typeof savedScroll === 'number') {
-  //   //   list.scrollTop = savedScroll;
-  //   // } else if (selectedFacilityRef.current) {
-  //   //   const li = selectedFacilityRef.current;
-  //   //   list.scrollTop =
-  //   //     li.offsetTop - list.clientHeight / 2 + li.clientHeight / 2;
-  //   // }
-  //   // scrollRestoredRef.current = true;
-  // }, [facilitiesLen]);
-
   return (
     <div
       className={cx('site-explorer', { 'site-explorer--expanded': expanded })}
