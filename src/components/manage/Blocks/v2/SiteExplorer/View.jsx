@@ -43,6 +43,7 @@ function Value({
       column={column}
       data={{
         allowedParams: provider?.allowedParams,
+        waitForParams: true,
       }}
       placeholder={placeholder}
       url={provider?.provider_url}
@@ -302,6 +303,7 @@ export default compose(
     ).map(([name, provider]) => ({
       name,
       provider_url: provider.provider_url,
+      waitForParams: true,
       data: {
         allowedParams: provider.allowedParams,
       },

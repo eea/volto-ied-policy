@@ -23,6 +23,7 @@ function Value({
       column={column}
       data={{
         allowedParams: provider.allowedParams,
+        waitForParams: true,
       }}
       placeholder={placeholder}
       url={provider.provider_url}
@@ -131,11 +132,8 @@ function View(props) {
 }
 
 export default compose(
-  connectToProviderData(({ location, data }) => {
-    const params = new URLSearchParams(location.search);
-    const hasAllParams = data.allowedParams?.every((p) => params.has(p));
-    return {
-      provider_url: hasAllParams ? data.provider_url : null,
-    };
-  }),
+  connectToProviderData(({ data }) => ({
+    provider_url: data.provider_url,
+    waitForParams: true,
+  })),
 )(View);
