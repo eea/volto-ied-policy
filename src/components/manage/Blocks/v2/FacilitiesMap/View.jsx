@@ -472,13 +472,6 @@ const View = (props) => {
     <div className="facilities-map-wrapper full-width">
       <div className="ui container facilities-map-sidebar-aligner">
         <aside className="facilities-map-sidebar">
-          <div className="sidebar-header">
-            <span className="eea-badge">EEA</span>
-            <div>
-              <h1>Explore Facilities</h1>
-              <p className="subtitle">IEPR Facility Map</p>
-            </div>
-          </div>
           <div className="filter-block">
             <h2 className="section-title">Filters</h2>
             <div className="field-group">
