@@ -115,7 +115,7 @@ function FacilityPopup({ mapElementId }) {
   const status = (data.facilityStatus || '').toLowerCase();
   const facilityInspireID = data.facilityInspireID || data.inspireId || '';
   const facilityHref = facilityInspireID
-    ? `/facility/${encodeURIComponent(facilityInspireID)}`
+    ? `/sandbox/v2/facility/${encodeURIComponent(facilityInspireID)}`
     : '';
   return (
     <div
