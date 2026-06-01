@@ -120,8 +120,13 @@ function FacilityPopup({ mapElementId }) {
   return (
     <div
       id="facilities-map-popup"
+      role="dialog"
+      aria-label="Facility details"
       className={`map-popup ${popup?.pinned ? 'is-pinned' : ''}`}
       onClick={(e) => {
+        if (popup?.pinned) e.stopPropagation();
+      }}
+      onKeyDown={(e) => {
         if (popup?.pinned) e.stopPropagation();
       }}
       onDoubleClick={(e) => {
@@ -244,6 +249,7 @@ const View = (props) => {
       .then((data) => {
         if (alive) setAllGeoJSON(data);
       })
+      // eslint-disable-next-line no-console
       .catch((err) => console.error('Failed to load facilities:', err))
       .finally(() => {
         if (alive) setLoading(false);
@@ -502,6 +508,7 @@ const View = (props) => {
                       <li
                         key={s}
                         role="option"
+                        aria-selected={false}
                         onMouseDown={() => {
                           const next = { ...draft, name: s };
                           setDraft(next);
