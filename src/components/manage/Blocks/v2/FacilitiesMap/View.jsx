@@ -114,7 +114,7 @@ function FacilityPopup({ mapElementId }) {
   const country = COUNTRY_NAMES[data.countryCode] || data.countryCode || '—';
   const status = (data.facilityStatus || '').toLowerCase();
   const facilityLocalId = data.facilityLocalId || '';
-  const facilityHref = facilityInspireID
+  const facilityHref = facilityLocalId
     ? `/sandbox/v2/facility/${encodeURIComponent(facilityLocalId)}`
     : '';
   return (
