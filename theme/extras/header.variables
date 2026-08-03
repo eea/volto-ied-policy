@@ -2,6 +2,10 @@
    HEADER MAIN SECTION
 -----------------------*/
 
+/* Main section */
+@computerMainSectionHeight: 180px;
+@computerLogoMarginTop: 0;
+
 /* Search box */
 @searchBoxBackgroundGradient  : linear-gradient(45deg, @primaryColor 12%, @secondaryColor 80%);
 @megaMenuBackgroundColor      : linear-gradient(45deg, @primaryColor 12%, @secondaryColor 80%);
