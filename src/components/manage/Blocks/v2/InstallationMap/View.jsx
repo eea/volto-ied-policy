@@ -35,7 +35,7 @@ const getConnectedParamsForPath = (connectedDataParameters, location) => {
 };
 
 const spreadOverlappingFeatures = (features) => {
-  const groups = new globalThis.Map();
+  const groups = new window.Map();
   features.forEach((feature) => {
     const coord = feature.getGeometry()?.getCoordinates();
     if (!coord) return;

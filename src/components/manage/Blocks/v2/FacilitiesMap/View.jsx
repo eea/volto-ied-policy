@@ -118,6 +118,8 @@ function FacilityPopup({ mapElementId }) {
     ? `/sandbox/v2/facility/${encodeURIComponent(facilityLocalId)}`
     : '';
   return (
+    // The popup must intercept map gestures while it is pinned.
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
     <div
       id="facilities-map-popup"
       role="dialog"

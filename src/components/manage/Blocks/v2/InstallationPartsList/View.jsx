@@ -96,33 +96,34 @@ function View(props) {
     <div className="panel installation-parts-panel">
       <ol className="entities-list installation-parts-list">
         {(provider_data?.partInspireID || []).map((id, row) => (
-          <li
-            key={id}
-            className={cx('list-card', {
-              selected: selectedPartId === id,
-            })}
-            role="link"
-            tabIndex={0}
-            onClick={() => {
-              goToPart(row);
-            }}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
+          <li key={id}>
+            <div
+              className={cx('list-card', {
+                selected: selectedPartId === id,
+              })}
+              role="link"
+              tabIndex={0}
+              onClick={() => {
                 goToPart(row);
-              }
-            }}
-          >
-            <p className="list-card-title">
-              <span className="list-card-index">{row + 1}.</span>
-              <Value
-                provider={data}
-                column="partInspireID"
-                row={row}
-                skeletonWidth="100px"
-              />
-            </p>
-            <div className="list-card-content">
-              <p>Iron and steal production (placeholder)</p>
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  goToPart(row);
+                }
+              }}
+            >
+              <p className="list-card-title">
+                <span className="list-card-index">{row + 1}.</span>
+                <Value
+                  provider={data}
+                  column="partInspireID"
+                  row={row}
+                  skeletonWidth="100px"
+                />
+              </p>
+              <div className="list-card-content">
+                <p>Iron and steal production (placeholder)</p>
+              </div>
             </div>
           </li>
         ))}

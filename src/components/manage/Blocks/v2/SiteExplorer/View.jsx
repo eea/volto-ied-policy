@@ -212,38 +212,39 @@ function View(props) {
             <ol className="entities-list facilities-list">
               {((providers_data.facilities || {}).facilityLocalId || []).map(
                 (id, row) => (
-                  <li
-                    key={id}
-                    ref={
-                      facility?.facilityLocalId === id
-                        ? selectedFacilityRef
-                        : null
-                    }
-                    className={cx('list-card', {
-                      selected: facility?.facilityLocalId === id,
-                    })}
-                    role="link"
-                    tabIndex={0}
-                    onClick={() => {
-                      goToFacility(row);
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        goToFacility(row);
+                  <li key={id}>
+                    <div
+                      ref={
+                        facility?.facilityLocalId === id
+                          ? selectedFacilityRef
+                          : null
                       }
-                    }}
-                  >
-                    <p className="list-card-title">
-                      <span className="list-card-index">{row + 1}.</span>
-                      <Value
-                        provider={data.facilities}
-                        column="facilityInspireID"
-                        row={row}
-                        skeleton={false}
-                      />
-                    </p>
-                    <div className="list-card-content">
-                      <p>SC COMP ANNEX ROMANIA SA (placeholder)</p>
+                      className={cx('list-card', {
+                        selected: facility?.facilityLocalId === id,
+                      })}
+                      role="link"
+                      tabIndex={0}
+                      onClick={() => {
+                        goToFacility(row);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          goToFacility(row);
+                        }
+                      }}
+                    >
+                      <p className="list-card-title">
+                        <span className="list-card-index">{row + 1}.</span>
+                        <Value
+                          provider={data.facilities}
+                          column="facilityInspireID"
+                          row={row}
+                          skeleton={false}
+                        />
+                      </p>
+                      <div className="list-card-content">
+                        <p>SC COMP ANNEX ROMANIA SA (placeholder)</p>
+                      </div>
                     </div>
                   </li>
                 ),
@@ -258,33 +259,34 @@ function View(props) {
               {(
                 (providers_data.installations || {}).installationInspireID || []
               ).map((id, row) => (
-                <li
-                  key={id}
-                  className={cx('list-card', {
-                    selected: selectedInstallationId === id,
-                  })}
-                  role="link"
-                  tabIndex={0}
-                  onClick={() => {
-                    goToInstallation(row);
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
+                <li key={id}>
+                  <div
+                    className={cx('list-card', {
+                      selected: selectedInstallationId === id,
+                    })}
+                    role="link"
+                    tabIndex={0}
+                    onClick={() => {
                       goToInstallation(row);
-                    }
-                  }}
-                >
-                  <p className="list-card-title">
-                    <span className="list-card-index">{row + 1}.</span>
-                    <Value
-                      provider={data.installations}
-                      column="installationInspireID"
-                      row={row}
-                      skeleton={false}
-                    />
-                  </p>
-                  <div className="list-card-content">
-                    <p>Iron and Steel Production (placeholder)</p>
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        goToInstallation(row);
+                      }
+                    }}
+                  >
+                    <p className="list-card-title">
+                      <span className="list-card-index">{row + 1}.</span>
+                      <Value
+                        provider={data.installations}
+                        column="installationInspireID"
+                        row={row}
+                        skeleton={false}
+                      />
+                    </p>
+                    <div className="list-card-content">
+                      <p>Iron and Steel Production (placeholder)</p>
+                    </div>
                   </div>
                 </li>
               ))}

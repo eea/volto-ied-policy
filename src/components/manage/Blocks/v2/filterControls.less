@@ -11,15 +11,15 @@
     border: 1px solid @v2-filter-border;
     border-radius: @v2-filter-radius;
     background: @v2-filter-control-bg;
+    box-shadow: none;
     color: @v2-filter-control-text;
     font-size: 13px;
-    box-shadow: none;
 
     &:focus,
     &:focus-within {
       border-color: @v2-filter-navy-mid;
-      color: @v2-filter-control-text;
       box-shadow: @v2-filter-focus-shadow;
+      color: @v2-filter-control-text;
     }
 
     &:focus::placeholder,
@@ -36,9 +36,9 @@
     align-items: center;
 
     .text {
+      color: @v2-filter-control-text !important;
       font-size: 13px;
       font-weight: 400;
-      color: @v2-filter-control-text !important;
 
       &.default {
         color: @v2-filter-placeholder !important;
@@ -46,12 +46,12 @@
     }
 
     .menu {
-      overflow-x: hidden;
-      overflow-y: auto;
-      margin-top: 8px;
       border: 1px solid @v2-filter-border !important;
       border-radius: @v2-filter-radius;
+      margin-top: 8px;
       background: @v2-filter-control-bg;
+      overflow-x: hidden;
+      overflow-y: auto;
       // box-shadow: 0 12px 26px rgba(16, 24, 40, 0.14);
 
       .item {
@@ -74,7 +74,6 @@
 
         &.selected::after,
         &.active::after {
-          content: '';
           position: absolute;
           top: 50%;
           right: 16px;
@@ -82,6 +81,7 @@
           height: 14px;
           border-right: 2px solid @v2-filter-selected-check;
           border-bottom: 2px solid @v2-filter-selected-check;
+          content: '';
           transform: translateY(-60%) rotate(45deg);
         }
       }
@@ -98,19 +98,19 @@
       right: 14px;
       width: 9px;
       height: 9px;
-      margin: 0;
       padding: 0;
+      margin: 0;
       color: transparent;
       opacity: 1;
       transform: translateY(-65%) rotate(45deg);
 
       &::before {
-        content: '';
         display: block;
         width: 9px;
         height: 9px;
         border-right: 1.5px solid #9aa3ad;
         border-bottom: 1.5px solid #9aa3ad;
+        content: '';
       }
     }
 
@@ -122,10 +122,10 @@
     &.upward.visible {
       border-color: @v2-filter-navy-mid;
       border-radius: @v2-filter-radius !important;
-      border-top-left-radius: @v2-filter-radius !important;
-      border-top-left-radius: @v2-filter-radius !important;
       border-bottom-left-radius: @v2-filter-radius !important;
       border-bottom-right-radius: @v2-filter-radius !important;
+      border-top-left-radius: @v2-filter-radius !important;
+      border-top-left-radius: @v2-filter-radius !important;
       box-shadow: @v2-filter-focus-shadow !important;
 
       .text,
@@ -137,8 +137,8 @@
       .text.default,
       input.search::placeholder {
         color: @v2-filter-placeholder !important;
-        -webkit-text-fill-color: @v2-filter-placeholder !important;
         opacity: 1;
+        -webkit-text-fill-color: @v2-filter-placeholder !important;
       }
     }
 
@@ -148,10 +148,10 @@
   }
 
   && .ui.multiple.selection.dropdown {
+    overflow: visible !important;
     height: auto;
     min-height: 38px;
     flex-wrap: wrap;
-    overflow: visible !important;
     white-space: normal;
 
     > input.search {
@@ -176,8 +176,8 @@
   && .ui.search.selection.dropdown.active > input.search::placeholder,
   && .ui.search.selection.dropdown.visible > input.search::placeholder {
     color: @v2-filter-placeholder !important;
-    -webkit-text-fill-color: @v2-filter-placeholder !important;
     opacity: 1;
+    -webkit-text-fill-color: @v2-filter-placeholder !important;
   }
 
   && .ui.input.focus > input,
@@ -198,9 +198,9 @@
   && .v2-applied-chips {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
-    margin: 6px 0 0;
     padding: 0;
+    margin: 6px 0 0;
+    gap: 6px;
     list-style: none;
   }
 
@@ -208,12 +208,12 @@
     display: inline-flex;
     max-width: 100%;
     align-items: center;
-    gap: 6px;
     padding: 4px 7px 4px 8px;
-    background: #ededed;
     border-radius: 2px;
+    background: #ededed;
     color: #333333;
     font-size: 12px;
+    gap: 6px;
     line-height: 1.25;
   }
 
@@ -231,8 +231,8 @@
     align-items: center;
     justify-content: center;
     padding: 0;
-    background: transparent;
     border: 0;
+    background: transparent;
     color: #777;
     cursor: pointer;
     font-size: 14px;

@@ -70,8 +70,8 @@ const View = (props) => {
                           a.derogationBATAELName > b.derogationBATAELName
                             ? 1
                             : b.derogationBATAELName > a.derogationBATAELName
-                            ? -1
-                            : 0,
+                              ? -1
+                              : 0,
                         );
 
                       return (

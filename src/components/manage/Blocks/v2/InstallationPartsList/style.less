@@ -1,9 +1,9 @@
 .installation-parts-panel {
   max-height: 350px;
-  overflow-y: auto;
-  scrollbar-width: none;
   /* Firefox */
   -ms-overflow-style: none;
+  overflow-y: auto;
+  scrollbar-width: none;
   /* IE/Edge */
 
   &::-webkit-scrollbar {
@@ -14,20 +14,20 @@
   .entities-list {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    margin: 0;
     padding: 0;
+    margin: 0;
+    gap: 4px;
     list-style: none;
 
     .list-card {
       position: relative;
       display: flex;
       flex-direction: column;
-      background-color: #F6F6F6;
       padding: 12px 20px 12px 40px;
       border-radius: 2px;
-      font-size: 14px;
+      background-color: #f6f6f6;
       cursor: pointer;
+      font-size: 14px;
 
       p {
         margin: 0;
@@ -35,19 +35,19 @@
 
       .list-card-title {
         position: relative;
-        font-weight: bold;
         color: #666;
+        font-weight: bold;
       }
 
       .list-card-index {
         position: absolute;
-        left: -2px;
         top: 0;
+        left: -2px;
         transform: translateX(-100%);
       }
 
       &.selected {
-        background-color: #4295B3;
+        background-color: #4295b3;
         color: #fff;
 
         .list-card-title {
