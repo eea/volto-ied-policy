@@ -331,7 +331,7 @@ const View = (props) => {
       if (p?.countryCode) set.add(p.countryCode);
     });
     return [...set]
-      .sort()
+      .sort((a, b) => a.localeCompare(b))
       .map((c) => ({ key: c, value: c, text: COUNTRY_NAMES[c] || c }));
   }, [allGeoJSON]);
 
@@ -341,7 +341,9 @@ const View = (props) => {
     allGeoJSON.features.forEach(({ properties: p }) => {
       if (p?.EPRTRAnnexIMainActivity) set.add(p.EPRTRAnnexIMainActivity);
     });
-    return [...set].sort().map((s) => ({ key: s, value: s, text: s }));
+    return [...set]
+      .sort((a, b) => a.localeCompare(b))
+      .map((s) => ({ key: s, value: s, text: s }));
   }, [allGeoJSON]);
 
   const reportingYearOptions = React.useMemo(

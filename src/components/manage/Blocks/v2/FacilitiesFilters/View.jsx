@@ -146,8 +146,8 @@ const View = (props) => {
         });
         setOptions({
           years: [...years].sort((x, y) => y - x),
-          countries: [...countries].sort(),
-          sectors: [...sectors].sort(),
+          countries: [...countries].sort((a, b) => a.localeCompare(b)),
+          sectors: [...sectors].sort((a, b) => a.localeCompare(b)),
         });
       })
       .catch((err) => {
