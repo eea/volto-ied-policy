@@ -4,7 +4,8 @@ import { compose } from 'redux';
 import { Icon, UniversalLink } from '@plone/volto/components';
 import { Table, Menu, Loader } from 'semantic-ui-react';
 import cx from 'classnames';
-import { setQuery } from '@eeacms/volto-ied-policy/actions';
+import { setIndustryMapFilters } from '@eeacms/volto-ied-policy/actions';
+import { searchParamsToFilters } from '@eeacms/volto-ied-policy/components/manage/Blocks/IndustryMap/urlFilters';
 
 import leftSVG from '@plone/volto/icons/left-key.svg';
 import rightSVG from '@plone/volto/icons/right-key.svg';
@@ -232,7 +233,7 @@ const IndustryDataTable = (props) => {
                                 <div className="flex align-center flex-grow">
                                   <UniversalLink
                                     className="solid red"
-                                    href={`/industrial-emissions/industrial-site?siteInspireId=${tableData?.['Site Inspire ID']?.[i]}&siteName=${tableData?.['siteName']?.[i]}&siteReportingYear=${tableData?.['Site_reporting_year']?.[i]}&lng=${tableData?.['x']?.[i]}&lat=${tableData?.['y']?.[i]}`}
+                                    href={`/industrial-emissions/industrial-site?siteInspireId=${tableData?.['Site Inspire ID']?.[i]}&siteName=${tableData?.['siteName']?.[i]}&siteReportingYear=${tableData?.['Site_reporting_year']?.[i]}`}
                                   >
                                     Site details
                                   </UniversalLink>
@@ -315,8 +316,11 @@ const IndustryDataTable = (props) => {
 export default compose(
   connect(
     (state) => ({
-      query: state.query.search,
+      query: {
+        ...searchParamsToFilters(state.router.location?.search || ''),
+        ...(state.industryMapFilters?.search || {}),
+      },
     }),
-    { setQuery },
+    { setIndustryMapFilters },
   ),
 )(IndustryDataTable);

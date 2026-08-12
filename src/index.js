@@ -1,28 +1,17 @@
+import { Sitemap } from '@plone/volto/components';
 import { getBlocks } from '@plone/volto/helpers';
 import installLink from '@plone/volto-slate/editor/plugins/AdvancedLink';
-import { addStylingFieldsetSchemaEnhancer } from '@eeacms/volto-ied-policy/components/manage/Blocks/schema';
-import documentIcon from '@plone/volto/icons/doument-details.svg';
-import sliderSVG from '@plone/volto/icons/slider.svg';
 
-import installBlocks from './components/manage/Blocks';
-import installStyles from './styles-config';
-import iconSVG from '@plone/volto/icons/tag.svg';
+import { addStylingFieldsetSchemaEnhancer } from '@eeacms/volto-ied-policy/components/manage/Blocks/schema';
+import ecLogo from '@eeacms/volto-ied-policy/../theme/assets/logos/logo-ec.svg';
 import iedLogo from '@eeacms/volto-ied-policy/../theme/assets/images/Header/Emissions_portal_negative.svg';
 import iedLogoBlack from '@eeacms/volto-ied-policy/../theme/assets/images/Header/Emissions_portal_colour.svg';
-import ecLogo from '@eeacms/volto-ied-policy/../theme/assets/logos/logo-ec.svg';
-import ListView from './components/manage/Blocks/ConnectedList/View.jsx';
-import EditView from './components/manage/Blocks/ConnectedList/Edit.jsx';
-import getSchema from './components/manage/Blocks/ConnectedList/schema.js';
-import PollutantIndexView from './components/manage/Blocks/PolluantsTable/View';
-import PollutantIndexEdit from './components/manage/Blocks/PolluantsTable/Edit';
-import addonReducers from './reducers';
-import IndustryDataTable from './components/IndustryDataTableVariation.jsx';
-import TableauEdit from './components/manage/Blocks/SiteTableau/Edit';
-import TableauView from './components/manage/Blocks/SiteTableau/View';
 
-import installSiteBlocks from './components/manage/Blocks/SiteBlocks/index.js';
+import IndustryDataTable from './components/IndustryDataTableVariation.jsx';
 import RedirectView from './components/manage/Views/RedirectView.jsx';
-import { Sitemap } from '@plone/volto/components';
+import installBlocks from './components/manage/Blocks';
+import installStyles from './styles-config';
+import addonReducers from './reducers';
 
 const restrictedBlocks = ['imagecards', 'embed_eea_tableau_block'];
 
@@ -35,157 +24,44 @@ const customBlocks = [
   'navigationBlock',
 ];
 
-const n2kLanguages = [
-  { name: 'Български', code: 'bg' },
-  { name: 'čeština', code: 'cs' },
-  { name: 'Hrvatski', code: 'hr' },
-  { name: 'dansk', code: 'da' },
-  { name: 'Nederlands', code: 'nl' },
-  { name: 'ελληνικά', code: 'el' },
-  { name: 'English', code: 'en' },
-  { name: 'eesti', code: 'et' },
-  { name: 'Suomi', code: 'fi' },
-  { name: 'Français', code: 'fr' },
-  { name: 'Deutsch', code: 'de' },
-  { name: 'magyar', code: 'hu' },
-  { name: 'Irish', code: 'ga' },
-  { name: 'italiano', code: 'it' },
-  { name: 'Latviešu', code: 'lv' },
-  { name: 'lietuvių', code: 'lt' },
-  { name: 'Malti', code: 'mt' },
-  { name: 'polski', code: 'pl' },
-  { name: 'Português', code: 'pt' },
-  { name: 'Română', code: 'ro' },
-  { name: 'slovenčina', code: 'sk' },
-  { name: 'Slovenščina', code: 'sl' },
-  { name: 'Español', code: 'es' },
-  { name: 'Svenska', code: 'sv' },
-];
-
 const applyConfig = (config) => {
-  // Volto specific settings
-
+  // ---------- Core settings ----------
   config.settings = {
     ...config.settings,
     navDepth: 3,
+    isMultilingual: false,
+    defaultLanguage: config.settings.eea?.defaultLanguage || 'en',
+    providerUrl: 'https://discodata.eea.europa.eu/sql',
   };
 
-  // Add route for subsite sitemap pages (e.g., /industrial-emissions/sitemap)
+  // ---------- Routes ----------
+  // Subsite sitemap pages (e.g., /industrial-emissions/sitemap)
   config.addonRoutes = [
     ...(config.addonRoutes || []),
-    {
-      path: '/**/sitemap',
-      component: Sitemap,
-    },
+    { path: '/**/sitemap', component: Sitemap },
   ];
 
-  config = installSiteBlocks(config);
-  config = installSiteBlocks(config);
-  config.blocks.blocksConfig.site_tableau_block = {
-    id: 'site_tableau_block',
-    title: 'Site tableau',
-    icon: sliderSVG,
-    group: 'data_blocks',
-    edit: TableauEdit,
-    view: TableauView,
-    restricted: false,
-    mostUsed: false,
-    sidebarTab: 1,
-    blocks: {},
-    security: {
-      addPermission: [],
-      view: [],
-    },
-    breakpoints: {
-      desktop: [Infinity, 982],
-      tablet: [981, 768],
-      mobile: [767, 0],
-    },
-    defaultProviderUrl: '/data-connectors/site-flags',
-  };
-  config.views.contentTypesViews.redirect = RedirectView;
-
-  config.blocks.blocksConfig.polluantTable = {
-    id: 'polluantTable',
-    title: 'Pollutant index',
-    icon: documentIcon,
-    group: 'eprtr_blocks',
-    view: PollutantIndexView,
-    edit: PollutantIndexEdit,
-    restricted: false,
-    mostUsed: false,
-    sidebarTab: 1,
-    schema: getSchema,
-    security: {
-      addPermission: [],
-      view: [],
-    },
-  };
-  // config.blocks.blocksConfig.siteHeader = {
-  //   view: SiteHeader,
-  //   edit: SiteHeader,
-  //   title: 'Site header',
-  //   getSchema: siteHeaderSchema,
-  //   id: 'siteHeader',
-  //   icon: documentIcon,
-  //   group: 'eprtr_blocks',
-  // };
-
-  // config.blocks.blocksConfig.regularitory_site_details = {
-  //   view: RegulatorySiteDetails,
-  //   edit: RegulatorySiteDetails,
-  //   schema: RegulatorySiteDetailsSchema,
-  //   id: 'regularitory_site_details',
-  //   icon: documentIcon,
-  //   group: 'eprtr_blocks',
-  //   title: 'Regulatory Site Details',
-  // };
-
-  // config.blocks.blocksConfig.regularitory_site_permits = {
-  //   view: RegulatoryPermits,
-  //   edit: RegulatoryPermits,
-  //   schema: RegulatoryPermitsSchema,
-  //   id: 'regularitory_site_permits',
-  //   icon: documentIcon,
-  //   group: 'eprtr_blocks',
-  //   title: 'Regulatory Permits',
-  // };
-  // config.blocks.blocksConfig.regulatory_bat = {
-  //   view: RegulatoryBAT,
-  //   edit: RegulatoryBAT,
-  //   schema: RegulatoryBATSchema,
-  //   id: 'regulatory_bat',
-  //   icon: documentIcon,
-  //   group: 'eprtr_blocks',
-  //   title: 'Regulatory BAT',
-  // };
-
+  // ---------- Reducers ----------
   config.addonReducers = {
     ...config.addonReducers,
     ...addonReducers,
   };
-  config.blocks.blocksConfig.custom_connected_tags = {
-    id: 'custom_connected_tags',
-    title: 'Connected Tags',
-    group: 'common',
-    view: ListView,
-    edit: EditView,
-    schema: getSchema,
-    icon: iconSVG,
-  };
 
-  config.blocks.blocksConfig.tableau_block.restricted = false;
-  // Multi-lingual
-  config.settings.isMultilingual = false;
-  config.settings.defaultLanguage =
-    config.settings.eea?.defaultLanguage || 'en';
+  // ---------- API Expanders ----------
+  config.settings.apiExpanders = [
+    ...(config.settings.apiExpanders || []),
+    {
+      match: ['/facility', '/facility/*'],
+      GET_CONTENT: ['connector-data'],
+    },
+  ];
 
-  // mega menu layout settings
+  // ---------- Content type views ----------
+  config.views.contentTypesViews.redirect = RedirectView;
 
-  // EEA customizations
+  // ---------- EEA branding ----------
   config.settings.eea = {
     ...(config.settings.eea || {}),
-    languages: n2kLanguages,
     headerOpts: {
       ...(config.settings.eea?.headerOpts || {}),
       logo: iedLogoBlack,
@@ -194,7 +70,6 @@ const applyConfig = (config) => {
     headerSearchBox: [
       {
         isDefault: true,
-        // to replace search path change path to whatever you want and match with the page in volto website
         path: '/advanced-search',
         placeholder: 'Search IED...',
         description:
@@ -213,19 +88,15 @@ const applyConfig = (config) => {
     src: ecLogo,
     alt: 'European commission Logo',
     className: 'commission logo',
-    columnSize: {
-      mobile: 6,
-      tablet: 12,
-      computer: 4,
-    },
+    columnSize: { mobile: 6, tablet: 12, computer: 4 },
   };
-  // BISE config
 
+  // ---------- Block defaults ----------
   config.blocks.requiredBlocks = [];
-
   config.blocks.blocksConfig.html.restricted = false;
+  config.blocks.blocksConfig.tableau_block.restricted = false;
 
-  // Install advanced link
+  // ---------- Slate: advanced link ----------
   config = installLink(config);
   const toolbarButtons = config.settings.slate.toolbarButtons || [];
   const linkIndex = toolbarButtons.indexOf('link');
@@ -233,10 +104,7 @@ const applyConfig = (config) => {
   toolbarButtons.splice(linkIndex, 1, 'a');
   toolbarButtons.splice(advancedLinkIndex, 1);
 
-  // Customizations
-  config.settings.providerUrl = 'https://discodata.eea.europa.eu/sql';
-
-  // Columns
+  // ---------- Columns block ----------
   if (config.blocks.blocksConfig.columnsBlock) {
     config.blocks.blocksConfig.columnsBlock.mostUsed = true;
     config.blocks.blocksConfig.columnsBlock.schemaEnhancer =
@@ -264,32 +132,33 @@ const applyConfig = (config) => {
     };
   }
 
-  // Listing
+  // ---------- Listing block ----------
   if (config.blocks.blocksConfig.listing) {
     config.blocks.blocksConfig.listing.title = 'Listing (Content)';
     config.blocks.blocksConfig.listing.schemaEnhancer =
       addStylingFieldsetSchemaEnhancer;
   }
 
-  // Hero image left
+  // ---------- Hero image left ----------
   if (config.blocks.blocksConfig.hero_image_left) {
     config.blocks.blocksConfig.hero_image_left.schemaEnhancer =
       addStylingFieldsetSchemaEnhancer;
   }
 
+  // ---------- Install custom blocks + styles ----------
   config = [installBlocks, installStyles].reduce(
     (acc, apply) => apply(acc),
     config,
   );
 
-  // Disable some blocks
+  // ---------- Restrict blocks ----------
   restrictedBlocks.forEach((block) => {
     if (config.blocks.blocksConfig[block]) {
       config.blocks.blocksConfig[block].restricted = true;
     }
   });
 
-  // Set custom blocks
+  // ---------- Group custom blocks ----------
   config.blocks.groupBlocksOrder = [
     ...config.blocks.groupBlocksOrder,
     { id: 'custom_blocks', title: 'Custom blocks' },
@@ -299,6 +168,8 @@ const applyConfig = (config) => {
       config.blocks.blocksConfig[block].group = 'custom_blocks';
     }
   });
+
+  // ---------- data_table variation ----------
   if (config?.blocks?.blocksConfig?.data_table) {
     config.blocks.blocksConfig.data_table = {
       ...config.blocks.blocksConfig.data_table,
@@ -313,6 +184,7 @@ const applyConfig = (config) => {
       variationSelector: true,
     };
   }
+
   return config;
 };
 

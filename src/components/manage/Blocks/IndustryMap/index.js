@@ -8,6 +8,7 @@ import {
 } from '@eeacms/volto-ied-policy/helpers.js';
 import IndustryMapEdit from './Edit';
 import IndustryMapView from './View';
+import { getLatestRegions } from './urlFilters';
 
 export const filters = [
   {
@@ -99,46 +100,6 @@ export const getStyles = (style) => {
   });
 
   return obj;
-};
-
-const getLatestRegions = (query) => {
-  const siteCountries = query.filter_countries;
-  const regions = query.filter_nuts_1;
-  const provinces = query.filter_nuts_2;
-  let nuts = [];
-  let nuts_latest = [];
-
-  siteCountries &&
-    siteCountries.forEach((country) => {
-      const filteredRegions = regions
-        ? regions.filter((region) => {
-            return region && region.includes(country);
-          })
-        : [];
-      if (filteredRegions.length) {
-        filteredRegions.forEach((region) => {
-          const filteredProvinces = provinces
-            ? provinces.filter((province) => {
-                return province && province.includes(region);
-              })
-            : [];
-          if (filteredProvinces.length) {
-            filteredProvinces.forEach((province) => {
-              nuts.push(`${province},${region},${country}`);
-              nuts_latest.push(province);
-            });
-          } else {
-            nuts.push(`${region},${country}`);
-            nuts_latest.push(region);
-          }
-        });
-      }
-    });
-
-  return {
-    nuts,
-    nuts_latest,
-  };
 };
 
 export const getLayerSitesURL = (extent) => {
@@ -370,13 +331,6 @@ const applyIndustryMapBlockConfig = (config) => {
     },
   };
   return config;
-};
-
-export const mercatorToLatLon = (x, y) => {
-  const R = 6378137.0; // Radius of Earth in meters
-  const lng = (x / R) * (180 / Math.PI);
-  const lat = (2 * Math.atan(Math.exp(y / R)) - Math.PI / 2) * (180 / Math.PI);
-  return { lat, lng };
 };
 
 export default applyIndustryMapBlockConfig;

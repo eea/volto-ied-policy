@@ -39,12 +39,10 @@ class PopupDetailed extends React.PureComponent {
   render() {
     const { data } = this.state;
     const open = !!Object.keys(data).length;
-    let href = `/industrial-emissions/industrial-site?siteInspireId=${data.InspireSiteId}&siteName=${data.siteName}&siteReportingYear=${data.Site_reporting_year}&activeTab=environmental-information`;
-
-    if (data.flatCoordinates) {
-      const [lng, lat] = data.flatCoordinates;
-      href += `&lat=${lat}&lng=${lng}`;
-    }
+    // Note: no lat/lng here. The detail page (SiteLocationMap) locates the site
+    // by siteInspireId. Adding lat/lng made the still-mounted explore map zoom to
+    // the site during the route transition (it reads query.lat/lng).
+    const href = `/industrial-emissions/industrial-site?siteInspireId=${data.InspireSiteId}&siteName=${data.siteName}&siteReportingYear=${data.Site_reporting_year}&activeTab=environmental-information`;
 
     return (
       <Modal

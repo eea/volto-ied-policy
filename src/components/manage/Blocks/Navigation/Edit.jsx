@@ -1,4 +1,3 @@
-import React from 'react';
 import { SidebarPortal } from '@plone/volto/components';
 import InlineForm from '@plone/volto/components/manage/Form/InlineForm';
 import schema from './schema';

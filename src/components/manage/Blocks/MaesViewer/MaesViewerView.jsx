@@ -108,7 +108,7 @@ const View = ({ data, provider_data, id, ...rest }) => {
             {provider_data
               ? multiCharts.map((chart, index) => {
                   return (
-                    <>
+                    <React.Fragment key={index}>
                       <div>{chart.title}</div>
                       <LoadablePlot
                         key={index}
@@ -122,7 +122,7 @@ const View = ({ data, provider_data, id, ...rest }) => {
                         }}
                         useResizeHandler={true}
                       />
-                    </>
+                    </React.Fragment>
                   );
                 })
               : ''}

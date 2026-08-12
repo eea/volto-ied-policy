@@ -6,7 +6,7 @@ import schema from './schema';
 import { connectToProviderData } from '@eeacms/volto-datablocks/hocs';
 import { useDispatch } from 'react-redux';
 import './styles.less';
-import { setQuery } from '../../../../../actions';
+import { setIndustryMapFilters } from '@eeacms/volto-ied-policy/actions';
 
 const getLength = (length = 0, limit = 0) => {
   if (!length) return 0;
@@ -60,7 +60,7 @@ const ConnectedList = (props) => {
                   }}
                   onClick={() => {
                     dispatch(
-                      setQuery({
+                      setIndustryMapFilters({
                         index_pollutant_id:
                           provider_data?.['pollutantId']?.[column] || '',
                       }),

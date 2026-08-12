@@ -1,60 +1,22 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
+import { withRouter } from 'react-router';
 import { Portal } from 'react-portal';
 import cs from 'classnames';
 import { Dropdown, Checkbox } from 'semantic-ui-react';
 import { Icon } from '@plone/volto/components';
 import { BodyClass } from '@plone/volto/helpers';
 import { trackSiteSearch } from '@eeacms/volto-matomo/utils';
-import { setQuery } from '@eeacms/volto-ied-policy/actions';
-import { getOptions, noOptions, inputsKeys } from './dictionary';
-import { withRouter } from 'react-router-dom';
-import { compose } from 'redux';
+import { setIndustryMapFilters } from '@eeacms/volto-ied-policy/actions';
+import {
+  getOptions,
+  noOptions,
+  inputsKeys,
+} from '@eeacms/volto-ied-policy/components/manage/Blocks/FiltersMap/dictionary';
+import { filtersToSearchParams, searchParamsToFilters } from './urlFilters';
 
 import menuSVG from '@plone/volto/icons/menu-alt.svg';
-
-const setParamsQuery = (filters, location) => {
-  const query = { ...filters };
-  const urlParams = new URLSearchParams(location.search);
-
-  const filteredReportingYears =
-    query?.filter_reporting_years?.filter((year) => year != null) ?? [];
-
-  if (filteredReportingYears.length > 0) {
-    urlParams.set('Site_reporting_year[in]', filteredReportingYears.join(','));
-  }
-  const filteredCountryCodes =
-    query?.filter_countries?.filter((code) => code != null) ?? [];
-  if (filteredCountryCodes.length > 0) {
-    urlParams.set('countryCode[in]', filteredCountryCodes.join(','));
-    urlParams.delete('nuts_regions[like]');
-  }
-
-  const filteredInstallationTypes =
-    query?.filter_installation_types?.filter((type) => type != null) ?? [];
-  if (filteredInstallationTypes.length > 0) {
-    if (filteredInstallationTypes.indexOf('IED') !== -1) {
-      urlParams.set('count_instype_IED[gte]', 1);
-    }
-    if (filteredInstallationTypes.indexOf('NONIED') !== -1) {
-      urlParams.set('count_instype_NONIED[gte]', 1);
-    }
-  }
-  const filteredFacilityTypes =
-    query?.filter_facility_types?.filter((type) => type != null) ?? [];
-  if (filteredFacilityTypes.length > 0) {
-    urlParams.set(
-      'facility_types',
-      filteredFacilityTypes.map((type) => `%${type}%`).join(','),
-    );
-  }
-  const filteredIndustries =
-    query?.filter_industries?.filter((industry) => industry != null) ?? [];
-  if (filteredIndustries.length > 0) {
-    urlParams.set('eprtr_sectors[in]', filteredIndustries.join(','));
-  }
-  return urlParams;
-};
 class Sidebar extends React.Component {
   constructor(props) {
     super(props);
@@ -70,14 +32,38 @@ class Sidebar extends React.Component {
     };
   }
 
+  // Filter values live in the URL (source of truth); decode them on demand.
+  getFilters() {
+    return searchParamsToFilters(this.props.location.search);
+  }
+
+  // Push the new filter set to the URL and bump the redux coordination counter
+  // so the map/table refetch effects fire (filter_change stays in redux).
+  pushFilters(filters, type) {
+    const { history, location, query, dispatch } = this.props;
+    const search = filtersToSearchParams(filters, location).toString();
+    history.push({
+      pathname: location.pathname,
+      search: search ? `?${search}` : '',
+    });
+    dispatch(
+      setIndustryMapFilters({
+        filter_change: {
+          counter: (query['filter_change']?.counter || 0) + 1,
+          type,
+        },
+        filter_search: null,
+        filter_search_value: '',
+      }),
+    );
+  }
+
   isChecked(filter, label) {
-    const { query } = this.props;
-    return (query[filter] || []).indexOf(label) !== -1;
+    return (this.getFilters()[filter] || []).indexOf(label) !== -1;
   }
 
   setCheckboxValue(_, data) {
-    const { query } = this.props;
-    const values = [...(query[data.name] || [])];
+    const values = [...(this.getFilters()[data.name] || [])];
     const checked = data.checked;
     const index = values.indexOf(data.label);
     if (checked && index === -1) {
@@ -103,65 +89,27 @@ class Sidebar extends React.Component {
   }
 
   applyFilters(filters) {
-    const { query } = this.props;
-    const newInputs = {};
-    inputsKeys.forEach((key) => {
-      newInputs[key] = query[key] || [];
-    });
-    const urlParams = setParamsQuery(filters, this.props.location);
-    const newQuery = {
-      ...newInputs,
-      ...filters,
-      filter_change: {
-        counter: (query['filter_change']?.counter || 0) + 1,
-        type: 'simple-filter',
-      },
-      filter_search: null,
-      filter_search_value: '',
-    };
-    this.props.dispatch(setQuery(newQuery));
+    const newFilters = { ...this.getFilters(), ...filters };
+    this.pushFilters(newFilters, 'simple-filter');
     trackSiteSearch({
       category: `Map/Table simple-filter`,
       keyword: JSON.stringify({
-        ...Object.keys(newQuery)
+        ...Object.keys(newFilters)
           .filter(
             (key) =>
               inputsKeys.includes(key) &&
-              newQuery[key]?.filter((value) => value)?.length,
+              newFilters[key]?.filter((value) => value)?.length,
           )
           .reduce((obj, key) => {
-            obj[key] = newQuery[key]?.filter((value) => value);
+            obj[key] = newFilters[key]?.filter((value) => value);
             return obj;
           }, {}),
       }),
     });
-    this.props.history.push({
-      pathname: this.props.location.pathname,
-      search: `?${urlParams.toString()}`,
-    });
   }
 
   clearFilters(e) {
-    this.props.history.replace({
-      pathname: this.props.location.pathname,
-      search: '',
-    });
-    const { query, dispatch } = this.props;
-    const newInputs = {};
-    inputsKeys.forEach((key) => {
-      newInputs[key] = [];
-    });
-    dispatch(
-      setQuery({
-        ...newInputs,
-        filter_change: {
-          counter: (query['filter_change']?.counter || 0) + 1,
-          type: 'clear',
-        },
-        filter_search: null,
-        filter_search_value: '',
-      }),
-    );
+    this.pushFilters({}, 'clear');
     e.preventDefault();
     e.stopPropagation();
   }
@@ -199,10 +147,9 @@ class Sidebar extends React.Component {
   }
 
   render() {
-    const { query } = this.props;
+    const filters = this.getFilters();
     const { options } = this.state;
     if (__SERVER__) return '';
-
     return (
       <div id="map-sidebar" className="outline-button">
         <form autoComplete="off" name="Map simple filters">
@@ -229,7 +176,7 @@ class Sidebar extends React.Component {
             }}
             options={options.reporting_years || noOptions}
             placeholder={'Select reporting year'}
-            value={query.filter_reporting_years || []}
+            value={filters.filter_reporting_years || []}
           />
           <h3>Country</h3>
           <Dropdown
@@ -243,7 +190,7 @@ class Sidebar extends React.Component {
             }}
             options={options.countries || noOptions}
             placeholder={'Select country'}
-            value={query.filter_countries || []}
+            value={filters.filter_countries || []}
           />
           <h3>Industrial sector</h3>
           <Dropdown
@@ -257,7 +204,7 @@ class Sidebar extends React.Component {
             }}
             options={options.industries || noOptions}
             placeholder={'Select industrial sector'}
-            value={query.filter_industries || []}
+            value={filters.filter_industries || []}
           />
           <h3>Facility type</h3>
           <Checkbox
@@ -313,6 +260,6 @@ class Sidebar extends React.Component {
 export default compose(
   withRouter,
   connect((state) => ({
-    query: state.query.search,
+    query: state.industryMapFilters.search,
   })),
 )(Sidebar);

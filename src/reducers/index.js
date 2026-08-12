@@ -4,7 +4,7 @@
  */
 
 import flags from './flags';
-import query from './query';
+import industryMapFilters from './industryMapFilters';
 /**
  * Root reducer.
  * @function
@@ -14,7 +14,7 @@ import query from './query';
  */
 const reducers = {
   flags,
-  query,
+  industryMapFilters,
 };
 
 export default reducers;

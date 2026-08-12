@@ -1,8 +1,8 @@
 import {
-  SET_QUERY,
-  DELETE_QUERY,
-  RESET_QUERY,
-  TRIGGER_QUERY_RENDER,
+  SET_INDUSTRY_MAP_FILTERS,
+  DELETE_INDUSTRY_MAP_FILTERS,
+  RESET_INDUSTRY_MAP_FILTERS,
+  TRIGGER_INDUSTRY_MAP_FILTERS_RENDER,
 } from '../constants';
 
 const initialState = {
@@ -11,12 +11,15 @@ const initialState = {
   counter: 0,
   lastAction: '',
 };
+// Holds cross-component coordination state only (filter_change, map_extent,
+// index_pollutant_id, filter_search). User-facing filter values live in the URL
+// query params; see IndustryMap/urlFilters.js.
 //fix deploy in strict mode
-export default function query(state = initialState, action = {}) {
+export default function industryMapFilters(state = initialState, action = {}) {
   let search = { ...state.search };
   let deletedQueryParams = { ...state.deletedQueryParams };
   switch (action.type) {
-    case SET_QUERY:
+    case SET_INDUSTRY_MAP_FILTERS:
       if (typeof action.queryParam === 'string') {
         search[action.queryParam] = action.value;
         delete deletedQueryParams[action.queryParam];
@@ -35,9 +38,9 @@ export default function query(state = initialState, action = {}) {
         search,
         deletedQueryParams,
         counter: state.counter + 1,
-        lastAction: SET_QUERY,
+        lastAction: SET_INDUSTRY_MAP_FILTERS,
       };
-    case DELETE_QUERY:
+    case DELETE_INDUSTRY_MAP_FILTERS:
       if (Array.isArray(action.queryParam)) {
         action.queryParam.forEach((param) => {
           if (search?.[param]) delete search[param];
@@ -52,9 +55,9 @@ export default function query(state = initialState, action = {}) {
         search,
         deletedQueryParams,
         counter: state.counter + 1,
-        lastAction: DELETE_QUERY,
+        lastAction: DELETE_INDUSTRY_MAP_FILTERS,
       };
-    case RESET_QUERY:
+    case RESET_INDUSTRY_MAP_FILTERS:
       if (Array.isArray(action.queryParam)) {
         action.queryParam.forEach((param) => {
           if (search?.[param]) delete search[param];
@@ -69,13 +72,13 @@ export default function query(state = initialState, action = {}) {
         search: {},
         deletedQueryParams: {},
         counter: 0,
-        lastAction: RESET_QUERY,
+        lastAction: RESET_INDUSTRY_MAP_FILTERS,
       };
-    case `${TRIGGER_QUERY_RENDER}`:
+    case `${TRIGGER_INDUSTRY_MAP_FILTERS_RENDER}`:
       return {
         ...state,
         counter: state.counter + 1,
-        lastAction: TRIGGER_QUERY_RENDER,
+        lastAction: TRIGGER_INDUSTRY_MAP_FILTERS_RENDER,
       };
     default:
       return state;

@@ -7,9 +7,8 @@ import { doesNodeContainClick } from 'semantic-ui-react/dist/commonjs/lib';
 import Highlighter from 'react-highlight-words';
 import config from '@plone/volto/registry';
 import { trackSiteSearch } from '@eeacms/volto-matomo/utils';
-import { setQuery } from '@eeacms/volto-ied-policy/actions';
+import { setIndustryMapFilters } from '@eeacms/volto-ied-policy/actions';
 import { getEncodedQueryString } from '@eeacms/volto-ied-policy/helpers';
-import { inputsKeys } from './dictionary';
 import { withRouter } from 'react-router-dom';
 
 const MAX_RESULTS = 6;
@@ -63,7 +62,7 @@ const Search = ({
   data,
   providers_data,
   query,
-  setQuery,
+  setIndustryMapFilters,
   location,
   history,
   ...props
@@ -99,11 +98,11 @@ const Search = ({
 
   const setValue = React.useCallback(
     (newValue) => {
-      setQuery({ filter_search_value: newValue });
+      setIndustryMapFilters({ filter_search_value: newValue });
 
       // When input is cleared via keyboard, also clear filter_search and URL params
       if (newValue === '') {
-        setQuery({
+        setIndustryMapFilters({
           filter_search: null,
           filter_search_value: '',
           filter_change: {
@@ -122,7 +121,7 @@ const Search = ({
         });
       }
     },
-    [setQuery, query, location.search, location.pathname, history],
+    [setIndustryMapFilters, query, location.search, location.pathname, history],
   );
 
   React.useEffect(() => {
@@ -142,7 +141,7 @@ const Search = ({
     const searchLocation = urlParams.get('searchLocation');
 
     if (siteName && !query.filter_search) {
-      setQuery({
+      setIndustryMapFilters({
         filter_search: { text: siteName, type: 'site' },
         filter_search_value: siteName,
         filter_change: {
@@ -151,7 +150,7 @@ const Search = ({
         },
       });
     } else if (facilityName && !query.filter_search) {
-      setQuery({
+      setIndustryMapFilters({
         filter_search: { text: facilityName, type: 'facility' },
         filter_search_value: facilityName,
         filter_change: {
@@ -160,7 +159,7 @@ const Search = ({
         },
       });
     } else if (searchLocation && !query.filter_search) {
-      setQuery({
+      setIndustryMapFilters({
         filter_search: { text: searchLocation, type: 'location' },
         filter_search_value: searchLocation,
         filter_change: {
@@ -286,12 +285,9 @@ const Search = ({
     (value, type, magicKey) => {
       debounce(onChange, { value });
       setLoading(true);
-      const newInputs = {};
-      inputsKeys.forEach((filter) => {
-        newInputs[filter] = [];
-      });
-      setQuery({
-        ...newInputs,
+      // Searching clears active filters: the URL is rebuilt below with only the
+      // search param. Redux keeps just the search coordination state.
+      setIndustryMapFilters({
         filter_search:
           value && type
             ? { text: value, type, ...(magicKey ? { magicKey } : {}) }
@@ -329,7 +325,7 @@ const Search = ({
         search: urlParams.toString() ? `?${urlParams.toString()}` : '',
       });
     },
-    [query, onChange, setQuery, history, location.pathname],
+    [query, onChange, setIndustryMapFilters, history, location.pathname],
   );
 
   return (
@@ -407,10 +403,10 @@ export default compose(
   withRouter,
   connect(
     (state) => ({
-      query: state.query.search,
+      query: state.industryMapFilters.search,
     }),
     {
-      setQuery,
+      setIndustryMapFilters,
     },
   ),
 )(Search);
