@@ -1,7 +1,7 @@
 import cx from 'classnames';
 import isPlainObject from 'lodash/isPlainObject';
 import pick from 'lodash/pick';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { compose } from 'redux';
 
 import { flattenToAppURL } from '@plone/volto/helpers/Url/Url';
@@ -73,17 +73,20 @@ function View(props) {
   const facilitiesListRef = useRef(null);
   const selectedFacilityRef = useRef(null);
 
-  const updateQueryParam = (key, value, method = 'push') => {
-    const nextParams = new URLSearchParams(
-      history.location?.search || location.search,
-    );
-    nextParams.set(key, value);
-    history[method]({
-      pathname: location.pathname,
-      search: nextParams.toString(),
-      state: history.location.state,
-    });
-  };
+  const updateQueryParam = useCallback(
+    (key, value, method = 'push') => {
+      const nextParams = new URLSearchParams(
+        history.location?.search || location.search,
+      );
+      nextParams.set(key, value);
+      history[method]({
+        pathname: location.pathname,
+        search: nextParams.toString(),
+        state: history.location.state,
+      });
+    },
+    [history, location],
+  );
 
   const goToFacility = (row) => {
     const id = providers_data.facilities?.facilityLocalId?.[row];
@@ -143,6 +146,7 @@ function View(props) {
     contentPath,
     history.location,
     location,
+    updateQueryParam,
   ]);
 
   return (

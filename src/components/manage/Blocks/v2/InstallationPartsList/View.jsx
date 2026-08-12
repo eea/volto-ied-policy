@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { compose } from 'redux';
 import { Message, MessageHeader } from 'semantic-ui-react';
@@ -43,17 +43,20 @@ function View(props) {
   const selectedPartId =
     params.get('partInspireID') || provider_data?.partInspireID?.[0] || null;
 
-  const updateQueryParam = (key, value, method = 'push') => {
-    const nextParams = new URLSearchParams(
-      history.location?.search || location.search,
-    );
-    nextParams.set(key, value);
-    history[method]({
-      pathname: location.pathname,
-      search: nextParams.toString(),
-      state: history.location.state,
-    });
-  };
+  const updateQueryParam = useCallback(
+    (key, value, method = 'push') => {
+      const nextParams = new URLSearchParams(
+        history.location?.search || location.search,
+      );
+      nextParams.set(key, value);
+      history[method]({
+        pathname: location.pathname,
+        search: nextParams.toString(),
+        state: history.location.state,
+      });
+    },
+    [history, location],
+  );
 
   const goToPart = (row) => {
     const id = provider_data?.partInspireID?.[row];
@@ -78,7 +81,13 @@ function View(props) {
       return;
     }
     updateQueryParam('partInspireID', id, 'replace');
-  }, [provider_data?.partInspireID, history.location, location, contentPath]);
+  }, [
+    provider_data?.partInspireID,
+    history.location,
+    location,
+    contentPath,
+    updateQueryParam,
+  ]);
 
   if (
     !provider_data?.partInspireID ||
