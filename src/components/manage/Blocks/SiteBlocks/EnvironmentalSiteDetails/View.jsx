@@ -66,8 +66,8 @@ const View = (props) => {
           a.facilityInspireId > b.facilityInspireId
             ? 1
             : b.facilityInspireId > a.facilityInspireId
-              ? -1
-              : 0,
+            ? -1
+            : 0,
         ),
       );
     }

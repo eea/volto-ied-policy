@@ -49,8 +49,8 @@ const View = (props) => {
             a.installationInspireId > b.installationInspireId
               ? 1
               : b.installationInspireId > a.installationInspireId
-                ? -1
-                : 0,
+              ? -1
+              : 0,
           )
           .map((permit, index) => {
             const facility = permit.facilityInspireId;
