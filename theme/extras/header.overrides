@@ -52,6 +52,7 @@
   max-width: 320px;
   height: auto;
   padding-right: 5px;
+  object-fit: contain;
 }
 
 @media only screen and (min-width: @computerBreakpoint) {

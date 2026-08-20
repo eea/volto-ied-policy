@@ -66,6 +66,9 @@ const applyConfig = (config) => {
       ...(config.settings.eea?.headerOpts || {}),
       logo: iedLogoBlack,
       logoWhite: iedLogo,
+      // Reserve the taller logo variant; CSS preserves each SVG's ratio.
+      logoWidth: 300,
+      logoHeight: 143,
     },
     headerSearchBox: [
       {
