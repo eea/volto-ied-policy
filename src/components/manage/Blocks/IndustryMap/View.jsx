@@ -42,11 +42,29 @@ import './styles.less';
 
 // let _REQS = 0;
 // const zoomSwitch = 6;
-let timer = [];
+const HOVER_SITE_OUT_FIELDS = 'OBJECTID,siteName';
+const CLICK_SITE_OUT_FIELDS = [
+  'OBJECTID',
+  'InspireSiteId',
+  'siteName',
+  'Site_reporting_year',
+  'count_factype_EPRTR',
+  'count_factype_NONEPRTR',
+  'count_instype_IED',
+  'count_instype_NONIED',
+  'count_plantType_LCP',
+  'count_plantType_WI',
+  'count_plantType_coWI',
+  'pollutants',
+  'numInspections',
+].join(',');
 
-const debounce = (func, index, timeout = 200, ...args) => {
-  if (timer[index]) clearTimeout(timer[index]);
-  timer[index] = setTimeout(func, timeout, ...args);
+const debounce = (timerRef, func, timeout = 200) => {
+  if (timerRef.current) clearTimeout(timerRef.current);
+  timerRef.current = setTimeout(() => {
+    timerRef.current = null;
+    func();
+  }, timeout);
 };
 
 // const getWhereStatementFromUrl = (params) => {
@@ -105,7 +123,19 @@ const View = (props) => {
   const overlayPopup = useRef(null);
   const overlayPopupDetailed = useRef(null);
   const isMounted = useRef(true);
+  const pointermoveTimer = useRef(null);
+  const layerUpdateTimer = useRef(null);
+  const pointermoveCancel = useRef(null);
+  const clickCancel = useRef(null);
+  const pointermoveRequestId = useRef(0);
+  const clickRequestId = useRef(0);
   const { openlayers } = props;
+
+  // Map registers event callbacks only once, so they must read changing filters
+  // through a ref instead of their initial render's props.
+  const currentWhere = getWhereStatement(props.query);
+  const whereRef = useRef(currentWhere);
+  whereRef.current = currentWhere;
 
   const olLoaded = !!(
     openlayers.proj &&
@@ -184,6 +214,11 @@ const View = (props) => {
   const onPointermove = (e) => {
     if (__SERVER__ || !overlayPopup.current || e.type !== 'pointermove') return;
 
+    const requestId = ++pointermoveRequestId.current;
+    if (pointermoveTimer.current) clearTimeout(pointermoveTimer.current);
+    pointermoveCancel.current?.();
+    pointermoveCancel.current = null;
+
     if (e.dragging) {
       // e.map.getTarget().style.cursor = 'grabbing';
       return;
@@ -210,60 +245,67 @@ const View = (props) => {
     ];
     if (!overlayPopup.current) return;
 
-    debounce(
-      () => {
-        const esrijsonFormat = new openlayers.format.EsriJSON();
-        const where = getWhereStatement(props.query);
-        jsonp(
-          getLayerSitesURL(pointerExtent),
-          {
-            prefix: '__jps',
-            param:
-              (where
-                ? qs.stringify({
-                    where,
-                  })
-                : '') + '&callback',
-          },
-          (error, response) => {
-            if (!error) {
-              let features = esrijsonFormat.readFeatures(response);
-              const feature = getClosestFeatureToCoordinate(
-                e.coordinate,
-                features,
-              );
-              if (!feature) {
-                if (typeof overlayPopup?.current?.setPosition == 'function') {
-                  overlayPopup.current?.setPosition(undefined);
-                  emitEvent(mapElement, 'ol-pointermove', {
-                    bubbles: false,
-                    detail: {},
-                  });
-                }
-
-                return;
+    const queryFeature = () => {
+      const esrijsonFormat = new openlayers.format.EsriJSON();
+      const where = whereRef.current;
+      pointermoveCancel.current = jsonp(
+        getLayerSitesURL(pointerExtent, HOVER_SITE_OUT_FIELDS),
+        {
+          prefix: '__jps',
+          param:
+            (where
+              ? qs.stringify({
+                  where,
+                })
+              : '') + '&callback',
+        },
+        (error, response) => {
+          if (requestId === pointermoveRequestId.current) {
+            pointermoveCancel.current = null;
+          }
+          if (
+            !isMounted.current ||
+            requestId !== pointermoveRequestId.current ||
+            where !== whereRef.current
+          ) {
+            return;
+          }
+          if (!error) {
+            let features = esrijsonFormat.readFeatures(response);
+            const feature = getClosestFeatureToCoordinate(
+              e.coordinate,
+              features,
+            );
+            if (!feature) {
+              if (typeof overlayPopup?.current?.setPosition == 'function') {
+                overlayPopup.current?.setPosition(undefined);
+                emitEvent(mapElement, 'ol-pointermove', {
+                  bubbles: false,
+                  detail: {},
+                });
               }
-              let hdms = coordinate.toStringHDMS(
-                proj.toLonLat(feature.getGeometry().flatCoordinates),
-              );
-              const featuresProperties = feature.getProperties();
-              emitEvent(mapElement, 'ol-pointermove', {
-                bubbles: false,
-                detail: {
-                  ...featuresProperties,
-                  hdms,
-                  flatCoordinates: feature.getGeometry().flatCoordinates,
-                },
-              });
-              overlayPopup.current?.setPosition(e.coordinate);
-              e.map.getTarget().style.cursor = 'pointer';
+
+              return;
             }
-          },
-        );
-      },
-      0,
-      250,
-    );
+            let hdms = coordinate.toStringHDMS(
+              proj.toLonLat(feature.getGeometry().flatCoordinates),
+            );
+            const featuresProperties = feature.getProperties();
+            emitEvent(mapElement, 'ol-pointermove', {
+              bubbles: false,
+              detail: {
+                ...featuresProperties,
+                hdms,
+                flatCoordinates: feature.getGeometry().flatCoordinates,
+              },
+            });
+            overlayPopup.current?.setPosition(e.coordinate);
+            e.map.getTarget().style.cursor = 'pointer';
+          }
+        },
+      );
+    };
+    debounce(pointermoveTimer, queryFeature, 250);
     overlayPopup.current?.setPosition(undefined);
     e.map.getTarget().style.cursor = '';
   };
@@ -273,9 +315,12 @@ const View = (props) => {
     if (__SERVER__ || !overlayPopup.current || !overlayPopupDetailed.current) {
       return;
     }
+    const requestId = ++clickRequestId.current;
+    clickCancel.current?.();
+    clickCancel.current = null;
     const { coordinate, proj, format } = openlayers;
     const esrijsonFormat = new format.EsriJSON();
-    const where = getWhereStatement(props.query);
+    const where = whereRef.current;
     const mapElement = document.querySelector('#industry-map');
     const resolution = e.map.getView().getResolution();
     const pointerExtent = [
@@ -284,8 +329,8 @@ const View = (props) => {
       e.coordinate[0] + (zoom >= 8 ? 8 : 6) * resolution,
       e.coordinate[1] + (zoom >= 8 ? 8 : 6) * resolution,
     ];
-    jsonp(
-      getLayerSitesURL(pointerExtent),
+    clickCancel.current = jsonp(
+      getLayerSitesURL(pointerExtent, CLICK_SITE_OUT_FIELDS),
       {
         prefix: '__jps',
         param:
@@ -296,6 +341,16 @@ const View = (props) => {
             : '') + '&callback',
       },
       (error, response) => {
+        if (requestId === clickRequestId.current) {
+          clickCancel.current = null;
+        }
+        if (
+          !isMounted.current ||
+          requestId !== clickRequestId.current ||
+          where !== whereRef.current
+        ) {
+          return;
+        }
         if (!error) {
           let features = esrijsonFormat.readFeatures(response);
           const feature = getClosestFeatureToCoordinate(e.coordinate, features);
@@ -342,11 +397,45 @@ const View = (props) => {
   }, []);
 
   useEffect(() => {
+    isMounted.current = true;
     return () => {
       isMounted.current = false;
+      if (pointermoveTimer.current) clearTimeout(pointermoveTimer.current);
+      if (layerUpdateTimer.current) clearTimeout(layerUpdateTimer.current);
+      pointermoveCancel.current?.();
+      clickCancel.current?.();
       setMapRendered(false);
     };
   }, []);
+
+  useEffect(() => {
+    pointermoveRequestId.current += 1;
+    clickRequestId.current += 1;
+    if (pointermoveTimer.current) clearTimeout(pointermoveTimer.current);
+    pointermoveCancel.current?.();
+    clickCancel.current?.();
+    pointermoveCancel.current = null;
+    clickCancel.current = null;
+  }, [currentWhere]);
+
+  useEffect(() => {
+    if (!mapRendered || !layerSites.current) return;
+    const updateSitesLayer = () => {
+      if (typeof layerSites.current?.getSource === 'function') {
+        layerSites.current.getSource().updateParams({
+          layerDefs: JSON.stringify({
+            0: currentWhere,
+          }),
+        });
+      }
+    };
+    debounce(layerUpdateTimer, updateSitesLayer, 500);
+
+    return () => {
+      if (layerUpdateTimer.current) clearTimeout(layerUpdateTimer.current);
+      layerUpdateTimer.current = null;
+    };
+  }, [currentWhere, mapRendered]);
 
   useEffect(() => {
     if (!mapRendered || !map.current) return;
@@ -358,24 +447,6 @@ const View = (props) => {
     if (!filter_change) return;
     const filter_countries = (props.query.filter_countries || []).filter(
       (value) => value,
-    );
-    /* Trigger update of features style */
-    debounce(
-      () => {
-        if (
-          layerSites.current &&
-          typeof layerSites.current.getSource === 'function'
-        ) {
-          layerSites.current.getSource().updateParams({
-            layerDefs: JSON.stringify({
-              0: getWhereStatement(props.query),
-            }),
-          });
-        }
-        // this.layerRegions.current.changed();
-      },
-      1,
-      500,
     );
 
     /* Fit view if necessary */

@@ -102,7 +102,7 @@ export const getStyles = (style) => {
   return obj;
 };
 
-export const getLayerSitesURL = (extent) => {
+export const getLayerSitesURL = (extent, outFields = '*') => {
   return `https://air.discomap.eea.europa.eu/arcgis/rest/services/Air/IED_SiteMap/MapServer/0/query/?f=json&returnGeometry=true&spatialRel=esriSpatialRelIntersects&geometry=${encodeURIComponent(
     '{"xmin":' +
       extent[0] +
@@ -113,7 +113,9 @@ export const getLayerSitesURL = (extent) => {
       ',"ymax":' +
       extent[3] +
       ',"spatialReference":{"wkid":102100}}',
-  )}&geometryType=esriGeometryEnvelope&inSR=102100&outFields=*&outSR=102100&resultRecordCount=20`;
+  )}&geometryType=esriGeometryEnvelope&inSR=102100&outFields=${encodeURIComponent(
+    outFields,
+  )}&outSR=102100&resultRecordCount=20`;
 };
 
 export const getLayerRegionsURL = (extent) => {
