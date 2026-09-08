@@ -105,7 +105,13 @@ const View = (props) => {
   const overlayPopup = useRef(null);
   const overlayPopupDetailed = useRef(null);
   const isMounted = useRef(true);
+  // Map registers event callbacks only once, so they must read changing filters
+  // through a ref instead of their initial render's props.
+  const queryRef = useRef(props.query);
+  const pointermoveRequestId = useRef(0);
   const { openlayers } = props;
+
+  queryRef.current = props.query;
 
   const olLoaded = !!(
     openlayers.proj &&
@@ -184,6 +190,8 @@ const View = (props) => {
   const onPointermove = (e) => {
     if (__SERVER__ || !overlayPopup.current || e.type !== 'pointermove') return;
 
+    const requestId = ++pointermoveRequestId.current;
+
     if (e.dragging) {
       // e.map.getTarget().style.cursor = 'grabbing';
       return;
@@ -213,7 +221,7 @@ const View = (props) => {
     debounce(
       () => {
         const esrijsonFormat = new openlayers.format.EsriJSON();
-        const where = getWhereStatement(props.query);
+        const where = getWhereStatement(queryRef.current);
         jsonp(
           getLayerSitesURL(pointerExtent),
           {
@@ -226,6 +234,13 @@ const View = (props) => {
                 : '') + '&callback',
           },
           (error, response) => {
+            if (
+              !isMounted.current ||
+              requestId !== pointermoveRequestId.current ||
+              where !== getWhereStatement(queryRef.current)
+            ) {
+              return;
+            }
             if (!error) {
               let features = esrijsonFormat.readFeatures(response);
               const feature = getClosestFeatureToCoordinate(
@@ -275,7 +290,7 @@ const View = (props) => {
     }
     const { coordinate, proj, format } = openlayers;
     const esrijsonFormat = new format.EsriJSON();
-    const where = getWhereStatement(props.query);
+    const where = getWhereStatement(queryRef.current);
     const mapElement = document.querySelector('#industry-map');
     const resolution = e.map.getView().getResolution();
     const pointerExtent = [
