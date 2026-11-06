@@ -78,10 +78,26 @@ const debounce = (timerRef, func, timeout = 200) => {
 //   }
 // };
 
+// OpenLayers' TileArcGISRest hardcodes uppercase query params (F, FORMAT,
+// TRANSPARENT, SIZE, BBOX, BBOXSR, IMAGESR, DPI) that cannot be overridden
+// through its `params` option. The upgraded ArcGIS Server now enforces
+// lowercase param names, so we lowercase them on the generated tile URL.
+const lowercaseUrlParams = (url) => {
+  if (!url) return url;
+  const [base, query] = url.split('?');
+  if (!query) return url;
+  const params = new URLSearchParams(query);
+  const lowered = new URLSearchParams();
+  params.forEach((value, key) => {
+    lowered.append(key.toLowerCase(), value);
+  });
+  return `${base}?${lowered.toString()}`;
+};
+
 const getSitesSource = (query, openlayers) => {
   // return {};
   const { source } = openlayers;
-  return new source.TileArcGISRest({
+  const tileSource = new source.TileArcGISRest({
     params: {
       layerDefs: JSON.stringify({
         0: getWhereStatement(query),
@@ -89,6 +105,12 @@ const getSitesSource = (query, openlayers) => {
     },
     url: 'https://air.discomap.eea.europa.eu/arcgis/rest/services/Air/IED_SiteMap/MapServer',
   });
+
+  const defaultTileUrlFunction = tileSource.tileUrlFunction.bind(tileSource);
+  tileSource.tileUrlFunction = (...args) =>
+    lowercaseUrlParams(defaultTileUrlFunction(...args));
+
+  return tileSource;
 };
 
 const getClosestFeatureToCoordinate = (coordinate, features) => {
