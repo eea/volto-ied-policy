@@ -234,7 +234,11 @@ class Sidebar extends React.Component {
             checked={this.isChecked('filter_installation_types', 'NONIED')}
             onChange={this.setCheckboxValue}
           />
-          <button onClick={this.clearFilters} className="clear-button">
+          <button
+            type="button"
+            onClick={this.clearFilters}
+            className="clear-button"
+          >
             Clear filters
           </button>
         </form>
